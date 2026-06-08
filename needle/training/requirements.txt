@@ -1,0 +1,7 @@
+# PersonaNeedle training-data pipeline.
+anthropic>=0.30
+google-generativeai>=0.7
+httpx              # Ollama (Llama teacher)
+tqdm
+jsonlines
+numpy

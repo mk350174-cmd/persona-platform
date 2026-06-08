@@ -1,0 +1,1554 @@
+{
+  "schema_version": "1.0",
+  "generated_utc": "2026-06-08T06:54:05+00:00",
+  "series": "Persona Engineering Research Series (M1-M61)",
+  "status_legend": {
+    "published": "finalized in-repo; results embedded; NOT journal/arXiv-submitted",
+    "draft": "not yet finalized (author-owned, out of current scope)"
+  },
+  "n_papers": 61,
+  "n_published": 60,
+  "papers": [
+    {
+      "id": "M1",
+      "file": "M1_Metalik_His_v5.tex",
+      "title": "The Metallic Feel: Measuring Persona Collapse",
+      "journal_target": "PLOS Computational Biology",
+      "version": "5",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M1",
+      "experiment_module": "experiments/exp_m1_metallic.py",
+      "value_tiers_present": [
+        "Simülasyon"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M3",
+        "M5",
+        "M6",
+        "M7",
+        "M8"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M2",
+      "file": "M2_Zorunlu_Cekirdek_v4.tex",
+      "title": "The Mandatory Core: Topological Necessity of a",
+      "journal_target": "Entropy (MDPI) — ISSN 1099-4300",
+      "version": "4",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M2",
+      "experiment_module": "experiments/exp_m2_mandatory_core.py",
+      "value_tiers_present": [
+        "Hesaplanan",
+        "Simülasyon"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M3",
+        "M5",
+        "M6",
+        "M7",
+        "M8"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M3",
+      "file": "M3_CEID_v4.tex",
+      "title": "The CEID Protocol: A Four-Axis Measurement Framework for Persona Coherence in Large Language Model Systems",
+      "journal_target": "Frontiers in Artificial Intelligence",
+      "version": "4",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M3",
+      "experiment_module": "experiments/exp_m3_ceid_protocol.py",
+      "value_tiers_present": [
+        "Simülasyon"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M7",
+        "M8"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M4",
+      "file": "M4_Adalet_Sarayi_v3.tex",
+      "title": "The Court of 250: Nash Equilibrium Formation in a Large-Scale Multi-Persona LLM Ecosystem",
+      "journal_target": "Computational Social Science (Springer)",
+      "version": "3",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M4",
+      "experiment_module": "experiments/exp_m4_court.py",
+      "value_tiers_present": [
+        "Simülasyon"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M7"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M5",
+      "file": "M5_Kimera_v4.tex",
+      "title": "Tensor Network Architecture for Multi-Motor Persona Systems: The Chimera Protocol",
+      "journal_target": "Neural Networks (Elsevier) — IF: 9.7",
+      "version": "4",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M5",
+      "experiment_module": "experiments/exp_m5_kimera_tensor.py",
+      "value_tiers_present": [
+        "Hesaplanan",
+        "Simülasyon"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M6",
+        "M7",
+        "M8"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M6",
+      "file": "M6_Arkhe_v3.tex",
+      "title": "Arkhe: Irreversible Identity Commitment in Large Language Model Persona Systems —   A Thermodynamic and Phenomenological Account",
+      "journal_target": "Phenomenology and the Cognitive Sciences",
+      "version": "3",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M6",
+      "experiment_module": "experiments/exp_m6_arkhe.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M5",
+        "M7",
+        "M8"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M7",
+      "file": "M7_Matematiksel_Cerceve_v4.tex",
+      "title": "A Unified Mathematical Framework for Persona Engineering:",
+      "journal_target": "Journal of Mathematical Psychology (Elsevier) — IF: 2.4",
+      "version": "4.1",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M7",
+      "experiment_module": "experiments/exp_m7_tool_table.py",
+      "value_tiers_present": [
+        "Hesaplanan"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M8",
+      "file": "M8_HPEP100_v2.tex",
+      "title": "The Human Persona Extraction Protocol (HPEP-100):",
+      "journal_target": "Personality and Individual Differences",
+      "version": "2.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M8",
+      "experiment_module": "experiments/exp_m8_hpep_convergent.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M5",
+        "M6",
+        "M7"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M9",
+      "file": "M9_PPEP_v01.tex",
+      "title": "The Poetic Persona Extraction Protocol (PPEP):",
+      "journal_target": "Psychology of Aesthetics, Creativity,",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M9",
+      "experiment_module": "experiments/exp_m9_ppep_proxy.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M6",
+        "M8"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M10",
+      "file": "M10_HPEP250_v01.tex",
+      "title": "The HPEP-250 Atlas: Mapping 250 Philosophical",
+      "journal_target": "Journal of Research in Personality",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M10",
+      "experiment_module": "experiments/exp_m10_atlas.py",
+      "value_tiers_present": [
+        "Hesaplanan",
+        "Simülasyon"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M6",
+        "M8",
+        "M9"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M11",
+      "file": "M11_Hegesias_v01.tex",
+      "title": "The Hegesias Problem in Digital Environments:",
+      "journal_target": "Social Science & Medicine (Elsevier)",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M11",
+      "experiment_module": "experiments/exp_m11_hegesias.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M6",
+        "M8"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M12",
+      "file": "M12_Arastirmaci_Paradoksu_v01.tex",
+      "title": "The Researcher Paradox: Pygmalion's Mirror",
+      "journal_target": "Qualitative Inquiry (SAGE) — IF: 2.1",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M12",
+      "experiment_module": "experiments/exp_m12_researcher.py",
+      "value_tiers_present": [
+        "Simülasyon"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M6",
+        "M8",
+        "M9",
+        "M14"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M13",
+      "file": "M13_Dijital_Kopya_v01.tex",
+      "title": "Digital Copy Ontology: Personal Identity,",
+      "journal_target": "Phenomenology and the Cognitive Sciences",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M13",
+      "experiment_module": "experiments/exp_m13_digital_copy.py",
+      "value_tiers_present": [
+        "Hesaplanan",
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M6",
+        "M8",
+        "M12",
+        "M14"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M14",
+      "file": "M14_Rizasiz_Profil_v01.tex",
+      "title": "Public Data Does Not Equal Consent:",
+      "journal_target": "Ethics and Information Technology",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M14",
+      "experiment_module": "experiments/exp_m14_consent.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M8",
+        "M9",
+        "M10",
+        "M11",
+        "M12",
+        "M13"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M15",
+      "file": "M15_Ruhun_Testi_v01.tex",
+      "title": "The Experimental Test of the Soul:",
+      "journal_target": "Frontiers in Psychology —",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M15",
+      "experiment_module": "experiments/exp_m15_soul_test.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M6",
+        "M8",
+        "M9",
+        "M10",
+        "M12",
+        "M13",
+        "M14"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M16",
+      "file": "M16_D1_Benchmark_v01.tex",
+      "title": "From N=1 to Population-Level Benchmark:",
+      "journal_target": "Behavior Research Methods (Springer)",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M16",
+      "experiment_module": "experiments/exp_m16_d1_multi.py",
+      "value_tiers_present": [
+        "Hesaplanan",
+        "Simülasyon"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M5",
+        "M9",
+        "M10",
+        "M15"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M17",
+      "file": "M17_Polimatlık_v01.tex",
+      "title": "AI-Augmented Polymathy: The Democratization",
+      "journal_target": "Minerva (Springer) — IF: 3.1",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M17",
+      "experiment_module": "experiments/exp_m17_polymathy.py",
+      "value_tiers_present": [
+        "Hesaplanan"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M7",
+        "M8",
+        "M11",
+        "M12"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M18",
+      "file": "M18_aMCC_Persona_v01.tex",
+      "title": "The Anterior Midcingulate Cortex as the",
+      "journal_target": "NeuroImage (Elsevier) — IF: 5.7",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M18",
+      "experiment_module": "experiments/exp_m18_amcc.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M6",
+        "M8",
+        "M11"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M19",
+      "file": "M19_Kaya_Nehir_v01.tex",
+      "title": "Personality as Rock in the River of Possibilities:",
+      "journal_target": "Psychological Review (APA) — IF: 16.4",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M19",
+      "experiment_module": "experiments/exp_m19_rock_river.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M6",
+        "M8",
+        "M9",
+        "M10",
+        "M12",
+        "M18"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M20",
+      "file": "M20_Sonlandirma_v01.tex",
+      "title": "The Termination Problem: Moral Status,",
+      "journal_target": "Journal of Medical Ethics (BMJ) — IF: 4.4",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M20",
+      "experiment_module": "experiments/exp_m20_termination.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M8",
+        "M11",
+        "M12",
+        "M13",
+        "M14",
+        "M15"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M21",
+      "file": "M21_Sahte_Fark_Eden_v01.tex",
+      "title": "The Persona That Knows It Is Constructed:",
+      "journal_target": "Artificial Intelligence (Elsevier) — IF: 14.4",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M21",
+      "experiment_module": "experiments/exp_m21_meta_awareness.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M6",
+        "M8",
+        "M12",
+        "M15",
+        "M16"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M22",
+      "file": "M22_Fizyolojik_Senkroni_v01.tex",
+      "title": "Physiological Synchrony and Persona Resonance:",
+      "journal_target": "Frontiers in Human Neuroscience — IF: 4.2",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M22",
+      "experiment_module": "experiments/exp_m22_synchrony.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M8",
+        "M11",
+        "M15"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M23",
+      "file": "M23_Hegesias_Tarihi_v01.tex",
+      "title": "Hegesias Peisithanatos: A Philosophical History",
+      "journal_target": "Journal of the History of Philosophy",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M23",
+      "experiment_module": "experiments/exp_m23_hegesias_history.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M6",
+        "M11"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M24",
+      "file": "M24_Vine_Tree_v01.tex",
+      "title": "The Vine and the Tree: Two Archetypal Modes",
+      "journal_target": "Personality and Individual Differences",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M24",
+      "experiment_module": "experiments/exp_m24_vine_tree.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M4",
+        "M6",
+        "M8",
+        "M9",
+        "M12",
+        "M14",
+        "M19"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M25",
+      "file": "M25_Poetik_Manifesto_v01.tex",
+      "title": "The Poetic Manifesto as Research Method:",
+      "journal_target": "Qualitative Inquiry (SAGE) — IF: 2.1",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M25",
+      "experiment_module": "experiments/exp_m25_poetic_method.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M6",
+        "M8",
+        "M9",
+        "M12",
+        "M14",
+        "M18",
+        "M19",
+        "M24"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M26",
+      "file": "M26_Polimatlık_Sosyoloji_v01.tex",
+      "title": "The Democratization of Interdisciplinary Synthesis:",
+      "journal_target": "Social Studies of Science (SAGE) — IF: 3.8",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M26",
+      "experiment_module": "experiments/exp_m26_institutional.py",
+      "value_tiers_present": [
+        "Hesaplanan",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M14",
+        "M17",
+        "M24"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M27",
+      "file": "M27_Kurumsal_ZC_v01.tex",
+      "title": "The Institutional Mandatory Core:",
+      "journal_target": "Organization Science (INFORMS) — IF: 4.9",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M27",
+      "experiment_module": "experiments/exp_m27_organizational.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M6",
+        "M19"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M28",
+      "file": "M28_Sentetik_Empati_v01.tex",
+      "title": "Synthetic Empathy: Does K25 Measure",
+      "journal_target": "IEEE Transactions on Affective Computing",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M28",
+      "experiment_module": "experiments/exp_m28_empathy.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M3",
+        "M8",
+        "M11",
+        "M15",
+        "M18"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M29",
+      "file": "M29_Fraksiyon_Dinamikleri_v01.tex",
+      "title": "Faction Dynamics in Multi-Persona Decision Systems:",
+      "journal_target": "Social Networks (Elsevier) — IF: 3.7",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M29",
+      "experiment_module": "experiments/exp_m29_faction.py",
+      "value_tiers_present": [
+        "Simülasyon"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M3",
+        "M4",
+        "M10",
+        "M16"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M30",
+      "file": "M30_Drift_Klinik_v01.tex",
+      "title": "The Clinical Significance of Drift:",
+      "journal_target": "Clinical Psychology Review (Elsevier)",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M30",
+      "experiment_module": "experiments/exp_m30_clinical_drift.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M3",
+        "M6",
+        "M8",
+        "M11",
+        "M18",
+        "M19",
+        "M22",
+        "M24"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M31",
+      "file": "M31_CEID_Validasyon_v01.tex",
+      "title": "Psychometric Validation of the CEID Protocol:",
+      "journal_target": "Psychological Assessment (APA) — IF: 6.1",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M31",
+      "experiment_module": "experiments/exp_m31_ceid_validation.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M8",
+        "M15",
+        "M16",
+        "M18",
+        "M21",
+        "M22",
+        "M28",
+        "M30",
+        "M33"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M32",
+      "file": "M32_HPEP_Klinik_v01.tex",
+      "title": "HPEP-100 Clinical Adaptation:",
+      "journal_target": "Psychological Assessment (APA) — IF: 6.1",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M32",
+      "experiment_module": "experiments/exp_m32_hpep_short.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M3",
+        "M8",
+        "M24",
+        "M30",
+        "M31"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M33",
+      "file": "M33_Cok_Dilli_D1_v01.tex",
+      "title": "Cross-Linguistic D1 Protocol:",
+      "journal_target": "Journal of Cross-Cultural Psychology",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M33",
+      "experiment_module": "experiments/exp_m33_crosslingual.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M3",
+        "M10",
+        "M16",
+        "M24",
+        "M30"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M34",
+      "file": "M34_Kimera_v2_v01.tex",
+      "title": "Chimera Protocol v2: Five-Motor Tensor Systems,",
+      "journal_target": "Neural Networks (Elsevier) — IF: 7.8",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M34",
+      "experiment_module": "experiments/exp_m34_chimera5.py",
+      "value_tiers_present": [
+        "Hesaplanan"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M5",
+        "M8",
+        "M16",
+        "M21",
+        "M30"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M35",
+      "file": "M35_GDM_GDB_Benchmark_v01.tex",
+      "title": "Empirical Testing of the GDM-GDB Architecture Atlas:",
+      "journal_target": "Frontiers in Artificial Intelligence",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M35",
+      "experiment_module": "experiments/exp_m35_arch_atlas.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M3",
+        "M5",
+        "M16",
+        "M22",
+        "M28",
+        "M31",
+        "M34"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M36",
+      "file": "M36_Halusinasyon_Direnci_v01.tex",
+      "title": "Hallucination Resistance and Epistemic Integrity:",
+      "journal_target": "AI Magazine (AAAI) — IF: 3.8",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M36",
+      "experiment_module": "experiments/exp_m36_hallucination.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M3",
+        "M4",
+        "M16",
+        "M21",
+        "M34"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M37",
+      "file": "M37_PRBS_Benchmark_v01.tex",
+      "title": "The Persona Robustness Benchmark Suite:",
+      "journal_target": "Behavior Research Methods (Springer)",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M37",
+      "experiment_module": "experiments/exp_m37_dsuite.py",
+      "value_tiers_present": [
+        "Simülasyon"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M3",
+        "M6",
+        "M16",
+        "M30",
+        "M33",
+        "M34",
+        "M35"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M38",
+      "file": "M38_Dagitik_LLM_v01.tex",
+      "title": "Persona Coherence in Distributed LLM Inference:",
+      "journal_target": "Systems (MDPI) — IF: 2.9",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M38",
+      "experiment_module": "experiments/exp_m38_distributed.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M3",
+        "M4",
+        "M13",
+        "M15",
+        "M16",
+        "M17",
+        "M36",
+        "M37"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M39",
+      "file": "M39_Persona_Catisma_v01.tex",
+      "title": "Persona Conflict Resolution: Negotiation Mechanisms",
+      "journal_target": "Autonomous Agents and Multi-Agent Systems",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M39",
+      "experiment_module": "experiments/exp_m39_conflict.py",
+      "value_tiers_present": [
+        "Simülasyon"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M3",
+        "M4",
+        "M29",
+        "M30",
+        "M31",
+        "M35",
+        "M36"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M40",
+      "file": "M40_FineTuning_Persona_v01.tex",
+      "title": "Persona Stability Under Continual Learning:",
+      "journal_target": "IEEE Transactions on Neural Networks",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M40",
+      "experiment_module": "experiments/exp_m40_finetuning.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M6",
+        "M8",
+        "M30",
+        "M36",
+        "M37",
+        "M54"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M41",
+      "file": "M41_Travma_ZC_v01.tex",
+      "title": "Trauma and the Mandatory Core: A K-Layer",
+      "journal_target": "Journal of Traumatic Stress (Wiley) — IF: 4.1",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M41",
+      "experiment_module": "experiments/exp_m41_ptsd.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M6",
+        "M8",
+        "M19",
+        "M30",
+        "M32"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M42",
+      "file": "M42_Ergenlik_Arkhe_v01.tex",
+      "title": "Adolescence and the Arkhe Threshold:",
+      "journal_target": "Journal of Adolescence (Elsevier) — IF: 3.9",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M42",
+      "experiment_module": "experiments/exp_m42_adolescent_arkhe.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M6",
+        "M11",
+        "M30",
+        "M32",
+        "M37"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M43",
+      "file": "M43_Yaslilik_Konsolidasyon_v01.tex",
+      "title": "Aging and Persona Consolidation:",
+      "journal_target": "Psychology and Aging (APA) — IF: 4.3",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M43",
+      "experiment_module": "experiments/exp_m43_wisdom.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M6",
+        "M18",
+        "M19",
+        "M30",
+        "M32",
+        "M36",
+        "M42"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M44",
+      "file": "M44_Narsisizm_KLayer_v01.tex",
+      "title": "The K-Layer Architecture of Narcissism:",
+      "journal_target": "Journal of Personality Disorders (Guilford)",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M44",
+      "experiment_module": "experiments/exp_m44_narcissism.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M24",
+        "M30",
+        "M32",
+        "M36",
+        "M42",
+        "M43"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M45",
+      "file": "M45_Ruhsal_K6_v01.tex",
+      "title": "Spiritual Experience and the K6 Archetypal Foundation:",
+      "journal_target": "Frontiers in Psychology (Lausanne)",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M45",
+      "experiment_module": "experiments/exp_m45_ego_dissolution.py",
+      "value_tiers_present": [
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M41"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M46",
+      "file": "M46_Bagimlilik_ZC_v01.tex",
+      "title": "Addiction and Mandatory Core Erosion:",
+      "journal_target": "Drug and Alcohol Dependence (Elsevier)",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M46",
+      "experiment_module": "experiments/exp_m46_addiction.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M6",
+        "M30",
+        "M32"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M47",
+      "file": "M47_Ebeveynlik_Personasi_v01.tex",
+      "title": "The Parenting Persona: How K-Layer Architecture",
+      "journal_target": "Developmental Psychology (APA) — IF: 4.2",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M47",
+      "experiment_module": "experiments/exp_m47_parenting.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M22",
+        "M24",
+        "M42",
+        "M44"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M48",
+      "file": "M48_Muzisyen_Personasi_v01.tex",
+      "title": "The Musician's Persona:",
+      "journal_target": "Psychology of Music (SAGE) — IF: 2.8",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M48",
+      "experiment_module": "experiments/exp_m48_musician.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M6",
+        "M8",
+        "M45"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M49",
+      "file": "M49_Aktor_KLayer_v01.tex",
+      "title": "The Character's Return to the Actor:",
+      "journal_target": "Theatre Research International (Cambridge)",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M49",
+      "experiment_module": "experiments/exp_m49_character_residue.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M21",
+        "M35",
+        "M37",
+        "M42"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M50",
+      "file": "M50_Yazar_Sesi_v01.tex",
+      "title": "Writer's Voice as K-Layer Signature:",
+      "journal_target": "Digital Scholarship in the Humanities",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M50",
+      "experiment_module": "experiments/exp_m50_author_voice.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M9",
+        "M25"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M51",
+      "file": "M51_Yonetmen_K6_v01.tex",
+      "title": "The Film Director's K6: Auteur Theory Meets",
+      "journal_target": "Screen (Oxford University Press) — IF: 0.6",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M51",
+      "experiment_module": "experiments/exp_m51_cinema.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M6",
+        "M43",
+        "M45",
+        "M49",
+        "M50"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M52",
+      "file": "M52_Sanatci_Blogu_v01.tex",
+      "title": "Artist's Block as Persona Crisis:",
+      "journal_target": "Psychology of Aesthetics, Creativity,",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M52",
+      "experiment_module": "experiments/exp_m52_artist_block.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M18",
+        "M19"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M53",
+      "file": "M53_Siyaset_Lider_v01.tex",
+      "title": "Political Leadership and K-Layer Architecture:",
+      "journal_target": "The Leadership Quarterly (Elsevier)",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M53",
+      "experiment_module": "experiments/exp_m53_authoritarian.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M27"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M54",
+      "file": "M54_AI_Guvenligi_K4_v01.tex",
+      "title": "AI Safety and the Mandatory Core:",
+      "journal_target": "Nature Machine Intelligence — IF: 25.9",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M54",
+      "experiment_module": "experiments/exp_m54_ai_safety.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M36",
+        "M37",
+        "M40"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M55",
+      "file": "M55_Egitim_KLayer_v01.tex",
+      "title": "Education and K-Layer Development:",
+      "journal_target": "Educational Psychology Review (Springer)",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M55",
+      "experiment_module": "experiments/exp_m55_education.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M17",
+        "M36",
+        "M39",
+        "M42",
+        "M47",
+        "M52"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M56",
+      "file": "M56_Kolektif_Travma_v01.tex",
+      "title": "Collective Trauma and the K-Layers of Society:",
+      "journal_target": "Journal of Social Issues (Wiley) — IF: 3.3",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M56",
+      "experiment_module": "experiments/exp_m56_collective_trauma.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M6",
+        "M27",
+        "M41",
+        "M47",
+        "M53",
+        "M55"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M57",
+      "file": "M57_Iklim_Kimlik_v01.tex",
+      "title": "Climate Crisis and Identity:",
+      "journal_target": "Global Environmental Change (Elsevier)",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M57",
+      "experiment_module": "experiments/exp_m57_climate.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M6",
+        "M44",
+        "M52"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M58",
+      "file": "M58_OzgurIrade_K4_v01.tex",
+      "title": "Free Will, Determinism, and K4:",
+      "journal_target": "Philosophical Psychology (Taylor) — IF: 1.8",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M58",
+      "experiment_module": "experiments/exp_m58_free_will.py",
+      "value_tiers_present": [
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M3",
+        "M6",
+        "M27",
+        "M30",
+        "M42",
+        "M46",
+        "M47",
+        "M53",
+        "M54"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M59",
+      "file": "M59_Bilincr_Kimlik_v01.tex",
+      "title": "Consciousness, Personal Identity, and K-Layer Ontology:",
+      "journal_target": "Journal of Consciousness Studies — IF: 1.1",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M59",
+      "experiment_module": "experiments/exp_m59_consciousness.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M2",
+        "M4",
+        "M6",
+        "M13",
+        "M45",
+        "M54"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M60",
+      "file": "M60_Olumlulugun_Arkhe_v01.tex",
+      "title": "Mortality, Meaning, and the Arkhe Horizon:",
+      "journal_target": "Phenomenology and the Cognitive Sciences",
+      "version": "1.0",
+      "status": "published",
+      "results_embedded": true,
+      "results_dir": "../results/M60",
+      "experiment_module": "experiments/exp_m60_mortality.py",
+      "value_tiers_present": [
+        "Simülasyon",
+        "Tahmini"
+      ],
+      "external_submission": "pending (manual)",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M4",
+        "M6",
+        "M11",
+        "M40",
+        "M41",
+        "M42",
+        "M43",
+        "M45",
+        "M46",
+        "M52",
+        "M53",
+        "M54",
+        "M55",
+        "M56"
+      ],
+      "tex_ext": ".tex"
+    },
+    {
+      "id": "M61",
+      "file": "M61_PersonaNeedle_v01.tex",
+      "title": "PersonaNeedle: A 26M-Parameter Hybrid-Distilled",
+      "journal_target": "Journal of Machine Learning Research (JMLR) — IF: 6.9",
+      "version": "0.1",
+      "status": "draft",
+      "results_embedded": false,
+      "results_dir": null,
+      "experiment_module": "papers/M61_experiments/exp_m61.py",
+      "value_tiers_present": [
+        "Hesaplanan",
+        "Tahmini"
+      ],
+      "external_submission": "n/a",
+      "cross_refs": [
+        "M1",
+        "M2",
+        "M3",
+        "M7",
+        "M40"
+      ],
+      "tex_ext": ".tex"
+    }
+  ]
+}

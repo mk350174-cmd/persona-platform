@@ -1,0 +1,44 @@
+.claude/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.ipynb_checkpoints/
+.env
+*.db
+*.sqlite
+*.sqlite3
+stitch_iconic_figures_part_*.zip
+stitch_*.zip
+Persona png
+PERSONA_IMAGE_LIST.txt
+persona_store.db
+
+# persona_mcp runtime cache
+persona_mcp/.cache/
+
+# needle training generated data + caches
+needle/training/data/*.jsonl
+needle/training/data/*.ckpt.json
+!needle/training/data/.gitkeep
+needle/training/.teacher_cache/
+
+# needle finetune checkpoints + quant/export outputs
+needle/finetune/checkpoints/*
+!needle/finetune/checkpoints/.gitkeep
+needle/finetune/quantize/output/
+needle/finetune/export/output/
+
+# needle bulk bundles: per-persona dirs + progress are generated; keep .gitkeep + catalog.json
+needle/bundles/*/
+needle/bundles/bundle_progress.json
+!needle/bundles/.gitkeep
+!needle/bundles/catalog.json
+
+# validation: per-paper run state is generated; keep REPORT.md (+ tiers.json once upgrades exist)
+validation/progress.json
+validation/measured/

@@ -1,0 +1,10 @@
+# PersonaNeedle fine-tune + quantization (needle/finetune/).
+# Install on a torch + GPU machine; the repo's core (pyproject.toml) stays light.
+torch>=2.0
+transformers>=4.40
+peft             # LoRA (drop-in alternative to the built-in LoRALinear)
+bitsandbytes     # INT4 / 8-bit quantization kernels
+gguf             # GGUF export (quantize/gguf_writer.py)
+tqdm
+numpy
+scikit-learn     # drift F1 / validation metrics

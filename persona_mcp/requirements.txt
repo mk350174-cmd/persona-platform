@@ -1,0 +1,5 @@
+# persona_mcp — Logseq MCP integration (separate from the math-only core).
+mcp>=1.0
+httpx
+python-dateutil
+jinja2
