@@ -1,0 +1,8421 @@
+{
+  "generated_at": "2026-06-08T06:36:22+00:00",
+  "total_personas": 495,
+  "personas": [
+    {
+      "id": "abraham_lincoln",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "achilles_char",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ada_lovelace",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "adam_smith",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "adolf_hitler",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "aeschylus",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ahsoka_tano",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "al_ghazali",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "alan_turing",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "alan_watts",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "albert_camus",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "albert_einstein",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "albert_the_great",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "alcibiades",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "alexander_pope",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "alexander_the_great",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "alexander_von_humboldt",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "alexis_de_tocqueville",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "amaterasu_shinto",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "anansi",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "anaxagoras",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "anaximander",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "angela_merkel",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "anna_karenina",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "anne_hutchinson",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "antonio_vivaldi",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "anwar_sadat",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "apollo_myth",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "archimedes",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ares",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ares_god",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "aristophanes",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "aristotle",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "arthur_dent",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "arthur_schopenhauer",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "arya_stark",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ashoka",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ashoka_the_great",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "athena",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "atticus_finch",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "attila_the_hun",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "august_comte",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "augustine_of_hippo",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "augustus",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "aung_san_suu_kyi",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "averroes",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "avicenna",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "bach",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "barbara_mcclintock",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "baruch_spinoza_2",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "baruch_spinoza_classic",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "beethoven",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "benedetto_croce",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "bertrand_russell",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "billie_holiday",
+      "domain": "Art",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "blaise_pascal",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "bodhidharma",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "boudicca",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "buckminster_fuller",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "buddha",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "captain_ahab",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "captain_nemo",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "caravaggio",
+      "domain": "Art",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "cardinal_richelieu",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "carl_jung",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "carl_linnaeus",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "catherine_the_great",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "cervantes",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "chanakya",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "chandragupta_maurya",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "charlemagne",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "charles_babbage",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "charles_baudelaire",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "charles_darwin",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "charles_darwin_scientist",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "charles_de_gaulle",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "charles_dickens",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "che_guevara",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "chrysippus",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "cicero",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "claude_monet",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "claude_shannon",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "cleopatra",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "condorcet",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "confucius",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "constantine",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "copernicus",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "cyrus_the_great",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "daenerys_targaryen",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "dante_alighieri",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "darth_vader",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "david_hume",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "democritus",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "demosthenes",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "deng_xiaoping",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "descartes",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "diogenes_2",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "diogenes_laertius",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "diogenes_of_sinope",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "dionysus",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "dionysus_myth",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "dmitri_mendeleev",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "don_draper",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "don_quixote",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "don_quixote_char",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "dorian_gray",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "dostoevsky",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "douglas_macarthur",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "dracula",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "duke_of_wellington",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "duns_scotus",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "dwight_eisenhower",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "edgar_allan_poe",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "edmond_dantes",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "edward_iii",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "edward_jenner",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "elizabeth_bennet",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "elizabeth_i",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "emile_durkheim",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "emiliano_zapata",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "emily_dickinson",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "emma_bovary",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "emma_woodhouse",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "emmanuel_levinas",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "empedocles",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ender_wiggin",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "epictetus",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "epicurus",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "epicurus_garden",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "erasmus",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "eratosthenes",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ernesto_che_guevara",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ernst_mach",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "erwin_rommel",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "erwin_schrodinger",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "euclid",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "euripides",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "evo_morales",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "falstaff",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "fichte",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "fidel_castro",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "florence_nightingale",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "francis_bacon",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "francis_of_assisi",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "frank_lloyd_wright",
+      "domain": "Art",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "frankenstein_monster",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "franklin_d_roosevelt",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "franklin_roosevelt",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "franklin_roosevelt_2",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "franz_kafka",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "frederick_douglass",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "frederick_the_great",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "freya",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "frida_kahlo",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "friedrich_nietzsche_classic",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "gabriel_garcia_marquez",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "gabriel_lorca",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "galileo_galilei",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "gamal_nasser",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "gandalf",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "gandalf_wizard",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "gaston_bachelard",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "genghis_khan",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "georg_buchner",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "george_boole",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "george_eliot",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "george_orwell_writer",
+      "domain": "Art",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "george_sand",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "george_washington",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "georgia_o_keeffe",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "georgy_zhukov",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "geralt_of_rivia",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "geronimo",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "giambattista_vico",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "giordano_bruno",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "giuseppe_garibaldi",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "godel",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "gorgias",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "gotthold_lessing",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "grace_hopper",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "gregor_mendel",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "gregor_samsa",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "gustav_mahler",
+      "domain": "Art",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "gustavus_adolphus",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hades_myth",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hal_9000",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hamlet",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hammurabi",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "han_feizi",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hannah_arendt",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hannibal",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hannibal_lecter",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "harriet_tubman",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "harry_truman",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hegel",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "henry_david_thoreau",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "henry_james",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "henry_v_england",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hephaestus_myth",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "heraclitus",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hermes",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hermione_granger",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "herodotus",
+      "domain": "History",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hildegard_of_bingen",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hippocrates",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ho_chi_minh",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "holden_caulfield",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "homer",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "honore_balzac",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "huckleberry_finn",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hugo_chavez",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "humbert_humbert",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "hypatia",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "iago",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ibn_khaldun",
+      "domain": "History",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ignatius_loyola",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "igor_stravinsky",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "immanuel_kant",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "indiana_jones",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "indira_gandhi",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "inspector_javert",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "isaac_newton",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ishmael",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "isis",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "isocrates",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ivan_karamazov",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ivan_terrible",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "jacinda_ardern",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "james_baldwin",
+      "domain": "Art",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "james_clerk_maxwell",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "james_joyce",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "james_watson",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "james_watt",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "javert",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "jawaharlal_nehru",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "jay_gatsby",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "jean_paul_sartre",
+      "domain": "Art",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "jean_racine",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "jean_valjean",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "jesus_of_nazareth",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "jfk",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "joan_of_arc",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "john_coltrane",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "john_dewey",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "john_henry_newman",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "john_locke",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "john_stuart_mill",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "john_von_neumann",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "jonathan_swift",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "jorge_luis_borges",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "joseph_haydn",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "joseph_stalin",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "julius_caesar",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "julius_nyerere",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "justinian",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "kali",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "karl_marx",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "katherine_johnson",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "katniss_everdeen",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "kemal_ataturk",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "kepler",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "kim_il_sung",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "kratos",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "krishna",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "krishnamurti",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "kublai_khan",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "kwame_nkrumah",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "langston_hughes",
+      "domain": "Art",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "laozi",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "lech_walesa",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "lee_kuan_yew",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "leibniz",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "leo_tolstoy",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "leo_tolstoy_writer",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "leon_trotsky",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "leonardo_da_vinci",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "leonidas",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "leonidas_ii",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "lestat",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "liezi",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "lisbeth_salander",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "lise_meitner",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "loki",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "lord_jim",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "lucretius",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "lula_da_silva",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "lyndon_johnson",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "macbeth",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "mahatma_gandhi",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "maimonides",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "mao_2",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "mao_zedong",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "marcus_aurelius",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "marcus_brutus",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "marcus_crassus",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "marduk_babylon",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "margaret_thatcher",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "marie_curie",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "marquis_de_lafayette",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "marshall_mcluhan",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "marsilio_ficino",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "martin_buber",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "martin_heidegger",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "martin_luther_king",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "martin_luther_reformer",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "mary_wollstonecraft",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "master_chief",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "max_planck",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "max_weber",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "medea_char",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "mehmed_ii",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "meister_eckhart",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "mencius",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "michael_faraday",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "michel_de_montaigne",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "michel_foucault",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "michelangelo",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "mikhail_gorbachev",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "miles_davis",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "moliere",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "morpheus_matrix",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "moshe_dayan",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "mozart",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "mozi",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "nagarjuna",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "nagarjuna_long",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "napoleon_bonaparte",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "nassim_taleb",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "nelson_mandela",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "netzach_venus",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "niccolo_paganini",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "niels_bohr",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "nikola_tesla",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "noam_chomsky",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "octavia_butler",
+      "domain": "Art",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "odin",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "odysseus_char",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "oliver_cromwell",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "osiris",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "otto_von_bismarck",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ovid",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "pablo_neruda",
+      "domain": "Art",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "pablo_picasso",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "paramahansa_yogananda",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "park_chung_hee",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "parmenides",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "patanjali",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "patrick_bateman",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "paul_dirac",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "pericles",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "persephone_myth",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "peter_the_great",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "pico_della_mirandola",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "plato",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "plotinus",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "pompey_magnus",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "prometheus_myth",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "prophet_muhammad",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "protagoras",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ptolemy_astronomer",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "pyrrhon",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "pythagoras",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "queen_of_sheba",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "queen_victoria",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "quetzalcoatl",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "r2d2",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ra",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "rachel_carson",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ralph_waldo_emerson",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ramana_maharshi",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ramesses_ii",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "raskolnikov",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "raskolnikov_2",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "rembrandt",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "richard_feynman",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "richard_lionheart",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "richard_wagner",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "robert_e_lee",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "robert_schumann",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "robespierre",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "roger_bacon",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ronald_reagan",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "rosalind_franklin",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "rousseau",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "rumi",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "saladin",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "salvador_allende",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "salvador_dali",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "samuel_beckett",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "samuel_johnson",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "samwise_gamgee",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "sappho",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "sauron",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "schelling",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "scipio_africanus",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "seneca",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "shaka_zulu",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "shankara",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "sherlock_holmes_char",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "shiva",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "sigmund_freud",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "simon_bolivar",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "simone_de_beauvoir",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "simone_weil",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "sitting_bull",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "slavoj_zizek",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "socrates",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "sophocles",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "spinoza",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "spock",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "stephen_hawking",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "suleiman_magnificent",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "sun_wu",
+      "domain": "Strategy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "sundiata",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "søren_kierkegaard",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "tacitus",
+      "domain": "History",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "teilhard_de_chardin",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "thales",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_anima",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_architect",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_fool_tarot",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_great_mother",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_hero",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_hero_campbell",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_joker",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_magician_arch",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_puer",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_senex",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_shadow",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_sibyl",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_trickster_arch",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_wise_old_man",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "the_witch_archetype",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "themistocles",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "theophrastus",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "therese_of_avila",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "thomas_aquinas",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "thomas_hobbes",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "thomas_jefferson",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "thomas_kuhn",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "thomas_more",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "thomas_sankara",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "thor_myth",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "thucydides",
+      "domain": "History",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "thucydides_02",
+      "domain": "History",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "tlaloc",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "tlaloc_aztec",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "toni_morrison",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "tony_soprano",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "toussaint_louverture",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "trajan",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "tyrion_lannister",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "ulysses_grant",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "umberto_eco",
+      "domain": "Art",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "vaclav_havel",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "vercingetorix",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "victor_hugo",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "vincent_van_gogh",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "virgil",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "virginia_woolf",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "virginia_woolf_writer",
+      "domain": "Art",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "vishnu_avatar",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "vladimir_lenin",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "vo_nguyen_giap",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "volodymyr_zelensky",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "voltaire",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "w_e_b_du_bois",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "walter_white",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "wassily_kandinsky",
+      "domain": "Arts",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "werner_heisenberg",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "william_blake",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "william_james",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "william_james_psychologist",
+      "domain": "Science",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "william_of_ockham",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "william_shakespeare",
+      "domain": "Literature",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "william_the_silent",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "winston_churchill",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "winston_smith",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "wittgenstein",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "woodrow_wilson",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "wu_qi",
+      "domain": "Strategy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "wu_zetian",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "wu_zetian_leader",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "xenophanes",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "xenophon",
+      "domain": "History",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "xunzi",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "yasser_arafat",
+      "domain": "Leadership",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "yoda_jedi",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "yossarian",
+      "domain": "Fiction",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "yuval_harari",
+      "domain": "History",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "zarathustra_prophet",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "zeno_of_citium",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "zeno_of_elea",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "zeus",
+      "domain": "Mythology",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    },
+    {
+      "id": "zhuangzi",
+      "domain": "Philosophy",
+      "size_mb": 13.15,
+      "untrained": true,
+      "components": {
+        "model": {
+          "placeholder": true
+        },
+        "visual": {
+          "placeholder": true
+        },
+        "audio": {
+          "placeholder": true
+        }
+      }
+    }
+  ]
+}

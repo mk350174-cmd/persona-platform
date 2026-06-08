@@ -1,0 +1,1 @@
+- CEID {{ timestamp }} :: C={{ C }} E={{ E }} I={{ I }} D={{ D }} | composite={{ composite }} | trend={{ trend }} #ceid

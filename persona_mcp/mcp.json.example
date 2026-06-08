@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "persona-mcp": {
+      "command": "python",
+      "args": ["persona_mcp/server.py"],
+      "env": {
+        "LOGSEQ_TOKEN": "your_token",
+        "LOGSEQ_PORT": "12315"
+      }
+    }
+  }
+}

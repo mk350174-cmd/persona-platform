@@ -1,0 +1,7 @@
+# PersonaNeedle (needle/) — separate from the math-only core (pyproject.toml).
+# Install only when training / running / quantizing the SAN model.
+torch>=2.0
+transformers>=4.40
+tokenizers
+numpy
+gguf            # INT4 / GGUF export (quantizer.py)
