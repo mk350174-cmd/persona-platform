@@ -1,0 +1,698 @@
+"""
+Persona Compiler API — FastAPI application
+==========================================
+Endpoints (public):
+  GET  /health
+  GET  /personas
+  GET  /personas/{id}
+  POST /auth/register
+
+Endpoints (requires X-API-Key):
+  GET  /me
+  GET  /me/purchases
+  POST /checkout/{persona_id}          → Stripe checkout URL
+  POST /checkout/{persona_id}/mock     → dev-only instant grant
+  POST /v1/compile/{id}                → compile (purchased personas only)
+  POST /v1/compile/{id}/all-platforms
+  POST /v1/compile/{id}/all-tiers
+  POST /v1/compile/{id}/voice          → ElevenLabs MP3
+
+Webhooks:
+  POST /webhook/stripe
+
+Run:
+  uvicorn api.main:app --reload --port 8000
+
+Env vars:
+  STRIPE_SECRET_KEY      sk_test_... or sk_live_...
+  STRIPE_WEBHOOK_SECRET  whsec_...
+  BASE_URL               http://localhost:8000
+"""
+
+from fastapi import FastAPI, HTTPException, Depends, Request, Header, WebSocket
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, Response
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+from sqlalchemy import text
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from typing import Optional
+from pathlib import Path
+import asyncio
+import logging
+import time
+import os
+
+from api.db import (
+    init_db, get_db, create_user, get_user_by_email,
+    User, log_usage,
+)
+from api.auth import get_current_user, require_persona_access
+from api.payments import (
+    create_checkout_session, handle_webhook, mock_purchase,
+    create_subscription_session,
+)
+from api.catalog import get_persona_vector, PERSONA_CATALOG
+from persona_math.persona_library import search_personas, library_stats, PERSONA_LIBRARY
+from api.db import check_quota, SUBSCRIPTION_TIERS, cancel_subscription, increment_request_count
+from api.ws import persona_chat_ws
+from api.voice import synthesize_speech, tts_available
+from api.visual_params import get_visual_params
+from api.routers.persona_router import router as persona_router
+from persona_math.compiler import (
+    compile_persona,
+    compile_all_platforms,
+    compile_all_tiers,
+    SUPPORTED_PLATFORMS,
+    SUPPORTED_TIERS,
+)
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
+logger = logging.getLogger("persona_hub")
+
+# ── Rate limiter ───────────────────────────────────────────────────────────────
+
+limiter = Limiter(key_func=get_remote_address, default_limits=["1000/hour"])
+
+# ── App init ───────────────────────────────────────────────────────────────────
+
+_CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",")]
+
+app = FastAPI(
+    title="Persona Compiler API",
+    description="HPEP-100 certified AI persona marketplace. Purchase, compile, deploy.",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+)
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# PersonaNeedle endpoints (CEID / drift / voice / profile / history) — see api/routers/persona_router.py
+app.include_router(persona_router, prefix="/api/v1")
+
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start = time.time()
+    response = await call_next(request)
+    ms = round((time.time() - start) * 1000)
+    logger.info("%s %s %s %dms", request.method, request.url.path, response.status_code, ms)
+    return response
+
+
+_AUDIO_CACHE_DIR = Path("/tmp/persona_audio")
+_AUDIO_MAX_AGE_HOURS = 24
+
+
+async def _audio_cache_cleaner():
+    """Background task: delete audio files older than 24 hours every hour."""
+    while True:
+        await asyncio.sleep(3600)
+        if not _AUDIO_CACHE_DIR.exists():
+            continue
+        cutoff = time.time() - _AUDIO_MAX_AGE_HOURS * 3600
+        removed = 0
+        for f in _AUDIO_CACHE_DIR.iterdir():
+            if f.is_file() and f.stat().st_mtime < cutoff:
+                try:
+                    f.unlink()
+                    removed += 1
+                except OSError:
+                    pass
+        if removed:
+            logger.info("Audio cache: removed %d stale files", removed)
+
+
+def _run_migrations() -> None:
+    """Apply pending Alembic migrations (no-op if already up to date)."""
+    try:
+        from alembic.config import Config
+        from alembic import command as alembic_cmd
+        ini_path = Path(__file__).parent.parent / "alembic.ini"
+        if ini_path.exists():
+            cfg = Config(str(ini_path))
+            alembic_cmd.upgrade(cfg, "head")
+            logger.info("Database migrations applied")
+            return
+    except Exception as exc:
+        logger.warning("Alembic migration failed (%s) — falling back to create_all", exc)
+    init_db()
+
+
+@app.on_event("startup")
+async def startup():
+    required = ["ANTHROPIC_API_KEY"]
+    missing = [k for k in required if not os.getenv(k)]
+    if missing:
+        logger.warning("Missing recommended env vars: %s", missing)
+    _run_migrations()
+    _AUDIO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    asyncio.create_task(_audio_cache_cleaner())
+    logger.info("Persona Hub API started — %d personas loaded", len(PERSONA_LIBRARY))
+
+
+# ── Static assets ──────────────────────────────────────────────────────────────
+
+_DEMO_DIR = Path(__file__).parent.parent / "demo"
+_ASSETS_DIR = _DEMO_DIR / "assets"
+_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+
+app.mount("/assets", StaticFiles(directory=str(_ASSETS_DIR)), name="assets")
+
+# External asset base URL — e.g. https://raw.githubusercontent.com/owner/repo/main
+# When set, image_url is always returned (remote 404s handled by frontend onerror).
+# When unset, falls back to local demo/assets/personas/ file existence check.
+_PERSONA_ASSETS_BASE = os.getenv("PERSONA_ASSETS_BASE_URL", "").rstrip("/")
+
+
+def _persona_image_url(persona_id: str) -> str | None:
+    if _PERSONA_ASSETS_BASE:
+        return f"{_PERSONA_ASSETS_BASE}/{persona_id}.png"
+    img_path = _ASSETS_DIR / "personas" / f"{persona_id}.png"
+    return f"/assets/personas/{persona_id}.png" if img_path.exists() else None
+
+@app.get("/demo", include_in_schema=False)
+def serve_demo():
+    """Simulation page (GET /demo?persona=machiavelli&tier=full&api_key=prs_...)."""
+    demo_file = _DEMO_DIR / "index.html"
+    if demo_file.exists():
+        return FileResponse(str(demo_file))
+    return {"message": "Demo not found. Create demo/index.html"}
+
+
+@app.get("/catalog", include_in_schema=False)
+def serve_catalog():
+    """Persona marketplace landing page."""
+    f = _DEMO_DIR / "catalog.html"
+    if f.exists():
+        return FileResponse(str(f))
+    return {"message": "Catalog page not found."}
+
+
+@app.get("/dashboard", include_in_schema=False)
+def serve_dashboard():
+    """User dashboard page."""
+    f = _DEMO_DIR / "dashboard.html"
+    if f.exists():
+        return FileResponse(str(f))
+    return {"message": "Dashboard not found."}
+
+
+@app.get("/", include_in_schema=False)
+def serve_landing():
+    """Marketing landing page."""
+    f = _DEMO_DIR / "landing.html"
+    if f.exists():
+        return FileResponse(str(f))
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/catalog")
+
+
+@app.get("/personas/{persona_id}/detail", include_in_schema=False)
+def serve_persona_detail(persona_id: str):
+    """Persona detail / purchase page."""
+    f = _DEMO_DIR / "persona_detail.html"
+    if f.exists():
+        return FileResponse(str(f))
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url=f"/catalog#{persona_id}")
+
+
+@app.get("/checkout/success", include_in_schema=False)
+def serve_checkout_success():
+    """Post-payment success page."""
+    f = _DEMO_DIR / "checkout_success.html"
+    if f.exists():
+        return FileResponse(str(f))
+    return {"message": "Purchase successful."}
+
+
+@app.get("/checkout/cancel", include_in_schema=False)
+def serve_checkout_cancel():
+    """Payment cancelled page."""
+    f = _DEMO_DIR / "checkout_cancel.html"
+    if f.exists():
+        return FileResponse(str(f))
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/catalog")
+
+
+@app.get("/ceid-monitor", include_in_schema=False)
+def serve_ceid_monitor():
+    """CEID drift monitoring dashboard."""
+    f = _DEMO_DIR / "ceid_monitor.html"
+    if f.exists():
+        return FileResponse(str(f))
+    return {"message": "CEID monitor not found."}
+
+
+@app.get("/config.js", include_in_schema=False)
+def serve_config_js():
+    """Runtime API base URL config for frontend pages."""
+    base = os.getenv("BASE_URL", "")
+    js = f"window.PERSONA_API_URL = '{base}';"
+    return Response(content=js, media_type="application/javascript")
+
+
+# ── WebSocket ──────────────────────────────────────────────────────────────────
+
+@app.websocket("/ws/chat/{persona_id}")
+async def ws_chat(
+    websocket: WebSocket,
+    persona_id: str,
+    api_key: Optional[str] = None,
+    tier: str = "text",
+    platform: str = "raw",
+):
+    """
+    Real-time persona conversation with streaming text + optional voice + visual params.
+    Query params: api_key=prs_..., tier=text|voice|full, platform=gemini|claude|openai|raw
+    """
+    _api_key  = websocket.query_params.get("api_key", api_key)
+    _tier     = websocket.query_params.get("tier", tier)
+    _platform = websocket.query_params.get("platform", platform)
+    await persona_chat_ws(websocket, persona_id, _api_key, _tier, _platform)
+
+
+# ── Request models ─────────────────────────────────────────────────────────────
+
+class RegisterRequest(BaseModel):
+    email: str = Field(..., description="Your email address")
+
+
+class CompileRequest(BaseModel):
+    platform: str = Field(default="gemini", description="gemini | claude | openai | raw")
+    tier: str = Field(default="standard", description="nano | standard | rich")
+
+
+class AllPlatformsRequest(BaseModel):
+    tier: str = Field(default="standard")
+
+
+class AllTiersRequest(BaseModel):
+    platform: str = Field(default="gemini")
+
+
+# ── Public endpoints ───────────────────────────────────────────────────────────
+
+@app.get("/health", tags=["system"])
+def health(db: Session = Depends(get_db)):
+    try:
+        db.execute(text("SELECT 1"))
+        db_ok = True
+    except Exception:
+        db_ok = False
+    return {
+        "status": "ok" if db_ok else "degraded",
+        "version": "1.0.0",
+        "db": db_ok,
+        "personas": len(PERSONA_LIBRARY),
+    }
+
+
+@app.get("/personas", tags=["catalog"])
+def get_catalog(
+    domain: Optional[str] = None,
+    tags: Optional[str] = None,
+    q: Optional[str] = None,
+    min_price: float = 0,
+    max_price: float = 999,
+    limit: int = 100,
+    offset: int = 0,
+    include_scores: bool = False,
+):
+    """
+    List personas. Supports filtering by domain, tags (comma-separated), text search, price range.
+    Set include_scores=true to add CEID quality badges to each result. No auth required.
+    """
+    tag_list = [t.strip() for t in tags.split(",")] if tags else None
+    results = search_personas(
+        query=q or "",
+        domain=domain,
+        tags=tag_list,
+        min_price=min_price,
+        max_price=max_price,
+    )
+
+    if include_scores:
+        from persona_math.ceid import ceid_full_diagnostic
+        from persona_math.foundation import metallic_score
+        from persona_math.threshold import persona_coordinate
+        for r in results:
+            pid = r.get("id")
+            try:
+                P = get_persona_vector(pid)
+                diag = ceid_full_diagnostic(P)
+                coord = persona_coordinate(P)
+                r["ceid_score"] = round(diag.get("ceid_composite", 0.0), 4)
+                r["metallic_score"] = round(metallic_score(P), 4)
+                r["quadrant"] = coord.get("quadrant", "Q?")
+                r["power_ethics_ratio"] = round(coord.get("power_axis", 0) / max(coord.get("ethics_axis", 0.01), 0.01), 2)
+            except Exception:
+                pass
+
+    # Attach image_url to each result
+    for r in results:
+        r["image_url"] = _persona_image_url(r.get("id", ""))
+
+    total = len(results)
+    page = results[offset: offset + limit]
+    return {
+        "total":    total,
+        "offset":   offset,
+        "limit":    limit,
+        "personas": page,
+    }
+
+
+@app.get("/personas/stats/library", tags=["catalog"])
+def get_library_stats():
+    """Library statistics: total personas, domain breakdown, avg price."""
+    stats = library_stats()
+    stats["catalog_ids_preview"] = list(PERSONA_LIBRARY.keys())[:20]
+    return stats
+
+
+@app.get("/personas/{persona_id}", tags=["catalog"])
+def get_persona_detail(persona_id: str):
+    """Persona detail with pricing. No auth required."""
+    spec = PERSONA_LIBRARY.get(persona_id)
+    if spec:
+        data = {"id": persona_id, **PERSONA_CATALOG.get(persona_id, spec)}
+    else:
+        meta = PERSONA_CATALOG.get(persona_id)
+        if meta is None:
+            raise HTTPException(status_code=404, detail=f"Persona '{persona_id}' not found.")
+        data = {"id": persona_id, **meta}
+
+    data["image_url"] = _persona_image_url(persona_id)
+    return data
+
+
+@app.post("/auth/register", tags=["auth"])
+@limiter.limit("5/hour")
+def register(request: Request, req: RegisterRequest, db: Session = Depends(get_db)):
+    """
+    Register a new account. Returns your API key — store it safely.
+    One account per email address.
+    """
+    existing = get_user_by_email(db, req.email)
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail="Email already registered. If you lost your API key, contact support.",
+        )
+    user = create_user(db, req.email)
+    return {
+        "api_key": user.api_key,
+        "email": user.email,
+        "message": (
+            "Store your API key safely — it won't be shown again. "
+            "Use it in the X-API-Key header."
+        ),
+    }
+
+
+# ── Authenticated endpoints ────────────────────────────────────────────────────
+
+@app.get("/me", tags=["auth"])
+def get_me(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Your account details and purchased personas."""
+    owned = [p.persona_id for p in user.purchases]
+    return {
+        "email": user.email,
+        "created_at": user.created_at,
+        "purchased_personas": owned,
+        "n_purchases": len(owned),
+    }
+
+
+@app.get("/me/purchases", tags=["auth"])
+def get_purchases(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """List your purchased personas with purchase dates."""
+    return {
+        "purchases": [
+            {
+                "persona_id": p.persona_id,
+                "purchased_at": p.purchased_at,
+                "amount_usd": (p.amount_usd / 100) if p.amount_usd else None,
+            }
+            for p in user.purchases
+        ]
+    }
+
+
+# ── Checkout ───────────────────────────────────────────────────────────────────
+
+@app.post("/checkout/{persona_id}", tags=["payments"])
+@limiter.limit("20/hour")
+def checkout(
+    request: Request,
+    persona_id: str,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Create a Stripe Checkout Session to purchase a persona.
+    Returns {checkout_url} — redirect the user there.
+    """
+    meta = PERSONA_CATALOG.get(persona_id)
+    if meta is None:
+        raise HTTPException(status_code=404, detail=f"Persona '{persona_id}' not found.")
+    return create_checkout_session(user, persona_id, meta, db)
+
+
+@app.post("/checkout/{persona_id}/mock", tags=["payments"])
+def checkout_mock(
+    persona_id: str,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Development only: grant persona access without Stripe.
+    Disabled when STRIPE_SECRET_KEY is a live key.
+    """
+    meta = PERSONA_CATALOG.get(persona_id)
+    if meta is None:
+        raise HTTPException(status_code=404, detail=f"Persona '{persona_id}' not found.")
+    return mock_purchase(user, persona_id, db)
+
+
+@app.get("/checkout/success", tags=["payments"], include_in_schema=False)
+def checkout_success(session_id: str):
+    return {"status": "success", "session_id": session_id,
+            "message": "Purchase complete. You can now compile this persona."}
+
+
+@app.get("/checkout/cancel", tags=["payments"], include_in_schema=False)
+def checkout_cancel():
+    return {"status": "cancelled"}
+
+
+# ── Subscription ───────────────────────────────────────────────────────────────
+
+@app.get("/subscription/tiers", tags=["subscription"])
+def list_subscription_tiers():
+    """Available subscription plans with pricing."""
+    return {
+        "tiers": {
+            k: {
+                "price_usd_per_month": v["price_usd"],
+                "monthly_requests": v["monthly_requests"] or "unlimited",
+                "label": v["label"],
+            }
+            for k, v in SUBSCRIPTION_TIERS.items()
+        }
+    }
+
+
+@app.post("/subscribe/{tier}", tags=["subscription"])
+def subscribe(
+    tier: str,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Create a Stripe Checkout Session for a monthly subscription.
+    Tiers: basic ($9/mo, 1 000 calls) | pro ($29/mo, unlimited).
+    Returns {checkout_url}.
+    """
+    return create_subscription_session(user, tier, db)
+
+
+@app.get("/me/subscription", tags=["subscription"])
+def get_my_subscription(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Your current subscription status and quota."""
+    quota = check_quota(db, user.id)
+    if not quota["has_subscription"]:
+        return {
+            "has_subscription": False,
+            "message": "No active subscription. POST /subscribe/basic or /subscribe/pro",
+            "available_tiers": list(SUBSCRIPTION_TIERS.keys()),
+        }
+    return quota
+
+
+@app.delete("/me/subscription", tags=["subscription"])
+def cancel_my_subscription(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Cancel your current subscription."""
+    cancelled = cancel_subscription(db, user.id)
+    if not cancelled:
+        raise HTTPException(status_code=404, detail="No active subscription found.")
+    return {"status": "cancelled"}
+
+
+# ── Stripe webhook (no auth — Stripe sends directly) ──────────────────────────
+
+@app.post("/webhook/stripe", tags=["payments"], include_in_schema=False)
+async def stripe_webhook(
+    request: Request,
+    stripe_signature: Optional[str] = Header(default=None, alias="Stripe-Signature"),
+    db: Session = Depends(get_db),
+):
+    raw_body = await request.body()
+    if not stripe_signature:
+        raise HTTPException(status_code=400, detail="Missing Stripe-Signature header.")
+    return handle_webhook(raw_body, stripe_signature, db)
+
+
+# ── Compile (gated by purchase + subscription quota) ──────────────────────────
+
+def _check_and_count(db: Session, user: User, endpoint: str, persona_id: str) -> None:
+    """Enforce subscription quota; increment counter on success."""
+    quota = check_quota(db, user.id)
+    if quota["has_subscription"] and not quota["allowed"]:
+        raise HTTPException(
+            status_code=429,
+            detail=f"Monthly limit reached ({quota['used']}/{quota['limit']}). Upgrade to Pro.",
+        )
+    log_usage(db, user.id, endpoint, persona_id=persona_id)
+    if quota["has_subscription"]:
+        increment_request_count(db, user.id)
+
+
+@app.post("/v1/compile/{persona_id}", tags=["compile"])
+@limiter.limit("100/hour")
+def compile(
+    request: Request,
+    persona_id: str,
+    req: CompileRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Compile a purchased persona for the given platform and tier."""
+    if req.platform not in SUPPORTED_PLATFORMS:
+        raise HTTPException(400, detail=f"platform must be one of {SUPPORTED_PLATFORMS}")
+    if req.tier not in SUPPORTED_TIERS:
+        raise HTTPException(400, detail=f"tier must be one of {SUPPORTED_TIERS}")
+    require_persona_access(persona_id, user, db)
+    try:
+        P = get_persona_vector(persona_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"Persona '{persona_id}' not found.")
+    result = compile_persona(P, persona_id=persona_id, platform=req.platform, tier=req.tier)
+    _check_and_count(db, user, f"/v1/compile/{persona_id}", persona_id)
+    return result
+
+
+@app.post("/v1/compile/{persona_id}/all-platforms", tags=["compile"])
+@limiter.limit("100/hour")
+def compile_platforms(
+    request: Request,
+    persona_id: str,
+    req: AllPlatformsRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Compile persona for all platforms at the given tier."""
+    if req.tier not in SUPPORTED_TIERS:
+        raise HTTPException(400, detail=f"tier must be one of {SUPPORTED_TIERS}")
+    require_persona_access(persona_id, user, db)
+    try:
+        P = get_persona_vector(persona_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"Persona '{persona_id}' not found.")
+    result = compile_all_platforms(P, persona_id=persona_id, tier=req.tier)
+    _check_and_count(db, user, f"/v1/compile/{persona_id}/all-platforms", persona_id)
+    return result
+
+
+@app.post("/v1/compile/{persona_id}/all-tiers", tags=["compile"])
+@limiter.limit("100/hour")
+def compile_tiers(
+    request: Request,
+    persona_id: str,
+    req: AllTiersRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Compile persona at all tiers for the given platform."""
+    if req.platform not in SUPPORTED_PLATFORMS:
+        raise HTTPException(400, detail=f"platform must be one of {SUPPORTED_PLATFORMS}")
+    require_persona_access(persona_id, user, db)
+    try:
+        P = get_persona_vector(persona_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"Persona '{persona_id}' not found.")
+    result = compile_all_tiers(P, persona_id=persona_id, platform=req.platform)
+    _check_and_count(db, user, f"/v1/compile/{persona_id}/all-tiers", persona_id)
+    return result
+
+
+class VoiceRequest(BaseModel):
+    text: str = Field(..., description="Text to synthesize as speech", min_length=1, max_length=2000)
+
+
+@app.post("/v1/compile/{persona_id}/voice", tags=["compile"])
+@limiter.limit("30/hour")
+async def compile_voice(
+    request: Request,
+    persona_id: str,
+    req: VoiceRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Synthesize a persona voice response as MP3 audio via ElevenLabs TTS."""
+    if not tts_available():
+        raise HTTPException(503, detail="Voice synthesis unavailable: ELEVENLABS_API_KEY not configured.")
+    require_persona_access(persona_id, user, db)
+    try:
+        P = get_persona_vector(persona_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"Persona '{persona_id}' not found.")
+    vparams = get_visual_params(P, persona_id)
+    audio_bytes = await synthesize_speech(req.text, persona_id, vparams.get("voice", {}))
+    if not audio_bytes:
+        raise HTTPException(status_code=502, detail="Voice synthesis failed.")
+    _check_and_count(db, user, f"/v1/compile/{persona_id}/voice", persona_id)
+    return Response(content=audio_bytes, media_type="audio/mpeg")

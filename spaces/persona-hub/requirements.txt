@@ -1,0 +1,5 @@
+gradio>=5.0.0
+anthropic>=0.40.0
+numpy>=1.24.0
+scipy>=1.10.0
+git+https://github.com/mk350174-cmd/Persona.git
