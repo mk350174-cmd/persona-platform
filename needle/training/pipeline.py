@@ -56,12 +56,17 @@ class TrainingPipeline:
                 print(f"[pipeline] Llama teacher unavailable: {exc}")
 
         teachers = [t for t in teachers if t.available()]
+        from .teachers.persona_math_teacher import PersonaMathTeacher
         if not teachers:
             if not offline_fallback:
                 raise RuntimeError("no teachers available and offline_fallback disabled")
-            from .teachers.persona_math_teacher import PersonaMathTeacher
             print("[pipeline] no API teachers — using offline PersonaMathTeacher fallback")
             teachers = [PersonaMathTeacher(weight=1.0)]
+        elif offline_fallback:
+            # always include persona_math as a low-weight co-teacher: gives the dataset a
+            # deterministic floor and an instant fallback signal when an API stalls/fails,
+            # without waiting on rate limits
+            teachers.append(PersonaMathTeacher(weight=0.1))
         self._normalize_weights(teachers)
 
         self.teachers = teachers

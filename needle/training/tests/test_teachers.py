@@ -60,16 +60,33 @@ def test_drift_falls_back_on_error(cls):
 def test_pipeline_three_teachers_normalized():
     pipe = TrainingPipeline(aiml_api_key="a", groq_api_key="g", openrouter_api_key="o",
                             llama_endpoint=None)
-    assert set(pipe.teacher_names()) == {"aiml", "groq", "openrouter"}
-    assert sum(t.weight for t in pipe.teachers) == pytest.approx(1.0)
+    names = set(pipe.teacher_names())
+    assert {"aiml", "groq", "openrouter"} <= names          # real teachers active
+    assert "persona_math" in names                          # + always-on co-teacher (weight 0.1)
+    assert sum(t.weight for t in pipe.teachers) == pytest.approx(1.0, abs=1e-3)  # 6-dp rounding
 
 
 def test_pipeline_subset_normalized_to_one():
     pipe = TrainingPipeline(aiml_api_key="a", groq_api_key="g", llama_endpoint=None)  # 0.5+0.3
-    assert sum(t.weight for t in pipe.teachers) == pytest.approx(1.0)                  # → 0.625+0.375
+    assert "persona_math" in pipe.teacher_names()           # co-teacher present (weight 0.1)
+    assert sum(t.weight for t in pipe.teachers) == pytest.approx(1.0)
+
+
+def test_persona_math_coteacher_weight():
+    pipe = TrainingPipeline(groq_api_key="g", llama_endpoint=None)   # groq 0.3 + persona_math 0.1
+    weights = {t.name: t.weight for t in pipe.teachers}
+    assert set(weights) == {"groq", "persona_math"}
+    assert weights["persona_math"] == pytest.approx(0.1 / 0.4)       # 0.25 after normalization
+    assert weights["groq"] == pytest.approx(0.3 / 0.4)              # 0.75
 
 
 def test_pipeline_no_keys_falls_back_to_persona_math():
     pipe = TrainingPipeline(llama_endpoint=None)            # no keys, no Ollama
     assert pipe.teacher_names() == ["persona_math"]
     assert pipe.teachers[0].weight == pytest.approx(1.0)
+
+
+def test_groq_rate_limit_is_2s():
+    # rpm 10 → 30 : 60/30 = 2s between requests (was 6s)
+    assert GroqTeacher("k").rate.min_interval == pytest.approx(2.0)
+    assert GroqTeacher.rpm == 30
