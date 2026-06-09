@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Persona Detail - Persona Hub</title>
+<script src="/config.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-variant": "#343440",
+                      "on-secondary-fixed": "#25005a",
+                      "surface-container-low": "#1b1a26",
+                      "on-tertiary": "#003640",
+                      "on-error-container": "#ffdad6",
+                      "surface-bright": "#383845",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "ethics-blue": "#3b82f6",
+                      "tertiary-fixed-dim": "#4cd7f6",
+                      "tertiary-fixed": "#acedff",
+                      "on-background": "#e3e0f1",
+                      "on-surface": "#e3e0f1",
+                      "on-error": "#690005",
+                      "border-glass": "rgba(255, 255, 255, 0.08)",
+                      "inverse-on-surface": "#302f3b",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "secondary-fixed": "#eaddff",
+                      "on-primary-container": "#dad7ff",
+                      "surface": "#12121d",
+                      "science-cyan": "#06b6d4",
+                      "background": "#12121d",
+                      "on-tertiary-fixed": "#001f26",
+                      "on-primary": "#1d00a5",
+                      "arts-orange": "#f97316",
+                      "surface-dim": "#12121d",
+                      "primary-container": "#4f46e5",
+                      "mythology-lilac": "#a78bfa",
+                      "power-red": "#ef4444",
+                      "on-tertiary-fixed-variant": "#004e5c",
+                      "on-secondary": "#3f008e",
+                      "surface-container-high": "#292935",
+                      "tertiary-container": "#006a7c",
+                      "surface-container-lowest": "#0d0d18",
+                      "surface-container-highest": "#343440",
+                      "on-secondary-fixed-variant": "#5a00c6",
+                      "primary-fixed": "#e2dfff",
+                      "literature-green": "#34d399",
+                      "philosophy-purple": "#8b5cf6",
+                      "secondary": "#d2bbff",
+                      "outline-variant": "#464555",
+                      "on-secondary-container": "#c9aeff",
+                      "on-primary-fixed": "#0f0069",
+                      "inverse-primary": "#4d44e3",
+                      "surface-container": "#1f1e2a",
+                      "on-tertiary-container": "#93e8ff",
+                      "error": "#ffb4ab",
+                      "surface-tint": "#c3c0ff",
+                      "inverse-surface": "#e3e0f1",
+                      "on-surface-variant": "#c7c4d8",
+                      "secondary-fixed-dim": "#d2bbff",
+                      "secondary-container": "#6001d1",
+                      "outline": "#918fa1",
+                      "error-container": "#93000a",
+                      "surface-glass": "rgba(26, 26, 46, 0.6)",
+                      "fiction-pink": "#ec4899",
+                      "primary": "#c3c0ff",
+                      "leadership-gold": "#f59e0b",
+                      "tertiary": "#4cd7f6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "8px",
+                      "margin-desktop": "40px",
+                      "container-max": "1280px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "label-caps": ["Geist"],
+                      "display-lg": ["Geist"],
+                      "mono-data": ["Geist"],
+                      "body-lg": ["Inter"],
+                      "display-lg-mobile": ["Geist"],
+                      "headline-md": ["Geist"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "mono-data": ["14px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+
+        .glass-panel {
+            background: theme('colors.surface-glass');
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid theme('colors.border-glass');
+        }
+
+        .ambient-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .gradient-btn {
+            background: linear-gradient(135deg, theme('colors.primary-container'), theme('colors.secondary-container'));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        .hpep-bar-segment {
+            transition: opacity 0.3s ease;
+        }
+        .hpep-bar-segment:hover {
+            opacity: 0.8;
+        }
+
+        /* Loading skeleton pulse */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .skeleton {
+            animation: pulse 1.8s ease-in-out infinite;
+            background: rgba(255,255,255,0.07);
+            border-radius: 6px;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed; bottom: 24px; right: 24px;
+            background: rgba(26,26,46,0.95);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px; padding: 12px 20px;
+            font-size: 14px; color: #e3e0f1;
+            transform: translateY(80px); opacity: 0;
+            transition: all 0.3s; z-index: 9999; pointer-events: none;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        #toast.success { border-color: #34d399; color: #34d399; }
+        #toast.error { border-color: #ef4444; color: #ef4444; }
+    </style>
+</head>
+<body class="antialiased min-h-screen relative overflow-x-hidden flex flex-col">
+<!-- Ambient Background Glows -->
+<div class="ambient-glow bg-primary w-[500px] h-[500px] top-[-100px] left-[-100px]"></div>
+<div class="ambient-glow bg-secondary w-[400px] h-[400px] top-[40%] right-[-50px]"></div>
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface-glass backdrop-blur-xl border-b border-border-glass shadow-sm flex justify-between items-center px-margin-desktop h-16 max-w-container-max mx-auto left-0 right-0">
+<div class="font-display-lg text-display-lg font-bold text-primary text-[24px]">
+            Persona Hub
+        </div>
+<!-- Web Nav Cluster -->
+<div class="hidden md:flex items-center gap-gutter">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md text-body-md" href="/catalog">Catalog</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md text-body-md hover:bg-white/5 transition-all px-2 py-1 rounded" href="/ceid-monitor">CEID Monitor</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md text-body-md hover:bg-white/5 transition-all px-2 py-1 rounded" href="/dashboard">Dashboard</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<a href="/dashboard" class="text-on-surface-variant hover:text-primary transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</a>
+</div>
+</nav>
+
+<!-- Main Content Layout -->
+<main id="main-content" class="flex-grow pt-24 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full flex flex-col md:flex-row gap-gutter">
+  <!-- Loading state -->
+  <div id="loading-state" class="w-full flex items-center justify-center py-24">
+    <div class="flex flex-col items-center gap-4 text-on-surface-variant">
+      <div class="w-12 h-12 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+      <span class="font-body-md text-body-md">Loading persona…</span>
+    </div>
+  </div>
+  <!-- Error state (hidden by default) -->
+  <div id="error-state" class="hidden w-full flex items-center justify-center py-24">
+    <div class="glass-panel rounded-xl p-8 max-w-md text-center flex flex-col gap-4">
+      <span class="material-symbols-outlined text-error text-5xl">error_outline</span>
+      <h2 class="font-headline-md text-headline-md text-on-surface">Persona Not Found</h2>
+      <p id="error-msg" class="font-body-md text-body-md text-on-surface-variant">Could not load persona data.</p>
+      <a href="/catalog" class="gradient-btn font-body-md text-body-md font-semibold text-white py-3 px-6 rounded-lg inline-flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+        Browse Catalog
+      </a>
+    </div>
+  </div>
+  <!-- Persona content (hidden until loaded) -->
+  <div id="persona-content" class="hidden w-full flex flex-col md:flex-row gap-gutter">
+    <!-- Left Column: Profile Core -->
+    <div class="w-full md:w-[360px] flex flex-col gap-gutter shrink-0">
+      <!-- Identity Card -->
+      <div class="glass-panel rounded-xl p-6 flex flex-col items-center text-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-leadership-gold/5 to-transparent pointer-events-none"></div>
+        <div id="persona-icon" class="text-[80px] leading-none mb-4 filter drop-shadow-[0_0_15px_rgba(245,158,11,0.2)]">🧠</div>
+        <h1 id="persona-name" class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-2">Loading…</h1>
+        <div class="flex flex-wrap justify-center gap-2 mb-4">
+          <span id="persona-era-tag" class="font-label-caps text-label-caps px-3 py-1 rounded-full border border-border-glass bg-surface-container text-on-surface-variant"></span>
+          <span id="persona-domain-tag" class="font-label-caps text-label-caps px-3 py-1 rounded-full border border-leadership-gold/30 bg-leadership-gold/10 text-leadership-gold"></span>
+        </div>
+        <p id="persona-tagline" class="font-body-md text-body-md text-on-surface-variant mb-6 italic"></p>
+        <div class="w-full flex flex-col gap-3">
+          <button id="btn-purchase" class="gradient-btn font-body-md text-body-md font-semibold text-white py-3 rounded-lg w-full flex justify-center items-center gap-2 hover:opacity-90 transition-opacity">
+            <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+            <span id="btn-purchase-text">Buy for $—</span>
+          </button>
+          <!-- No API key fallback message (hidden by default) -->
+          <div id="no-key-msg" class="hidden glass-panel rounded-lg p-3 text-center">
+            <p class="font-body-md text-[13px] text-on-surface-variant">
+              <a href="/dashboard" class="text-primary hover:underline">Register first</a> to purchase personas.
+            </p>
+          </div>
+          <button class="glass-panel font-body-md text-body-md text-on-surface py-3 rounded-lg w-full flex justify-center items-center gap-2 hover:bg-surface-bright transition-colors">
+            <span class="material-symbols-outlined text-[20px]">chat</span>
+            Start Demo Chat
+          </button>
+        </div>
+      </div>
+      <!-- CEID Gauge Card -->
+      <div class="glass-panel rounded-xl p-6 flex flex-col items-center relative">
+        <div class="absolute top-4 left-4">
+          <span class="material-symbols-outlined text-outline-variant">info</span>
+        </div>
+        <h3 class="font-label-caps text-label-caps text-on-surface-variant mb-6">Cognitive Entity Integrity Density</h3>
+        <div class="relative w-48 h-48 flex items-center justify-center">
+          <!-- SVG Circular Progress (Dynamic Gauge) -->
+          <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" fill="none" r="45" stroke="rgba(255,255,255,0.1)" stroke-width="8"></circle>
+            <circle id="ceid-gauge-arc" class="drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" cx="50" cy="50" fill="none" r="45"
+              stroke="#f59e0b" stroke-dasharray="282.7" stroke-dashoffset="282.7" stroke-linecap="round" stroke-width="8"
+              style="transition: stroke-dashoffset 1s ease, stroke 0.5s ease;">
+            </circle>
+          </svg>
+          <div class="absolute flex flex-col items-center">
+            <span id="ceid-score-display" class="font-display-lg text-display-lg text-on-surface">—</span>
+            <span id="ceid-tier-label" class="font-label-caps text-label-caps text-leadership-gold tracking-widest mt-1">LOADING</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Right Column: Data & Analytics -->
+    <div class="flex-grow flex flex-col gap-gutter min-w-0">
+      <!-- Bento Grid Top Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+        <!-- HPEP-100 Bars -->
+        <div class="glass-panel rounded-xl p-6 flex flex-col">
+          <h3 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">bar_chart</span>
+            HPEP-100 Profile
+          </h3>
+          <div id="hpep-bars" class="flex flex-col gap-4">
+            <!-- Filled dynamically -->
+            <div class="skeleton h-6 w-full"></div>
+            <div class="skeleton h-6 w-full"></div>
+            <div class="skeleton h-6 w-full"></div>
+            <div class="skeleton h-6 w-full"></div>
+          </div>
+        </div>
+        <!-- Scatter Plot: Power vs Ethics -->
+        <div class="glass-panel rounded-xl p-6 flex flex-col relative overflow-hidden">
+          <h3 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary">scatter_plot</span>
+            Behavioral Matrix
+          </h3>
+          <div class="flex-grow relative border-l border-b border-surface-container-high mt-4 mr-4 mb-8 ml-8" style="min-height:160px;">
+            <!-- Grid Lines -->
+            <div class="absolute inset-0 grid grid-cols-2 grid-rows-2 opacity-20 pointer-events-none">
+              <div class="border-r border-b border-white border-dashed"></div>
+              <div class="border-b border-white border-dashed"></div>
+              <div class="border-r border-white border-dashed"></div>
+              <div></div>
+            </div>
+            <!-- Axis Labels -->
+            <div class="absolute -left-8 top-1/2 -translate-y-1/2 -rotate-90 font-label-caps text-label-caps text-on-surface-variant tracking-widest whitespace-nowrap">HIGH POWER</div>
+            <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 font-label-caps text-label-caps text-on-surface-variant tracking-widest">HIGH ETHICS</div>
+            <!-- Dynamic data point -->
+            <div id="scatter-point" class="absolute w-4 h-4 bg-leadership-gold rounded-full transform -translate-x-1/2 -translate-y-1/2 shadow-[0_0_15px_rgba(245,158,11,0.8)] z-10 animate-pulse" style="top:50%;left:50%;">
+              <div id="scatter-label" class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-mono-data text-[10px] text-on-surface whitespace-nowrap"></div>
+            </div>
+            <!-- Ghost reference points -->
+            <div class="absolute top-[40%] left-[80%] w-2 h-2 bg-surface-variant rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+            <div class="absolute top-[70%] left-[60%] w-2 h-2 bg-surface-variant rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+          </div>
+        </div>
+      </div>
+      <!-- System Prompt Preview (Full Width Bottom) -->
+      <div class="glass-panel rounded-xl p-6 flex flex-col">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+            <span class="material-symbols-outlined text-tertiary">code</span>
+            System Prompt Genome
+          </h3>
+          <span id="prompt-lock-badge" class="font-label-caps text-label-caps text-on-surface-variant border border-border-glass px-2 py-1 rounded bg-surface-container">LOCKED</span>
+        </div>
+        <div class="bg-[#0a0a14] border border-border-glass rounded-lg p-4 relative font-mono-data text-mono-data text-on-surface-variant leading-relaxed">
+          <p>
+            <span class="text-secondary">SYSTEM:</span> <span id="prompt-preview-text">You are a cognitive persona. You operate with precision and depth across your domain of expertise…</span>
+          </p>
+          <p class="mt-2 opacity-40 blur-[2px] select-none">
+            [Core behavioral axioms and identity constraints are encoded in this block. Full content visible after purchase.] [REDACTED ENCRYPTED BLOCK]…
+          </p>
+          <div id="prompt-lock-overlay" class="absolute inset-0 bg-gradient-to-t from-[#0a0a14] via-transparent to-transparent flex items-end justify-center pb-4">
+            <button onclick="handlePurchase()" class="bg-surface-glass border border-border-glass font-label-caps text-label-caps text-on-surface px-4 py-2 rounded flex items-center gap-2 hover:bg-surface-bright transition-colors backdrop-blur-md">
+              <span class="material-symbols-outlined text-[16px]">lock_open</span>
+              PURCHASE TO UNLOCK FULL PROMPT
+            </button>
+          </div>
+        </div>
+        <!-- Tags row -->
+        <div id="tags-row" class="flex flex-wrap gap-2 mt-4"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-border-glass w-full py-12 mt-auto">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter px-margin-desktop max-w-container-max mx-auto">
+<div>
+<div class="font-display-lg text-display-lg text-primary text-[20px] mb-4">Persona Hub</div>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 Persona Hub AI. All rights reserved.</p>
+</div>
+<div class="flex gap-6 items-start font-body-md text-body-md">
+<a class="text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">GitHub</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Docs</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">API</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Newsletter</a>
+</div>
+</div>
+</footer>
+
+<script>
+// ── Config ──────────────────────────────────────────────────────────────────────
+const API_BASE = window.PERSONA_API_URL || '';
+const LS_KEY = 'persona_hub_api_key';
+
+// HPEP block names (1-10)
+const HPEP_BLOCK_NAMES = [
+  'Power', 'Strategy', 'Epistemology', 'Rhetoric',
+  'Psych Depth', 'Temporal', 'Systemic', 'Flexibility',
+  'Ethics', 'Meta'
+];
+
+// Colors per block (cycled)
+const BLOCK_COLORS = [
+  ['power-red', '#ef4444'],
+  ['science-cyan', '#06b6d4'],
+  ['philosophy-purple', '#8b5cf6'],
+  ['literature-green', '#34d399'],
+  ['leadership-gold', '#f59e0b'],
+  ['fiction-pink', '#ec4899'],
+  ['mythology-lilac', '#a78bfa'],
+  ['tertiary', '#4cd7f6'],
+  ['ethics-blue', '#3b82f6'],
+  ['arts-orange', '#f97316'],
+];
+
+// Domain icon mapping
+const DOMAIN_ICONS = {
+  philosophy: '🏛️', political: '🏛️', science: '🔬', literature: '📚',
+  arts: '🎨', mythology: '⚡', leadership: '👑', military: '⚔️',
+  mathematics: '∑', psychology: '🧠', economics: '📊', default: '🧠'
+};
+
+// ── State ───────────────────────────────────────────────────────────────────────
+let currentPersona = null;
+
+// ── Utilities ───────────────────────────────────────────────────────────────────
+function getPersonaId() {
+  return new URLSearchParams(window.location.search).get('persona') || 'machiavelli';
+}
+
+function getApiKey() {
+  return localStorage.getItem(LS_KEY) || '';
+}
+
+function getDomainIcon(domain, name) {
+  if (!domain && !name) return '🧠';
+  const str = ((domain || '') + ' ' + (name || '')).toLowerCase();
+  for (const [key, icon] of Object.entries(DOMAIN_ICONS)) {
+    if (str.includes(key)) return icon;
+  }
+  return DOMAIN_ICONS.default;
+}
+
+function getCeidTier(score) {
+  if (!score) return { label: 'UNKNOWN', color: '#918fa1' };
+  if (score >= 0.95) return { label: 'ELITE SERIES', color: '#f59e0b' };
+  if (score >= 0.90) return { label: 'HIGH FIDELITY', color: '#34d399' };
+  if (score >= 0.80) return { label: 'STANDARD', color: '#c3c0ff' };
+  return { label: 'BASIC', color: '#918fa1' };
+}
+
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (type ? ' ' + type : '');
+  setTimeout(() => { el.className = ''; }, 2800);
+}
+
+function showError(msg) {
+  document.getElementById('loading-state').classList.add('hidden');
+  document.getElementById('error-state').classList.remove('hidden');
+  document.getElementById('error-msg').textContent = msg;
+}
+
+// ── HPEP bars renderer ──────────────────────────────────────────────────────────
+function renderHpepBars(blocks) {
+  const container = document.getElementById('hpep-bars');
+  if (!blocks || typeof blocks !== 'object') {
+    container.innerHTML = '<p class="font-body-md text-body-md text-on-surface-variant">No block data available.</p>';
+    return;
+  }
+
+  // Accept both array (indexed 0-9) and object {Power:val, Strategy:val, ...}
+  let blockValues = {};
+  if (Array.isArray(blocks)) {
+    HPEP_BLOCK_NAMES.forEach((name, i) => {
+      blockValues[name] = blocks[i] !== undefined ? blocks[i] : 0;
+    });
+  } else {
+    // object keyed by name or 1-indexed numbers
+    HPEP_BLOCK_NAMES.forEach((name, i) => {
+      // try exact name, then index+1, then index
+      blockValues[name] = blocks[name] !== undefined ? blocks[name]
+        : blocks[i + 1] !== undefined ? blocks[i + 1]
+        : blocks[i] !== undefined ? blocks[i]
+        : 0;
+    });
+  }
+
+  container.innerHTML = HPEP_BLOCK_NAMES.map((name, i) => {
+    const val = blockValues[name];
+    const numericVal = typeof val === 'number' ? val : 0;
+    // Normalize: if > 1, treat as 0-100 scale
+    const normalized = numericVal > 1 ? numericVal / 100 : numericVal;
+    const pct = Math.round(normalized * 100);
+    const [colorName, colorHex] = BLOCK_COLORS[i % BLOCK_COLORS.length];
+    const displayVal = pct;
+
+    // Build segmented bar (filled segments based on value)
+    const totalSegments = 10;
+    const filledSegments = Math.round(normalized * totalSegments);
+    let segmentsHtml = '';
+    for (let s = 0; s < totalSegments; s++) {
+      const opacity = s < filledSegments ? (0.4 + (s / totalSegments) * 0.6).toFixed(2) : 0;
+      const bgStyle = s < filledSegments
+        ? `background-color: ${colorHex}; opacity: ${opacity};`
+        : `background-color: rgba(255,255,255,0.05);`;
+      segmentsHtml += `<div class="flex-[1] h-full hpep-bar-segment rounded-sm" style="${bgStyle}"></div>`;
+    }
+
+    return `
+      <div class="flex items-center gap-4">
+        <span class="font-mono-data text-mono-data text-on-surface-variant w-24 text-right text-[12px]">${name}</span>
+        <div class="flex-grow h-2 bg-surface-container-high rounded-full overflow-hidden flex gap-0.5">
+          <div class="w-full h-full flex gap-0.5">${segmentsHtml}</div>
+        </div>
+        <span class="font-mono-data text-mono-data text-on-surface w-8 text-[12px]">${displayVal}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── Scatter point positioning ────────────────────────────────────────────────────
+function positionScatterPoint(blocks, name) {
+  // Use Power (index 0) and Ethics (index 8) from blocks
+  let power = 0.5, ethics = 0.5;
+  if (blocks) {
+    if (Array.isArray(blocks)) {
+      power = blocks[0] !== undefined ? blocks[0] : 0.5;
+      ethics = blocks[8] !== undefined ? blocks[8] : 0.5;
+    } else {
+      power = blocks['Power'] !== undefined ? blocks['Power']
+        : blocks[1] !== undefined ? blocks[1]
+        : 0.5;
+      ethics = blocks['Ethics'] !== undefined ? blocks['Ethics']
+        : blocks[9] !== undefined ? blocks[9]
+        : 0.5;
+    }
+    // Normalize if needed
+    if (power > 1) power = power / 100;
+    if (ethics > 1) ethics = ethics / 100;
+  }
+
+  // X axis = Ethics (0=left, 1=right)
+  // Y axis = Power (0=bottom, 1=top)
+  const xPct = Math.round(ethics * 100);
+  const yPct = Math.round((1 - power) * 100);
+
+  const point = document.getElementById('scatter-point');
+  const label = document.getElementById('scatter-label');
+  point.style.left = `${xPct}%`;
+  point.style.top = `${yPct}%`;
+
+  // Color by quadrant: high power + low ethics = red, high power + high ethics = gold
+  if (power > 0.5 && ethics < 0.4) {
+    point.style.background = '#ef4444';
+    point.style.boxShadow = '0 0 15px rgba(239,68,68,0.8)';
+  } else if (power > 0.5 && ethics >= 0.5) {
+    point.style.background = '#f59e0b';
+    point.style.boxShadow = '0 0 15px rgba(245,158,11,0.8)';
+  } else {
+    point.style.background = '#c3c0ff';
+    point.style.boxShadow = '0 0 15px rgba(195,192,255,0.6)';
+  }
+
+  if (name) {
+    const shortName = name.split(' ').pop(); // last name
+    label.textContent = shortName;
+  }
+}
+
+// ── CEID gauge ──────────────────────────────────────────────────────────────────
+function renderCeidGauge(score) {
+  const arc = document.getElementById('ceid-gauge-arc');
+  const display = document.getElementById('ceid-score-display');
+  const tierLabel = document.getElementById('ceid-tier-label');
+
+  if (!score) {
+    display.textContent = '—';
+    tierLabel.textContent = 'NO DATA';
+    return;
+  }
+
+  const circumference = 282.7;
+  const offset = circumference - (score * circumference);
+  const tier = getCeidTier(score);
+
+  arc.style.strokeDashoffset = offset;
+  arc.style.stroke = tier.color;
+  arc.style.filter = `drop-shadow(0 0 8px ${tier.color}80)`;
+  display.textContent = score.toFixed(3);
+  tierLabel.textContent = tier.label;
+  tierLabel.style.color = tier.color;
+}
+
+// ── Purchase handler ─────────────────────────────────────────────────────────────
+async function handlePurchase() {
+  if (!currentPersona) return;
+
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    document.getElementById('no-key-msg').classList.remove('hidden');
+    toast('Register first to purchase', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btn-purchase');
+  const btnText = document.getElementById('btn-purchase-text');
+  const overlay = document.getElementById('prompt-lock-overlay');
+
+  btn.disabled = true;
+  btnText.textContent = 'Processing…';
+
+  try {
+    const res = await fetch(`${API_BASE}/checkout/${currentPersona.id}/mock`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': apiKey
+      }
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: `HTTP ${res.status}` }));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
+    // Update button to owned state
+    btn.className = btn.className.replace('gradient-btn', '');
+    btn.style.background = 'rgba(52, 211, 153, 0.12)';
+    btn.style.border = '1px solid rgba(52, 211, 153, 0.35)';
+    btn.style.color = '#34d399';
+    btn.disabled = false;
+    btnText.textContent = '✓ You own this persona';
+
+    // Remove lock overlay
+    overlay.classList.add('hidden');
+    document.getElementById('prompt-lock-badge').textContent = 'UNLOCKED';
+    document.getElementById('prompt-lock-badge').style.color = '#34d399';
+    document.getElementById('prompt-lock-badge').style.borderColor = 'rgba(52,211,153,0.4)';
+
+    toast('Purchase successful!', 'success');
+
+  } catch (err) {
+    btn.disabled = false;
+    btnText.textContent = `Buy for $${currentPersona.price_usd || '—'}`;
+    toast(`Purchase failed: ${err.message}`, 'error');
+  }
+}
+
+// ── Render persona page ──────────────────────────────────────────────────────────
+function renderPersona(p) {
+  currentPersona = p;
+  document.title = `${p.name} — Persona Hub`;
+
+  // Icon / image
+  const iconEl = document.getElementById('persona-icon');
+  if (p.image_url) {
+    iconEl.innerHTML = `<img src="${p.image_url}" alt="${p.name}"
+      class="w-24 h-24 rounded-2xl object-cover border-2 border-leadership-gold/30 shadow-lg"
+      onerror="this.outerHTML='<span>${getDomainIcon(p.domain, p.name)}</span>'">`;
+    iconEl.className = 'mb-4';
+  } else {
+    const icon = getDomainIcon(p.domain, p.name);
+    iconEl.textContent = icon;
+  }
+
+  // Name & meta
+  document.getElementById('persona-name').textContent = p.name;
+  if (p.era) document.getElementById('persona-era-tag').textContent = p.era;
+  if (p.domain) document.getElementById('persona-domain-tag').textContent = p.domain;
+  if (p.tagline) document.getElementById('persona-tagline').textContent = `"${p.tagline}"`;
+
+  // Purchase button
+  const apiKey = getApiKey();
+  const btnText = document.getElementById('btn-purchase-text');
+  if (apiKey) {
+    btnText.textContent = p.price_usd ? `Buy for $${p.price_usd}` : 'Purchase';
+    document.getElementById('btn-purchase').onclick = handlePurchase;
+  } else {
+    document.getElementById('no-key-msg').classList.remove('hidden');
+    btnText.textContent = p.price_usd ? `$${p.price_usd}` : 'Purchase';
+    document.getElementById('btn-purchase').onclick = () => {
+      document.getElementById('no-key-msg').classList.remove('hidden');
+      toast('Register first to purchase', 'error');
+    };
+  }
+
+  // CEID gauge
+  renderCeidGauge(p.ceid_score);
+
+  // HPEP bars
+  renderHpepBars(p.blocks);
+
+  // Scatter plot
+  positionScatterPoint(p.blocks, p.name);
+
+  // Tags
+  if (p.tags && p.tags.length > 0) {
+    const tagsRow = document.getElementById('tags-row');
+    tagsRow.innerHTML = p.tags.map(tag =>
+      `<span class="font-label-caps text-label-caps px-3 py-1 rounded-full border border-border-glass bg-surface-container text-on-surface-variant">${tag}</span>`
+    ).join('');
+  }
+
+  // Prompt preview
+  if (p.name) {
+    document.getElementById('prompt-preview-text').textContent =
+      `You are ${p.name}. You operate with precision and depth across your domain of expertise. Your reasoning reflects the historical and intellectual context of your era…`;
+  }
+
+  // Show content
+  document.getElementById('loading-state').classList.add('hidden');
+  document.getElementById('persona-content').classList.remove('hidden');
+  document.getElementById('persona-content').style.display = 'flex';
+}
+
+// ── Known-persona fallback data (blocks keyed 1-10, values 0-1) ──────────────────
+const PERSONA_BLOCKS_FALLBACK = {
+  machiavelli: { 1: 0.98, 2: 0.95, 3: 0.76, 4: 0.88, 5: 0.79, 6: 0.68, 7: 0.74, 8: 0.63, 9: 0.20, 10: 0.58, ceid_score: 0.941 },
+  aristotle:   { 1: 0.72, 2: 0.88, 3: 0.93, 4: 0.78, 5: 0.75, 6: 0.80, 7: 0.95, 8: 0.72, 9: 0.87, 10: 0.80, ceid_score: 0.991 },
+  kant:        { 1: 0.87, 2: 0.88, 3: 0.85, 4: 0.82, 5: 0.79, 6: 0.81, 7: 0.83, 8: 0.77, 9: 0.95, 10: 0.76, ceid_score: 0.962 },
+  holmes:      { 1: 0.85, 2: 0.91, 3: 0.92, 4: 0.80, 5: 0.87, 6: 0.79, 7: 0.91, 8: 0.83, 9: 0.45, 10: 0.64, ceid_score: 0.949 },
+  nietzsche:   { 1: 0.93, 2: 0.55, 3: 0.72, 4: 0.91, 5: 0.92, 6: 0.76, 7: 0.62, 8: 0.88, 9: 0.14, 10: 0.82, ceid_score: 0.932 },
+  sun_tzu:     { 1: 0.88, 2: 0.97, 3: 0.85, 4: 0.70, 5: 0.82, 6: 0.93, 7: 0.91, 8: 0.78, 9: 0.42, 10: 0.74, ceid_score: 0.958 },
+  socrates:    { 1: 0.68, 2: 0.65, 3: 0.82, 4: 0.91, 5: 0.88, 6: 0.62, 7: 0.78, 8: 0.85, 9: 0.92, 10: 0.95, ceid_score: 0.947 },
+  aurelius:    { 1: 0.84, 2: 0.78, 3: 0.85, 4: 0.82, 5: 0.79, 6: 0.81, 7: 0.77, 8: 0.74, 9: 0.91, 10: 0.85, ceid_score: 0.978 },
+};
+
+// ── Init ─────────────────────────────────────────────────────────────────────────
+async function init() {
+  const personaId = getPersonaId();
+  const apiKey = getApiKey();
+
+  const headers = { 'Accept': 'application/json' };
+  if (apiKey) headers['X-API-Key'] = apiKey;
+
+  try {
+    // Fetch persona detail AND ceid score in parallel
+    const [detailRes, scoreRes] = await Promise.allSettled([
+      fetch(`${API_BASE}/personas/${personaId}`, { headers }),
+      fetch(`${API_BASE}/personas?q=${encodeURIComponent(personaId)}&include_scores=true&limit=5`, { headers })
+    ]);
+
+    if (detailRes.status === 'rejected') throw new Error('Network error');
+    const res = detailRes.value;
+
+    if (res.status === 404) {
+      showError(`No persona found with ID "${personaId}". Check the URL or browse the catalog.`);
+      return;
+    }
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+
+    // Enrich with ceid_score from list endpoint if not present
+    if (!data.ceid_score && scoreRes.status === 'fulfilled' && scoreRes.value.ok) {
+      try {
+        const scoreData = await scoreRes.value.json();
+        const matches = (scoreData.personas || scoreData.items || scoreData || []);
+        const match = Array.isArray(matches)
+          ? matches.find(p => p.id === personaId || p.id === data.id)
+          : null;
+        if (match && match.ceid_score) data.ceid_score = match.ceid_score;
+      } catch (_) {}
+    }
+
+    // Inject block data from fallback if API doesn't return blocks
+    if (!data.blocks) {
+      const pid = (data.id || personaId).toLowerCase();
+      for (const [key, fallback] of Object.entries(PERSONA_BLOCKS_FALLBACK)) {
+        if (pid.includes(key)) {
+          const { ceid_score, ...blockData } = fallback;
+          data.blocks = blockData;
+          if (!data.ceid_score) data.ceid_score = ceid_score;
+          break;
+        }
+      }
+    }
+
+    renderPersona(data);
+
+  } catch (err) {
+    showError(`Could not load persona: ${err.message}. The API may be offline.`);
+  }
+}
+
+init();
+</script>
+</body></html>
