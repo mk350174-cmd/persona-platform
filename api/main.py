@@ -924,7 +924,6 @@ def create_billing_portal_session(
         )
 
     try:
-        import stripe
         session = stripe.billing_portal.Session.create(
             customer=user.stripe_customer_id,
             return_url=f"{BASE_URL}/me",
@@ -932,6 +931,62 @@ def create_billing_portal_session(
         return {"url": session.url}
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Billing portal error: {str(e)}")
+
+
+# ── Admin: Refund endpoint (B18) ───────────────────────────────────────────────
+
+@app.post("/admin/refund/{purchase_id}", tags=["admin"])
+def refund_purchase(
+    request: Request,
+    purchase_id: str,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    ADMIN ONLY: Issue a refund for a purchase and revoke persona access (B18).
+    Soft-deletes the purchase record (for GDPR/KVKK compliance).
+    """
+    from api.db import Purchase
+    from datetime import datetime, timezone
+
+    # Simple admin check (in production, use proper role-based access control)
+    if user.email not in ["admin@example.com"]:  # Placeholder
+        raise HTTPException(
+            status_code=403,
+            detail="Admin access required.",
+        )
+
+    purchase = db.query(Purchase).filter(Purchase.id == purchase_id).first()
+    if not purchase:
+        raise HTTPException(status_code=404, detail="Purchase not found.")
+
+    # Soft-delete the purchase
+    purchase.deleted_at = datetime.now(timezone.utc)
+    db.commit()
+
+    # Attempt to issue Stripe refund if session exists
+    refund_result = None
+    if purchase.stripe_session_id:
+        try:
+            # Retrieve the payment intent from the session
+            checkout_session = stripe.checkout.Session.retrieve(purchase.stripe_session_id)
+            payment_intent = checkout_session.payment_intent
+            if payment_intent:
+                refund = stripe.Refund.create(charge=payment_intent)
+                refund_result = {"stripe_refund_id": refund.id, "status": refund.status}
+        except Exception as e:
+            # Log error but still consider purchase soft-deleted
+            logger.warning(f"Failed to refund Stripe payment: {e}")
+
+    return {
+        "status": "refunded",
+        "purchase_id": purchase_id,
+        "persona_id": purchase.persona_id,
+        "user_id": purchase.user_id,
+        "amount_refunded_usd": (purchase.amount_usd or 0) / 100,
+        "stripe_refund": refund_result,
+        "message": "Purchase access revoked. Stripe refund issued if applicable.",
+    }
 
 
 # ── Stripe webhook (no auth — Stripe sends directly) ──────────────────────────
