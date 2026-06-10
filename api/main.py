@@ -78,6 +78,7 @@ from persona_math.compiler import (
 )
 from api.middleware.security_headers import SecurityHeadersMiddleware
 from api.middleware.audit_logger import AuditLoggerMiddleware
+from api.middleware.rate_limiter import RateLimitMiddleware
 from api.exceptions import (
     generic_exception_handler,
     validation_exception_handler,
@@ -145,6 +146,9 @@ async def limit_request_size(request: Request, call_next):
             pass  # Invalid content-length, let nginx handle it
     return await call_next(request)
 
+
+# Per-API-key rate limiting middleware (before security headers to catch rate limit exceptions early)
+app.add_middleware(RateLimitMiddleware)
 
 # Audit logging middleware (logs security events)
 app.add_middleware(AuditLoggerMiddleware)

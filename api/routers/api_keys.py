@@ -1,12 +1,15 @@
-"""API Key management endpoints — rotation and revocation."""
+"""API Key management endpoints — rotation and revocation with grace period."""
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from api.db import User, APIKeyRotation, get_db, hash_api_key
 from api.auth import get_current_user
+
+# Grace period: old key remains valid for N days after rotation
+API_KEY_GRACE_PERIOD_DAYS = 7
 
 router = APIRouter(prefix="/me/api-keys", tags=["api-keys"])
 
@@ -58,11 +61,12 @@ def rotate_api_key(
     db.add(user)
     db.flush()
 
-    # Log old key as deprecated
+    # Log old key as deprecated (grace period tracking)
+    now = datetime.now(timezone.utc)
     old_rotation = APIKeyRotation(
         user_id=user.id,
         api_key=old_prefix,
-        deprecated_at=datetime.now(timezone.utc),
+        deprecated_at=now,
         reason="rotation",
     )
     db.add(old_rotation)
@@ -77,12 +81,15 @@ def rotate_api_key(
 
     db.commit()
 
+    grace_period_end = now + timedelta(days=API_KEY_GRACE_PERIOD_DAYS)
+
     return RotateKeyResponse(
         new_api_key=full_key,
         old_key_prefix=old_prefix,
         message=(
-            "API key rotated. Store the new key safely — it won't be shown again. "
-            "Old key prefix is deprecated; update your clients within 7 days."
+            f"API key rotated. Store the new key safely — it won't be shown again. "
+            f"Old key prefix is deprecated but valid until {grace_period_end.strftime('%Y-%m-%d')} "
+            f"({API_KEY_GRACE_PERIOD_DAYS}-day grace period). Update your clients before then."
         ),
     )
 
