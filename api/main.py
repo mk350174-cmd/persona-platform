@@ -33,9 +33,11 @@ from fastapi import FastAPI, HTTPException, Depends, Request, Header, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
+from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -69,6 +71,13 @@ from persona_math.compiler import (
     SUPPORTED_PLATFORMS,
     SUPPORTED_TIERS,
 )
+from api.middleware.security_headers import SecurityHeadersMiddleware
+from api.exceptions import (
+    generic_exception_handler,
+    validation_exception_handler,
+    database_exception_handler,
+    value_error_handler,
+)
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 
@@ -84,7 +93,9 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["1000/hour"])
 
 # ── App init ───────────────────────────────────────────────────────────────────
 
-_CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",")]
+# CORS configuration: default to restrictive list, require explicit env var for production
+_CORS_DEFAULT = ""  # Empty string = no CORS (restrictive default)
+_CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", _CORS_DEFAULT).split(",") if o.strip()]
 
 app = FastAPI(
     title="Persona Compiler API",
@@ -97,13 +108,23 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+# Security headers middleware (must be added BEFORE CORS to ensure headers are not overwritten)
+app.add_middleware(SecurityHeadersMiddleware)
+
+# CORS configuration: explicit origin list (no wildcards in production)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_CORS_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_CORS_ORIGINS if _CORS_ORIGINS else ["localhost:3000", "localhost:8000"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["authorization", "content-type"],
 )
+
+# Register custom exception handlers (must be after app initialization)
+app.add_exception_handler(Exception, generic_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(SQLAlchemyError, database_exception_handler)
+app.add_exception_handler(ValueError, value_error_handler)
 
 # PersonaNeedle endpoints (CEID / drift / voice / profile / history) — see api/routers/persona_router.py
 app.include_router(persona_router, prefix="/api/v1")
@@ -159,10 +180,19 @@ def _run_migrations() -> None:
 
 @app.on_event("startup")
 async def startup():
+    # Validate critical security-related secrets
+    stripe_secret = os.getenv("STRIPE_WEBHOOK_SECRET", "").strip()
+    if stripe_secret and len(stripe_secret) < 32:
+        raise RuntimeError(
+            "STRIPE_WEBHOOK_SECRET is configured but too short (< 32 chars). "
+            "This may indicate a misconfiguration. Please verify."
+        )
+
     required = ["ANTHROPIC_API_KEY"]
     missing = [k for k in required if not os.getenv(k)]
     if missing:
         logger.warning("Missing recommended env vars: %s", missing)
+
     _run_migrations()
     _AUDIO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     asyncio.create_task(_audio_cache_cleaner())
