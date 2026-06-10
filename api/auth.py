@@ -1,8 +1,13 @@
 """
-API key authentication middleware.
+API key and password authentication.
 
-Every protected endpoint requires:
+API Key:
   Header: X-API-Key: prs_<56 hex chars>
+  or Authorization: Bearer prs_...
+
+Password Login:
+  POST /auth/login with {email, password}
+  Returns API key on success
 
 Access rules:
   - /personas (GET)  → public
@@ -12,11 +17,15 @@ Access rules:
 """
 
 from typing import Optional
+from datetime import datetime, timezone
 
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Depends, Header, HTTPException, status, Request
 from sqlalchemy.orm import Session
 
-from api.db import User, get_db, get_user_by_api_key, has_purchased
+from api.db import (
+    User, get_db, get_user_by_api_key, has_purchased,
+    verify_password, record_login_attempt, check_lockout, clear_login_attempts,
+)
 
 
 def _require_api_key(
@@ -91,3 +100,46 @@ def require_persona_access(
                 f"POST /checkout/{persona_id} to buy for ${price:.0f}."
             ),
         )
+
+
+def authenticate_password(
+    db: Session,
+    email: str,
+    password: str,
+    client_ip: str,
+) -> User:
+    """
+    Authenticate user by email + password.
+    Track failed attempts and enforce lockout (5 attempts → 5 min lockout).
+    Raises HTTPException on failure.
+    """
+    user = db.query(User).filter(User.email == email, User.deleted_at == None).first()
+
+    # Check lockout before verifying password (prevent timing attack)
+    if user and check_lockout(user):
+        record_login_attempt(db, user.id, client_ip, success=False)
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Account temporarily locked. Please try again in a few minutes.",
+        )
+
+    # Constant-time check: always hash even if user not found (prevent user enumeration)
+    if user and user.password_hash and verify_password(user.password_hash, password):
+        record_login_attempt(db, user.id, client_ip, success=True)
+        clear_login_attempts(db, user.id)
+        if not user.active or user.deleted_at:
+            raise HTTPException(status_code=401, detail="Account inactive or deleted.")
+        return user
+
+    # Log failed attempt even if user not found (timing attack: always hash dummy)
+    if user:
+        record_login_attempt(db, user.id, client_ip, success=False)
+    else:
+        # User not found: still hash a dummy password to avoid timing attack
+        from api.db import hash_password
+        hash_password(password)
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid email or password.",
+    )

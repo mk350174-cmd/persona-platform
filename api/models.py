@@ -12,6 +12,15 @@ class RegisterRequest(BaseModel):
 
     model_config = ConfigDict(extra='forbid')
     email: EmailStr = Field(..., description="Your email address")
+    password: str | None = Field(None, min_length=8, max_length=128, description="Optional password for /auth/login")
+
+
+class LoginRequest(BaseModel):
+    """Login request (email + password)."""
+
+    model_config = ConfigDict(extra='forbid')
+    email: EmailStr = Field(..., description="Email address")
+    password: str = Field(..., min_length=1, max_length=128, description="Password")
 
 
 class VerifyEmailRequest(BaseModel):

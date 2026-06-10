@@ -10,11 +10,15 @@ import os
 import secrets
 from datetime import datetime, timedelta, timezone
 
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 from sqlalchemy import (
     Column, String, DateTime, Boolean, ForeignKey,
     Integer, Index, create_engine, UniqueConstraint,
 )
 from sqlalchemy.orm import DeclarativeBase, relationship, sessionmaker, Session
+
+_pwd_hasher = PasswordHasher()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./persona_store.db")
 
@@ -40,6 +44,20 @@ def verify_api_key(stored_hash: str, provided_key: str) -> bool:
     return hashlib.sha256(provided_key.encode()).hexdigest() == stored_hash
 
 
+def hash_password(password: str) -> str:
+    """Argon2 hash for user passwords."""
+    return _pwd_hasher.hash(password)
+
+
+def verify_password(stored_hash: str, provided: str) -> bool:
+    """Verify password against Argon2 hash."""
+    try:
+        _pwd_hasher.verify(stored_hash, provided)
+        return True
+    except VerifyMismatchError:
+        return False
+
+
 # ── Models ─────────────────────────────────────────────────────────────────────
 
 class User(Base):
@@ -52,16 +70,23 @@ class User(Base):
     api_key           = Column(String(64), unique=True, nullable=False, index=True)
     # SHA-256 hash of the full key for secure verification.
     api_key_hash      = Column(String(64), nullable=True, index=True)
+    # Optional password for /auth/login (in addition to API key auth)
+    password_hash     = Column(String(255), nullable=True)
     created_at        = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     active            = Column(Boolean, default=True)
     deleted_at        = Column(DateTime, nullable=True)
     email_verified    = Column(Boolean, default=False)
     email_verified_at = Column(DateTime, nullable=True)
+    # Failed login tracking (for rate limiting / lockout)
+    failed_login_attempts = Column(Integer, default=0)
+    last_failed_login_at  = Column(DateTime, nullable=True)
+    lockout_until         = Column(DateTime, nullable=True)
 
     purchases             = relationship("Purchase", back_populates="user", lazy="select")
     usage_logs            = relationship("APIKeyUsage", back_populates="user", lazy="select")
     subscription          = relationship("Subscription", back_populates="user", uselist=False, lazy="select")
     verification_tokens   = relationship("EmailVerificationToken", back_populates="user", lazy="select")
+    login_attempts        = relationship("LoginAttempt", back_populates="user", lazy="select")
 
     @staticmethod
     def generate_api_key() -> str:
@@ -170,6 +195,22 @@ class AuditLog(Base):
     client_ip   = Column(String(45), nullable=True)
     timestamp   = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
     details     = Column(String(1000), nullable=True)
+
+
+class LoginAttempt(Base):
+    """Track login attempts for failed login detection and IP-based rate limiting."""
+    __tablename__ = "login_attempts"
+    __table_args__ = (
+        Index("ix_login_attempts_user_ip", "user_id", "client_ip", "attempted_at"),
+    )
+
+    id            = Column(Integer, primary_key=True, autoincrement=True)
+    user_id       = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    client_ip     = Column(String(45), nullable=False, index=True)
+    success       = Column(Boolean, nullable=False)  # True = successful, False = failed
+    attempted_at  = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+
+    user = relationship("User", back_populates="login_attempts")
 
 
 # ── Init ───────────────────────────────────────────────────────────────────────
@@ -448,3 +489,53 @@ def is_stripe_event_processed(db: Session, event_id: str) -> bool:
 def mark_stripe_event_processed(db: Session, event_id: str, event_type: str) -> None:
     db.add(StripeEvent(id=event_id, type=event_type))
     db.commit()
+
+
+# ── Login attempt tracking & lockout ──────────────────────────────────────────
+
+def record_login_attempt(
+    db: Session,
+    user_id: str,
+    client_ip: str,
+    success: bool,
+) -> None:
+    """Record a login attempt for failed login tracking and rate limiting."""
+    attempt = LoginAttempt(user_id=user_id, client_ip=client_ip, success=success)
+    db.add(attempt)
+
+    if not success:
+        user = db.query(User).filter(User.id == user_id).first()
+        if user:
+            user.failed_login_attempts = (user.failed_login_attempts or 0) + 1
+            user.last_failed_login_at = datetime.now(timezone.utc)
+
+            if user.failed_login_attempts >= 5:
+                user.lockout_until = datetime.now(timezone.utc) + timedelta(minutes=5)
+
+    db.commit()
+
+
+def check_lockout(user: User) -> bool:
+    """Check if user is currently locked out due to failed login attempts."""
+    if user.lockout_until is None:
+        return False
+    now = datetime.now(timezone.utc)
+    # Handle both timezone-aware and naive datetimes
+    lockout = user.lockout_until
+    if lockout.tzinfo is None:
+        lockout = lockout.replace(tzinfo=timezone.utc)
+    if now < lockout:
+        return True
+    user.lockout_until = None
+    user.failed_login_attempts = 0
+    return False
+
+
+def clear_login_attempts(db: Session, user_id: str) -> None:
+    """Clear failed login counter after successful login."""
+    user = db.query(User).filter(User.id == user_id).first()
+    if user:
+        user.failed_login_attempts = 0
+        user.last_failed_login_at = None
+        user.lockout_until = None
+        db.commit()

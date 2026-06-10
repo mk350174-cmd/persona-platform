@@ -27,7 +27,7 @@ def upgrade() -> None:
     conn = op.get_bind()
     is_sqlite = conn.dialect.name == "sqlite"
 
-    # ── 1. users: api_key_hash, email_verified, email_verified_at, deleted_at ──
+    # ── 1. users: new security & password columns ──────────────────────────────
 
     if is_sqlite:
         with op.batch_alter_table("users") as batch_op:
@@ -35,11 +35,19 @@ def upgrade() -> None:
             batch_op.add_column(sa.Column("email_verified", sa.Boolean(), nullable=True, server_default="0"))
             batch_op.add_column(sa.Column("email_verified_at", sa.DateTime(), nullable=True))
             batch_op.add_column(sa.Column("deleted_at", sa.DateTime(), nullable=True))
+            batch_op.add_column(sa.Column("password_hash", sa.String(255), nullable=True))
+            batch_op.add_column(sa.Column("failed_login_attempts", sa.Integer(), nullable=True, server_default="0"))
+            batch_op.add_column(sa.Column("last_failed_login_at", sa.DateTime(), nullable=True))
+            batch_op.add_column(sa.Column("lockout_until", sa.DateTime(), nullable=True))
     else:
         op.add_column("users", sa.Column("api_key_hash", sa.String(64), nullable=True))
         op.add_column("users", sa.Column("email_verified", sa.Boolean(), nullable=True, server_default="false"))
         op.add_column("users", sa.Column("email_verified_at", sa.DateTime(), nullable=True))
         op.add_column("users", sa.Column("deleted_at", sa.DateTime(), nullable=True))
+        op.add_column("users", sa.Column("password_hash", sa.String(255), nullable=True))
+        op.add_column("users", sa.Column("failed_login_attempts", sa.Integer(), nullable=True, server_default="0"))
+        op.add_column("users", sa.Column("last_failed_login_at", sa.DateTime(), nullable=True))
+        op.add_column("users", sa.Column("lockout_until", sa.DateTime(), nullable=True))
 
     # ── 2. Data migration: hash existing plaintext API keys, store prefix ──────
 
@@ -127,13 +135,33 @@ def upgrade() -> None:
     except Exception:
         pass  # Table already exists from a previous migration
 
+    # ── 8. login_attempts table ────────────────────────────────────────────────
+
+    op.create_table(
+        "login_attempts",
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        sa.Column("client_ip", sa.String(45), nullable=False),
+        sa.Column("success", sa.Boolean(), nullable=False),
+        sa.Column("attempted_at", sa.DateTime(), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_index("ix_login_attempts_user_ip_ts", "login_attempts", ["user_id", "client_ip", "attempted_at"])
+    op.create_index("ix_login_attempts_client_ip", "login_attempts", ["client_ip"])
+
 
 def downgrade() -> None:
     conn = op.get_bind()
     is_sqlite = conn.dialect.name == "sqlite"
 
+    op.drop_table("login_attempts")
     op.drop_table("audit_log")
     op.drop_table("email_verification_tokens")
+
+    try:
+        op.drop_table("api_key_rotation")
+    except Exception:
+        pass
 
     if is_sqlite:
         with op.batch_alter_table("subscriptions") as batch_op:
@@ -146,6 +174,10 @@ def downgrade() -> None:
             batch_op.drop_column("email_verified")
             batch_op.drop_column("email_verified_at")
             batch_op.drop_column("deleted_at")
+            batch_op.drop_column("password_hash")
+            batch_op.drop_column("failed_login_attempts")
+            batch_op.drop_column("last_failed_login_at")
+            batch_op.drop_column("lockout_until")
     else:
         op.drop_index("ix_users_api_key_hash", table_name="users")
         op.drop_column("subscriptions", "deleted_at")
@@ -154,3 +186,7 @@ def downgrade() -> None:
         op.drop_column("users", "email_verified")
         op.drop_column("users", "email_verified_at")
         op.drop_column("users", "deleted_at")
+        op.drop_column("users", "password_hash")
+        op.drop_column("users", "failed_login_attempts")
+        op.drop_column("users", "last_failed_login_at")
+        op.drop_column("users", "lockout_until")

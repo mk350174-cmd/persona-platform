@@ -53,7 +53,7 @@ import os
 from api.db import (
     init_db, get_db, create_user, get_user_by_email,
     create_email_verification_token, consume_verification_token,
-    has_pending_verification,
+    has_pending_verification, hash_password,
     User, log_usage,
 )
 from api.auth import get_current_user, require_persona_access
@@ -86,6 +86,7 @@ from api.exceptions import (
 )
 from api.models import (
     RegisterRequest,
+    LoginRequest,
     VerifyEmailRequest,
     RequestVerificationRequest,
     CompileRequest,
@@ -94,6 +95,7 @@ from api.models import (
     VoiceRequest,
 )
 from api.email_service import send_verification_email
+from api.auth import authenticate_password
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 
@@ -504,6 +506,7 @@ def register(request: Request, req: RegisterRequest, db: Session = Depends(get_d
     """
     Register a new account. Returns your API key — store it safely.
     One account per email address. A verification email is sent to confirm your address.
+    Optional: provide a password to enable /auth/login (alternative to API key).
     """
     existing = get_user_by_email(db, req.email)
     if existing:
@@ -512,6 +515,11 @@ def register(request: Request, req: RegisterRequest, db: Session = Depends(get_d
             detail="Email already registered. If you lost your API key, contact support.",
         )
     user, full_key = create_user(db, req.email)
+
+    # Set password if provided
+    if req.password:
+        user.password_hash = hash_password(req.password)
+        db.commit()
 
     # Send verification email (non-blocking; failure logged but doesn't block registration)
     token = create_email_verification_token(db, user.id)
@@ -531,6 +539,7 @@ def register(request: Request, req: RegisterRequest, db: Session = Depends(get_d
         "api_key": full_key,
         "email": user.email,
         "email_verified": user.email_verified,
+        "password_enabled": bool(req.password),
         "message": (
             "Store your API key safely — it won't be shown again. "
             "Use it in the X-API-Key header. "
@@ -578,6 +587,26 @@ def request_verification(request: Request, req: RequestVerificationRequest, db: 
     token = create_email_verification_token(db, user.id)
     send_verification_email(req.email, token)
     return {"message": "Verification email sent."}
+
+
+@app.post("/auth/login", tags=["auth"])
+@limiter.limit("10/hour")
+def login(request: Request, req: LoginRequest, db: Session = Depends(get_db)):
+    """
+    Login with email and password. Returns API key on success.
+    Failed attempts are tracked; 5 failures trigger 5-minute lockout.
+    """
+    client_ip = request.client.host if request.client else "unknown"
+    user = authenticate_password(db, req.email, req.password, client_ip)
+
+    return {
+        "api_key": user.api_key,  # Prefix stored in DB; full key not retrievable
+        "email": user.email,
+        "message": (
+            "Login successful. Use the API key prefix above "
+            "(stored in your client). To retrieve the full key, use /auth/register."
+        ),
+    }
 
 
 # ── Authenticated endpoints ────────────────────────────────────────────────────
