@@ -384,6 +384,43 @@ class PerformanceBaseline(Base):
     created_at      = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
 
 
+# ── Automatic Rollback (H94) ──────────────────────────────────────────────────
+
+class RollbackPolicy(Base):
+    """Configuration for automatic rollbacks."""
+    __tablename__ = "rollback_policies"
+
+    id                              = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    enabled                         = Column(Boolean, nullable=False, server_default="1")
+    error_rate_threshold_percent    = Column(Integer, nullable=False, server_default="2")  # 2%
+    latency_threshold_ms            = Column(Integer, nullable=False, server_default="500")
+    window_minutes                  = Column(Integer, nullable=False, server_default="5")
+    min_samples                     = Column(Integer, nullable=False, server_default="100")
+    cooldown_minutes                = Column(Integer, nullable=False, server_default="15")  # 15 min cooldown
+    require_approval                = Column(Boolean, nullable=False, server_default="0")
+    max_rollbacks_per_hour          = Column(Integer, nullable=False, server_default="3")
+    created_at                      = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    updated_at                      = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+
+
+class RollbackHistory(Base):
+    """History of rollback executions."""
+    __tablename__ = "rollback_history"
+    __table_args__ = (
+        Index("ix_rollback_history_initiated_at", "initiated_at"),
+        Index("ix_rollback_history_status", "status"),
+    )
+
+    id              = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    from_version    = Column(String(128), nullable=False)  # Current version before rollback
+    to_version      = Column(String(128), nullable=False)  # Version to rollback to
+    reason          = Column(String(64), nullable=False)  # error_rate_spike, latency_degradation, etc.
+    status          = Column(String(32), nullable=False, index=True)  # pending, in_progress, completed, failed
+    details         = Column(JSON, nullable=False, server_default="{}")  # Error details, metrics, etc.
+    initiated_at    = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
+    completed_at    = Column(DateTime, nullable=True, index=True)
+
+
 # ── Init ───────────────────────────────────────────────────────────────────────
 
 def init_db() -> None:

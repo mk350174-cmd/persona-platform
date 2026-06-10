@@ -74,6 +74,7 @@ from api.routers.persona_router import router as persona_router
 from api.routers.api_keys import router as api_keys_router
 from api.routers.feature_flags import router as feature_flags_router
 from api.routers.performance import router as performance_router
+from api.routers.rollback import router as rollback_router
 from persona_math.compiler import (
     compile_persona,
     compile_all_platforms,
@@ -190,6 +191,9 @@ app.include_router(feature_flags_router)
 
 # Performance Monitoring endpoints (metrics, regression detection) — see api/routers/performance.py
 app.include_router(performance_router)
+
+# Rollback Management endpoints (automatic rollback, self-healing) — see api/routers/rollback.py
+app.include_router(rollback_router)
 
 
 @app.middleware("http")
