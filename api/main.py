@@ -72,6 +72,7 @@ from persona_math.compiler import (
     SUPPORTED_TIERS,
 )
 from api.middleware.security_headers import SecurityHeadersMiddleware
+from api.middleware.audit_logger import AuditLoggerMiddleware
 from api.exceptions import (
     generic_exception_handler,
     validation_exception_handler,
@@ -119,6 +120,9 @@ app = FastAPI(
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Audit logging middleware (logs security events)
+app.add_middleware(AuditLoggerMiddleware)
 
 # Security headers middleware (must be added BEFORE CORS to ensure headers are not overwritten)
 app.add_middleware(SecurityHeadersMiddleware)
@@ -194,11 +198,15 @@ def _run_migrations() -> None:
 async def startup():
     # Validate critical security-related secrets
     stripe_secret = os.getenv("STRIPE_WEBHOOK_SECRET", "").strip()
-    if stripe_secret and len(stripe_secret) < 32:
-        raise RuntimeError(
-            "STRIPE_WEBHOOK_SECRET is configured but too short (< 32 chars). "
-            "This may indicate a misconfiguration. Please verify."
-        )
+    if stripe_secret:
+        if len(stripe_secret) < 32:
+            raise RuntimeError(
+                "STRIPE_WEBHOOK_SECRET is configured but too short (< 32 chars). "
+                "This may indicate a misconfiguration. Please verify."
+            )
+        logger.info("Stripe webhook secret validated at startup")
+    else:
+        logger.warning("STRIPE_WEBHOOK_SECRET not configured — webhook validation disabled")
 
     required = ["ANTHROPIC_API_KEY"]
     missing = [k for k in required if not os.getenv(k)]
