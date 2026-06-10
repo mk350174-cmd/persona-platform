@@ -10,6 +10,7 @@ Endpoints (public):
 Endpoints (requires X-API-Key):
   GET  /me
   GET  /me/purchases
+  GET  /v1/personas/{id}/image         → portrait image (must own/purchase persona)
   POST /checkout/{persona_id}          → Stripe checkout URL
   POST /checkout/{persona_id}/mock     → dev-only instant grant
   POST /v1/compile/{id}                → compile (purchased personas only)
@@ -27,6 +28,8 @@ Env vars:
   STRIPE_SECRET_KEY      sk_test_... or sk_live_...
   STRIPE_WEBHOOK_SECRET  whsec_...
   BASE_URL               http://localhost:8000
+
+See ASSET_MIGRATION.md for image URL migration guide (public → authenticated).
 """
 
 from fastapi import FastAPI, HTTPException, Depends, Request, Header, WebSocket
@@ -254,10 +257,21 @@ app.mount("/assets", StaticFiles(directory=str(_ASSETS_DIR)), name="assets")
 # External asset base URL — e.g. https://raw.githubusercontent.com/owner/repo/main
 # When set, image_url is always returned (remote 404s handled by frontend onerror).
 # When unset, falls back to local demo/assets/personas/ file existence check.
+#
+# DEPRECATED: Use GET /api/v1/personas/{persona_id}/image (authenticated) instead.
+# See ASSET_MIGRATION.md for migration guide.
 _PERSONA_ASSETS_BASE = os.getenv("PERSONA_ASSETS_BASE_URL", "").rstrip("/")
 
 
 def _persona_image_url(persona_id: str) -> str | None:
+    """
+    Get persona image URL.
+
+    DEPRECATED: Construct URLs to GET /api/v1/personas/{persona_id}/image instead.
+    Public /assets/personas/{id}.png serving will be removed in a future release.
+
+    See ASSET_MIGRATION.md for migration guide.
+    """
     if _PERSONA_ASSETS_BASE:
         return f"{_PERSONA_ASSETS_BASE}/{persona_id}.png"
     img_path = _ASSETS_DIR / "personas" / f"{persona_id}.png"
