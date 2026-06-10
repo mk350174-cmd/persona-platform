@@ -41,6 +41,7 @@ def create_checkout_session(
     db: Session,
     tier: str | None = None,
     promo: str | None = None,
+    referrer_id: str | None = None,
 ) -> dict:
     """
     Create a Stripe Checkout Session for a persona purchase or subscription.
@@ -52,6 +53,8 @@ def create_checkout_session(
         If provided, creates a subscription checkout instead of one-time purchase.
     promo : str, optional
         Promo code for discount (B14). Applies to both persona and subscription checkouts.
+    referrer_id : str, optional
+        User ID of the referrer (B21). Used to issue referral credit on purchase.
 
     Returns
     -------
@@ -65,7 +68,7 @@ def create_checkout_session(
 
     # Handle subscription tier checkout (B13)
     if tier:
-        return create_subscription_session(user, tier, db, promo=promo)
+        return create_subscription_session(user, tier, db, promo=promo, referrer_id=referrer_id)
 
     # One-time persona purchase
     price_usd = persona_meta.get("price_usd", 0)
@@ -121,6 +124,7 @@ def create_checkout_session(
                 "persona_id": persona_id,
                 "original_price_cents": _price_cents(price_usd),
                 "discount_cents": discount_cents,
+                "referrer_id": referrer_id or "",  # B21: referrer for credit issuance
             },
             customer_email=user.email,
         )
@@ -158,18 +162,36 @@ def handle_webhook(raw_body: bytes, stripe_signature: str, db: Session) -> dict:
     if event_type == "checkout.session.completed":
         meta = obj.get("metadata", {})
         user_id = meta.get("user_id")
+        amount_cents = obj.get("amount_total", 0)
 
         if mode == "subscription":
-            # Recurring subscription purchase
+            # Recurring subscription purchase (B13 annual support)
             tier = meta.get("subscription_tier")
             stripe_sub_id = obj.get("subscription")
             stripe_customer_id = obj.get("customer")
+            billing_period = meta.get("billing_period", "month")
             if user_id and tier:
                 upsert_subscription(db, user_id, tier, stripe_sub_id, stripe_customer_id)
+                # Update stripe_customer_id on User (B13 multi-currency support)
+                from api.db import User as UserModel
+                user = db.query(UserModel).filter(UserModel.id == user_id).first()
+                if user:
+                    user.stripe_customer_id = stripe_customer_id
+                    db.commit()
+                # B17: Record invoice for subscription
+                if stripe_sub_id:
+                    record_invoice(
+                        db,
+                        user_id=user_id,
+                        stripe_invoice_id=f"{stripe_sub_id}:{obj['id']}",
+                        amount_usd_cents=amount_cents,
+                        status="paid",
+                        issued_at=None,  # Use current time
+                        pdf_url=obj.get("invoice"),  # Stripe invoice URL
+                    )
         else:
             # One-time persona purchase
             persona_id = meta.get("persona_id")
-            amount_cents = obj.get("amount_total")
             if user_id and persona_id:
                 if not has_purchased(db, user_id, persona_id):
                     record_purchase(
@@ -179,6 +201,12 @@ def handle_webhook(raw_body: bytes, stripe_signature: str, db: Session) -> dict:
                         stripe_session_id=obj["id"],
                         amount_cents=amount_cents,
                     )
+                    # B21: Issue referral credit if referrer_id is in request context
+                    # (This is passed from the checkout endpoint)
+                    # For now, we store the referrer_id in metadata if available
+                    referrer_id = meta.get("referrer_id")
+                    if referrer_id and referrer_id != user_id:
+                        issue_referral_credit(db, referrer_id, user_id, amount_cents=500)  # $5 default
 
     elif event_type in ("customer.subscription.deleted", "customer.subscription.updated"):
         stripe_sub_id = obj.get("id")
@@ -204,6 +232,7 @@ def create_subscription_session(
     tier: str,
     db: Session,
     promo: str | None = None,
+    referrer_id: str | None = None,
 ) -> dict:
     """
     Create a Stripe Checkout Session for a subscription (monthly or annual — B13).
@@ -214,6 +243,8 @@ def create_subscription_session(
         Subscription tier: basic_monthly, basic_annual, pro_monthly, pro_annual
     promo : str, optional
         Promo code for discount (B14).
+    referrer_id : str, optional
+        User ID of the referrer (B21). Used to issue referral credit on purchase.
 
     Returns {checkout_url, session_id, tier, discount_percent}
     """
@@ -271,6 +302,7 @@ def create_subscription_session(
                 "subscription_tier": tier,
                 "billing_period": billing_period,
                 "discount_percent": discount_percent,
+                "referrer_id": referrer_id or "",  # B21: referrer for credit issuance
             },
             customer_email=user.email,
         )

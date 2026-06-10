@@ -49,6 +49,7 @@ import asyncio
 import logging
 import time
 import os
+import stripe
 
 from api.db import (
     init_db, get_db, create_user, get_user_by_email,
@@ -171,6 +172,9 @@ app.add_exception_handler(Exception, generic_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(SQLAlchemyError, database_exception_handler)
 app.add_exception_handler(ValueError, value_error_handler)
+
+# Configure Stripe for payment processing
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "")
 
 # PersonaNeedle endpoints (CEID / drift / voice / profile / history) — see api/routers/persona_router.py
 app.include_router(persona_router, prefix="/api/v1")
@@ -687,14 +691,14 @@ def checkout(
         raise HTTPException(status_code=404, detail=f"Persona '{persona_id}' not found.")
 
     # B21: If referral code provided, verify it exists
+    referrer_id = None
     if ref:
         ref_code = get_referral_code_by_code(db, ref)
         if not ref_code:
             raise HTTPException(status_code=400, detail="Invalid referral code.")
-        # Link referrer for later credit issuance
-        request.state.referrer_id = ref_code.referrer_id
+        referrer_id = ref_code.referrer_id
 
-    return create_checkout_session(user, persona_id, meta, db, tier=tier, promo=promo)
+    return create_checkout_session(user, persona_id, meta, db, tier=tier, promo=promo, referrer_id=referrer_id)
 
 
 @app.post("/checkout/{persona_id}/mock", tags=["payments"])
@@ -781,6 +785,112 @@ def cancel_my_subscription(
     if not cancelled:
         raise HTTPException(status_code=404, detail="No active subscription found.")
     return {"status": "cancelled"}
+
+
+# ── Referral Program (B21) ────────────────────────────────────────────────────
+
+@app.post("/me/referral-code", tags=["payments"])
+def get_my_referral_code(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Get or create a referral code for earning credits.
+    Share the referral URL with friends — when they sign up and make a purchase,
+    you get $5 credit toward your next purchase.
+    """
+    code = generate_referral_code(db, user.id)
+    return {
+        "code": code,
+        "url": f"{BASE_URL}?ref={code}",
+        "message": "Share this code with friends to earn $5 credits per signup + first purchase.",
+    }
+
+
+# ── Wallet/Credits (B22) ──────────────────────────────────────────────────────
+
+@app.get("/me/wallet", tags=["payments"])
+def get_wallet_balance(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Get your wallet balance (in cents).
+    Credit is automatically deducted from wallet before charging Stripe.
+    """
+    wallet = get_or_create_wallet(db, user.id)
+    return {
+        "balance_cents": wallet.balance_cents or 0,
+        "balance_usd": (wallet.balance_cents or 0) / 100,
+    }
+
+
+# ── Invoices (B17) ────────────────────────────────────────────────────────────
+
+@app.get("/me/invoices", tags=["payments"])
+def get_my_invoices(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    limit: int = 50,
+):
+    """
+    Get your recent invoices for accounting and tax purposes.
+    Each invoice includes a link to the PDF for download.
+    """
+    from api.db import get_user_invoices
+    invoices = get_user_invoices(db, user.id, limit=limit)
+    return {
+        "invoices": [
+            {
+                "id": inv.id,
+                "stripe_invoice_id": inv.stripe_invoice_id,
+                "amount_usd": inv.amount_usd_cents / 100,
+                "status": inv.status,
+                "issued_at": inv.issued_at.isoformat() if inv.issued_at else None,
+                "due_at": inv.due_at.isoformat() if inv.due_at else None,
+                "pdf_url": inv.pdf_url,
+            }
+            for inv in invoices
+        ]
+    }
+
+
+# ── Billing Portal (B16) ──────────────────────────────────────────────────────
+
+@app.post("/billing/portal", tags=["payments"])
+def create_billing_portal_session(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Create a Stripe Billing Portal session for managing subscriptions.
+    Returns a redirect URL to Stripe's customer portal where you can:
+    - View and download invoices
+    - Update payment method
+    - Cancel subscription
+    - View billing history
+    """
+    if not stripe.api_key:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Payment system not configured.",
+        )
+
+    if not user.stripe_customer_id:
+        raise HTTPException(
+            status_code=400,
+            detail="No subscription found. Make a subscription purchase first.",
+        )
+
+    try:
+        import stripe
+        session = stripe.billing_portal.Session.create(
+            customer=user.stripe_customer_id,
+            return_url=f"{BASE_URL}/me",
+        )
+        return {"url": session.url}
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Billing portal error: {str(e)}")
 
 
 # ── Stripe webhook (no auth — Stripe sends directly) ──────────────────────────
