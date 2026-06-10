@@ -16,12 +16,15 @@ personas raise HTTP 404.
 from __future__ import annotations
 
 from typing import Optional
+from pathlib import Path
 
 import numpy as np
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from api import needle_service
+from api.auth import get_current_user, require_persona_access
 from persona_math.persona_library import get_library_persona, PERSONA_LIBRARY, search_personas
 
 router = APIRouter(tags=["personas"])
@@ -89,3 +92,47 @@ def get_persona_history(persona_id: str):
         "drift_events": g.get_drift_events(persona_id),
         "conversations": g.get_memories(persona_id, limit=20),
     }
+
+
+@router.get("/personas/{persona_id}/image")
+def get_persona_image(
+    persona_id: str,
+    current_user = Depends(get_current_user),
+    x_api_key: Optional[str] = Header(None),
+):
+    """
+    Get persona portrait image (authenticated, rate-limited).
+
+    Requires:
+    - Valid API key (X-API-Key header)
+    - User has purchased persona or has admin access
+
+    Returns:
+    - PNG image file
+    - 404 if persona not found or image missing
+    - 403 if not authenticated/authorized
+    """
+    _require(persona_id)
+
+    # Require persona access (checks purchase/subscription)
+    access = require_persona_access(current_user, persona_id)
+    if not access:
+        raise HTTPException(status_code=403, detail="Not authorized to access this persona")
+
+    # Construct image path
+    demo_dir = Path(__file__).parent.parent.parent / "demo"
+    assets_dir = demo_dir / "assets"
+    img_path = assets_dir / "personas" / f"{persona_id}.png"
+
+    # Return image if exists
+    if img_path.exists():
+        return FileResponse(
+            path=img_path,
+            media_type="image/png",
+            headers={
+                "Cache-Control": "public, max-age=86400, immutable",
+                "ETag": f'"{persona_id}-{int(img_path.stat().st_mtime)}"',
+            }
+        )
+    else:
+        raise HTTPException(status_code=404, detail=f"Image not found for persona: {persona_id}")
