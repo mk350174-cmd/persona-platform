@@ -98,6 +98,20 @@ class APIKeyUsage(Base):
     tier       = Column(String(16), nullable=True)
     timestamp  = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
+
+class APIKeyRotation(Base):
+    """Track API key rotations and revocations for audit trail."""
+    __tablename__ = "api_key_rotation"
+
+    id            = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    user_id       = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
+    api_key       = Column(String(64), unique=True, nullable=False, index=True)
+    created_at    = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    deprecated_at = Column(DateTime, nullable=True)  # When rotated/revoked
+    reason        = Column(String(64), nullable=True)  # "rotation" | "revocation" | "admin_revoke"
+
+    user = relationship("User", foreign_keys=[user_id])
+
     user = relationship("User", back_populates="usage_logs")
 
 

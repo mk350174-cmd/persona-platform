@@ -21,13 +21,32 @@ from api.db import User, get_db, get_user_by_api_key, has_purchased
 
 def _require_api_key(
     x_api_key: Optional[str] = Header(default=None, alias="X-API-Key"),
+    authorization: Optional[str] = Header(default=None),
 ) -> str:
-    if not x_api_key or not x_api_key.startswith("prs_"):
+    """
+    Extract API key from either:
+    1. X-API-Key header: X-API-Key: prs_...
+    2. Authorization header: Authorization: Bearer prs_...
+    """
+    api_key = None
+
+    # Try Authorization header first (Bearer format)
+    if authorization:
+        parts = authorization.split()
+        if len(parts) == 2 and parts[0].lower() == "bearer" and parts[1].startswith("prs_"):
+            api_key = parts[1]
+
+    # Fall back to X-API-Key header
+    if not api_key and x_api_key and x_api_key.startswith("prs_"):
+        api_key = x_api_key
+
+    if not api_key:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing or invalid API key. Header: X-API-Key: prs_...",
+            detail="Missing or invalid API key. Use: Authorization: Bearer prs_... or X-API-Key: prs_...",
         )
-    return x_api_key
+
+    return api_key
 
 
 def get_current_user(

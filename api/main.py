@@ -10,6 +10,7 @@ Endpoints (public):
 Endpoints (requires X-API-Key):
   GET  /me
   GET  /me/purchases
+  GET  /v1/personas/{id}/image         → portrait image (must own/purchase persona)
   POST /checkout/{persona_id}          → Stripe checkout URL
   POST /checkout/{persona_id}/mock     → dev-only instant grant
   POST /v1/compile/{id}                → compile (purchased personas only)
@@ -27,15 +28,18 @@ Env vars:
   STRIPE_SECRET_KEY      sk_test_... or sk_live_...
   STRIPE_WEBHOOK_SECRET  whsec_...
   BASE_URL               http://localhost:8000
+
+See ASSET_MIGRATION.md for image URL migration guide (public → authenticated).
 """
 
-from fastapi import FastAPI, HTTPException, Depends, Request, Header, WebSocket
+from fastapi import FastAPI, HTTPException, Depends, Request, Header, WebSocket, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
-from pydantic import BaseModel, Field
+from fastapi.exceptions import RequestValidationError
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -62,12 +66,28 @@ from api.ws import persona_chat_ws
 from api.voice import synthesize_speech, tts_available
 from api.visual_params import get_visual_params
 from api.routers.persona_router import router as persona_router
+from api.routers.api_keys import router as api_keys_router
 from persona_math.compiler import (
     compile_persona,
     compile_all_platforms,
     compile_all_tiers,
     SUPPORTED_PLATFORMS,
     SUPPORTED_TIERS,
+)
+from api.middleware.security_headers import SecurityHeadersMiddleware
+from api.middleware.audit_logger import AuditLoggerMiddleware
+from api.exceptions import (
+    generic_exception_handler,
+    validation_exception_handler,
+    database_exception_handler,
+    value_error_handler,
+)
+from api.models import (
+    RegisterRequest,
+    CompileRequest,
+    AllPlatformsRequest,
+    AllTiersRequest,
+    VoiceRequest,
 )
 
 # ── Logging ───────────────────────────────────────────────────────────────────
@@ -84,7 +104,9 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["1000/hour"])
 
 # ── App init ───────────────────────────────────────────────────────────────────
 
-_CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",")]
+# CORS configuration: default to restrictive list, require explicit env var for production
+_CORS_DEFAULT = ""  # Empty string = no CORS (restrictive default)
+_CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", _CORS_DEFAULT).split(",") if o.strip()]
 
 app = FastAPI(
     title="Persona Compiler API",
@@ -97,16 +119,52 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+# Request body size limit middleware (prevent DoS via large payloads)
+# Limit: 10 MB (matches nginx client_max_body_size)
+@app.middleware("http")
+async def limit_request_size(request: Request, call_next):
+    """Limit request body size to prevent DoS attacks."""
+    if request.method in ["POST", "PUT", "PATCH"]:
+        content_length = request.headers.get("content-length", "0")
+        try:
+            size = int(content_length)
+            if size > 10_000_000:  # 10 MB limit
+                from fastapi.responses import JSONResponse
+                return JSONResponse(
+                    status_code=413,
+                    content={"error": "Payload too large (max 10 MB)"},
+                )
+        except ValueError:
+            pass  # Invalid content-length, let nginx handle it
+    return await call_next(request)
+
+
+# Audit logging middleware (logs security events)
+app.add_middleware(AuditLoggerMiddleware)
+
+# Security headers middleware (must be added BEFORE CORS to ensure headers are not overwritten)
+app.add_middleware(SecurityHeadersMiddleware)
+
+# CORS configuration: explicit origin list (no wildcards in production)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_CORS_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_CORS_ORIGINS if _CORS_ORIGINS else ["localhost:3000", "localhost:8000"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["authorization", "content-type"],
 )
+
+# Register custom exception handlers (must be after app initialization)
+app.add_exception_handler(Exception, generic_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(SQLAlchemyError, database_exception_handler)
+app.add_exception_handler(ValueError, value_error_handler)
 
 # PersonaNeedle endpoints (CEID / drift / voice / profile / history) — see api/routers/persona_router.py
 app.include_router(persona_router, prefix="/api/v1")
+
+# API Key management endpoints (rotation, revocation, list) — see api/routers/api_keys.py
+app.include_router(api_keys_router)
 
 
 @app.middleware("http")
@@ -159,10 +217,23 @@ def _run_migrations() -> None:
 
 @app.on_event("startup")
 async def startup():
+    # Validate critical security-related secrets
+    stripe_secret = os.getenv("STRIPE_WEBHOOK_SECRET", "").strip()
+    if stripe_secret:
+        if len(stripe_secret) < 32:
+            raise RuntimeError(
+                "STRIPE_WEBHOOK_SECRET is configured but too short (< 32 chars). "
+                "This may indicate a misconfiguration. Please verify."
+            )
+        logger.info("Stripe webhook secret validated at startup")
+    else:
+        logger.warning("STRIPE_WEBHOOK_SECRET not configured — webhook validation disabled")
+
     required = ["ANTHROPIC_API_KEY"]
     missing = [k for k in required if not os.getenv(k)]
     if missing:
         logger.warning("Missing recommended env vars: %s", missing)
+
     _run_migrations()
     _AUDIO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     asyncio.create_task(_audio_cache_cleaner())
@@ -180,10 +251,21 @@ app.mount("/assets", StaticFiles(directory=str(_ASSETS_DIR)), name="assets")
 # External asset base URL — e.g. https://raw.githubusercontent.com/owner/repo/main
 # When set, image_url is always returned (remote 404s handled by frontend onerror).
 # When unset, falls back to local demo/assets/personas/ file existence check.
+#
+# DEPRECATED: Use GET /api/v1/personas/{persona_id}/image (authenticated) instead.
+# See ASSET_MIGRATION.md for migration guide.
 _PERSONA_ASSETS_BASE = os.getenv("PERSONA_ASSETS_BASE_URL", "").rstrip("/")
 
 
 def _persona_image_url(persona_id: str) -> str | None:
+    """
+    Get persona image URL.
+
+    DEPRECATED: Construct URLs to GET /api/v1/personas/{persona_id}/image instead.
+    Public /assets/personas/{id}.png serving will be removed in a future release.
+
+    See ASSET_MIGRATION.md for migration guide.
+    """
     if _PERSONA_ASSETS_BASE:
         return f"{_PERSONA_ASSETS_BASE}/{persona_id}.png"
     img_path = _ASSETS_DIR / "personas" / f"{persona_id}.png"
@@ -191,7 +273,10 @@ def _persona_image_url(persona_id: str) -> str | None:
 
 @app.get("/demo", include_in_schema=False)
 def serve_demo():
-    """Simulation page (GET /demo?persona=machiavelli&tier=full&api_key=prs_...)."""
+    """
+    Simulation page (GET /demo?persona=machiavelli&tier=text).
+    WebSocket auth: Connect with Authorization header (Authorization: Bearer prs_...).
+    """
     demo_file = _DEMO_DIR / "index.html"
     if demo_file.exists():
         return FileResponse(str(demo_file))
@@ -278,43 +363,37 @@ def serve_config_js():
 async def ws_chat(
     websocket: WebSocket,
     persona_id: str,
-    api_key: Optional[str] = None,
     tier: str = "text",
     platform: str = "raw",
 ):
     """
     Real-time persona conversation with streaming text + optional voice + visual params.
-    Query params: api_key=prs_..., tier=text|voice|full, platform=gemini|claude|openai|raw
+    Auth: Authorization header required (Authorization: Bearer prs_...)
+    Query params: tier=text|voice|full, platform=raw
     """
-    _api_key  = websocket.query_params.get("api_key", api_key)
+    # Extract API key from Authorization header
+    auth_header = websocket.headers.get("authorization", "")
+    api_key = None
+
+    if auth_header.startswith("Bearer "):
+        api_key = auth_header[7:]  # Remove "Bearer " prefix
+
+    if not api_key or not api_key.startswith("prs_"):
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Missing Authorization header")
+        return
+
     _tier     = websocket.query_params.get("tier", tier)
     _platform = websocket.query_params.get("platform", platform)
-    await persona_chat_ws(websocket, persona_id, _api_key, _tier, _platform)
+    await persona_chat_ws(websocket, persona_id, api_key, _tier, _platform)
 
 
 # ── Request models ─────────────────────────────────────────────────────────────
 
-class RegisterRequest(BaseModel):
-    email: str = Field(..., description="Your email address")
-
-
-class CompileRequest(BaseModel):
-    platform: str = Field(default="gemini", description="gemini | claude | openai | raw")
-    tier: str = Field(default="standard", description="nano | standard | rich")
-
-
-class AllPlatformsRequest(BaseModel):
-    tier: str = Field(default="standard")
-
-
-class AllTiersRequest(BaseModel):
-    platform: str = Field(default="gemini")
-
-
 # ── Public endpoints ───────────────────────────────────────────────────────────
 
 @app.get("/health", tags=["system"])
-def health(db: Session = Depends(get_db)):
+@limiter.limit("100/hour")  # Allow monitoring, but prevent enumeration DoS
+async def health(request: Request, db: Session = Depends(get_db)):
     try:
         db.execute(text("SELECT 1"))
         db_ok = True
@@ -329,7 +408,9 @@ def health(db: Session = Depends(get_db)):
 
 
 @app.get("/personas", tags=["catalog"])
+@limiter.limit("100/hour")  # Per-IP rate limit to prevent enumeration/scraping
 def get_catalog(
+    request: Request,
     domain: Optional[str] = None,
     tags: Optional[str] = None,
     q: Optional[str] = None,
@@ -384,7 +465,8 @@ def get_catalog(
 
 
 @app.get("/personas/stats/library", tags=["catalog"])
-def get_library_stats():
+@limiter.limit("50/hour")  # Prevent repeated scraping of stats data
+def get_library_stats(request: Request):
     """Library statistics: total personas, domain breakdown, avg price."""
     stats = library_stats()
     stats["catalog_ids_preview"] = list(PERSONA_LIBRARY.keys())[:20]
@@ -392,7 +474,8 @@ def get_library_stats():
 
 
 @app.get("/personas/{persona_id}", tags=["catalog"])
-def get_persona_detail(persona_id: str):
+@limiter.limit("200/hour")  # Higher limit for detail requests, but prevent scraping
+def get_persona_detail(request: Request, persona_id: str):
     """Persona detail with pricing. No auth required."""
     spec = PERSONA_LIBRARY.get(persona_id)
     if spec:
@@ -667,10 +750,6 @@ def compile_tiers(
     result = compile_all_tiers(P, persona_id=persona_id, platform=req.platform)
     _check_and_count(db, user, f"/v1/compile/{persona_id}/all-tiers", persona_id)
     return result
-
-
-class VoiceRequest(BaseModel):
-    text: str = Field(..., description="Text to synthesize as speech", min_length=1, max_length=2000)
 
 
 @app.post("/v1/compile/{persona_id}/voice", tags=["compile"])
