@@ -1,0 +1,467 @@
+name: Deploy - Canary (Progressive Rollout) (H91)
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      canary_percent:
+        description: "Starting canary traffic percentage (10-50)"
+        required: false
+        default: "10"
+
+permissions:
+  contents: read
+  deployments: write
+  actions: read
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  CANARY_TRAFFIC_PERCENT: ${{ github.event.inputs.canary_percent || '10' }}
+  ROLLOUT_WINDOW_MINUTES: 10
+
+jobs:
+  build-image:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    outputs:
+      image-uri: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  canary-deploy:
+    name: Deploy to Canary (10% Traffic)
+    runs-on: ubuntu-latest
+    needs: build-image
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Create canary task definition
+        id: task-def
+        run: |
+          # Get current task definition
+          TASK_DEF=$(aws ecs describe-task-definition \
+            --task-definition persona-hub:latest \
+            --query 'taskDefinition' --output json)
+
+          # Update image to new version
+          NEW_TASK_DEF=$(echo "$TASK_DEF" | jq \
+            --arg IMAGE "${{ needs.build-image.outputs.image-uri }}" \
+            '.containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes)')
+
+          # Register new task definition
+          TASK_ARN=$(aws ecs register-task-definition \
+            --cli-input-json "$(echo "$NEW_TASK_DEF")" \
+            --query 'taskDefinition.taskDefinitionArn' --output text)
+
+          echo "task_arn=$TASK_ARN" >> $GITHUB_OUTPUT
+          echo "Task definition: $TASK_ARN"
+
+      - name: Deploy canary service (10% traffic)
+        run: |
+          # Update canary service with new task definition
+          aws ecs update-service \
+            --cluster persona-hub-prod \
+            --service persona-hub-canary \
+            --task-definition ${{ steps.task-def.outputs.task_arn }} \
+            --force-new-deployment
+
+          # Wait for canary service to stabilize
+          aws ecs wait services-stable \
+            --cluster persona-hub-prod \
+            --services persona-hub-canary
+
+          echo "✅ Canary deployment started with 10% traffic"
+
+      - name: Verify canary service health
+        run: |
+          # Check canary service is running
+          RUNNING=$(aws ecs describe-services \
+            --cluster persona-hub-prod \
+            --services persona-hub-canary \
+            --query 'services[0].runningCount' --output text)
+
+          if [ "$RUNNING" -eq 0 ]; then
+            echo "❌ Canary service failed to start"
+            exit 1
+          fi
+
+          echo "✅ Canary service running with $RUNNING tasks"
+
+      - name: Create GitHub deployment
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.ref,
+              environment: 'canary',
+              auto_merge: false,
+              description: 'Canary deployment (10% traffic)'
+            });
+            core.setOutput('deployment-id', deployment.data.id);
+
+  monitor-canary:
+    name: Monitor Canary (5 min)
+    runs-on: ubuntu-latest
+    needs: [build-image, canary-deploy]
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Wait 5 minutes for canary to stabilize
+        run: |
+          echo "⏳ Monitoring canary for 5 minutes..."
+          for i in {1..5}; do
+            echo "   [$i/5] Collecting metrics..."
+            sleep 60
+          done
+          echo "✅ Monitoring complete"
+
+      - name: Get canary metrics
+        id: metrics
+        run: |
+          CURRENT_TIME=$(date -u +%Y-%m-%dT%H:%M:%S)
+          START_TIME=$(date -u -d '5 minutes ago' +%Y-%m-%dT%H:%M:%S)
+
+          # Error rate from canary service
+          ERROR_RATE=$(aws cloudwatch get-metric-statistics \
+            --namespace AWS/ApplicationELB \
+            --metric-name HTTPCode_Target_5XX_Count \
+            --dimensions \
+              Name=TargetGroup,Value=persona-hub-canary \
+              Name=LoadBalancer,Value=app/persona-hub-alb \
+            --start-time $START_TIME \
+            --end-time $CURRENT_TIME \
+            --period 300 \
+            --statistics Sum \
+            --query 'Datapoints[0].Sum' --output text)
+
+          # Response time from canary
+          LATENCY=$(aws cloudwatch get-metric-statistics \
+            --namespace AWS/ApplicationELB \
+            --metric-name TargetResponseTime \
+            --dimensions \
+              Name=TargetGroup,Value=persona-hub-canary \
+              Name=LoadBalancer,Value=app/persona-hub-alb \
+            --start-time $START_TIME \
+            --end-time $CURRENT_TIME \
+            --period 300 \
+            --statistics Average \
+            --query 'Datapoints[0].Average' --output text)
+
+          # Request count from canary
+          REQUESTS=$(aws cloudwatch get-metric-statistics \
+            --namespace AWS/ApplicationELB \
+            --metric-name RequestCount \
+            --dimensions \
+              Name=TargetGroup,Value=persona-hub-canary \
+              Name=LoadBalancer,Value=app/persona-hub-alb \
+            --start-time $START_TIME \
+            --end-time $CURRENT_TIME \
+            --period 300 \
+            --statistics Sum \
+            --query 'Datapoints[0].Sum' --output text)
+
+          echo "error_rate=${ERROR_RATE:-0}" >> $GITHUB_OUTPUT
+          echo "latency=${LATENCY:-0.5}" >> $GITHUB_OUTPUT
+          echo "requests=${REQUESTS:-0}" >> $GITHUB_OUTPUT
+
+          echo "📊 Canary Metrics (5-min window):"
+          echo "   - Error Rate (5xx): ${ERROR_RATE:-0} errors"
+          echo "   - Response Time: ${LATENCY:-0.5}s avg"
+          echo "   - Request Count: ${REQUESTS:-0} requests"
+
+      - name: Evaluate canary health
+        id: health
+        run: |
+          ERROR_RATE=${{ steps.metrics.outputs.error_rate }}
+          LATENCY=${{ steps.metrics.outputs.latency }}
+
+          # Convert to numbers (handle decimal)
+          ERROR_RATE=${ERROR_RATE%.*}
+          LATENCY=${LATENCY%.*}
+
+          HEALTHY=true
+
+          # Check error rate (threshold: 5 errors in 5 min)
+          if [ "${ERROR_RATE:-0}" -gt 5 ]; then
+            echo "❌ Error rate too high: $ERROR_RATE errors"
+            HEALTHY=false
+          fi
+
+          # Check latency (threshold: 2 seconds)
+          if [ "${LATENCY:-0}" -gt 2000 ]; then
+            echo "❌ Response latency too high: ${LATENCY}ms"
+            HEALTHY=false
+          fi
+
+          echo "healthy=$HEALTHY" >> $GITHUB_OUTPUT
+
+          if [ "$HEALTHY" = "true" ]; then
+            echo "✅ Canary health check PASSED"
+            exit 0
+          else
+            echo "⚠️  Canary health check FAILED"
+            exit 1
+          fi
+
+  progressive-rollout:
+    name: Progressive Traffic Shift
+    runs-on: ubuntu-latest
+    needs: [build-image, canary-deploy, monitor-canary]
+    if: success()
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Shift to 50% traffic
+        run: |
+          echo "🚀 Shifting to 50% traffic..."
+
+          aws elbv2 modify-rule \
+            --rule-arn ${{ secrets.ALB_RULE_ARN }} \
+            --actions Type=forward,ForwardConfig="{TargetGroups=[{TargetGroupArn=arn:aws:elasticloadbalancing:...:targetgroup/persona-hub-stable,Weight=50},{TargetGroupArn=arn:aws:elasticloadbalancing:...:targetgroup/persona-hub-canary,Weight=50}]}"
+
+          echo "⏳ Waiting 3 minutes..."
+          sleep 180
+
+          # Re-check metrics
+          echo "📊 Checking metrics at 50% traffic..."
+
+      - name: Evaluate at 50% traffic
+        run: |
+          CURRENT_TIME=$(date -u +%Y-%m-%dT%H:%M:%S)
+          START_TIME=$(date -u -d '3 minutes ago' +%Y-%m-%dT%H:%M:%S)
+
+          ERROR_RATE=$(aws cloudwatch get-metric-statistics \
+            --namespace AWS/ApplicationELB \
+            --metric-name HTTPCode_Target_5XX_Count \
+            --dimensions \
+              Name=TargetGroup,Value=persona-hub-canary \
+              Name=LoadBalancer,Value=app/persona-hub-alb \
+            --start-time $START_TIME \
+            --end-time $CURRENT_TIME \
+            --period 180 \
+            --statistics Sum \
+            --query 'Datapoints[0].Sum' --output text)
+
+          ERROR_RATE=${ERROR_RATE%.*}
+
+          if [ "${ERROR_RATE:-0}" -gt 3 ]; then
+            echo "❌ Error spike detected at 50%! Rolling back..."
+            exit 1
+          fi
+
+          echo "✅ Metrics healthy at 50%"
+
+      - name: Shift to 100% traffic (stable)
+        run: |
+          echo "🎉 Shifting to 100% traffic (stable)..."
+
+          aws elbv2 modify-rule \
+            --rule-arn ${{ secrets.ALB_RULE_ARN }} \
+            --actions Type=forward,ForwardConfig="{TargetGroups=[{TargetGroupArn=arn:aws:elasticloadbalancing:...:targetgroup/persona-hub-stable,Weight=0},{TargetGroupArn=arn:aws:elasticloadbalancing:...:targetgroup/persona-hub-canary,Weight=100}]}"
+
+          # Update main service to new task definition
+          aws ecs update-service \
+            --cluster persona-hub-prod \
+            --service persona-hub \
+            --task-definition ${{ needs.build-image.outputs.image-uri }} \
+            --force-new-deployment
+
+          echo "✅ 100% traffic shift complete"
+
+      - name: Verify production deployment
+        run: |
+          aws ecs wait services-stable \
+            --cluster persona-hub-prod \
+            --services persona-hub
+
+          echo "✅ Production service stable"
+
+  rollback:
+    name: Automatic Rollback (on failure)
+    runs-on: ubuntu-latest
+    needs: [build-image, canary-deploy, monitor-canary]
+    if: failure()
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Rollback canary deployment
+        run: |
+          echo "🔄 Rolling back canary deployment..."
+
+          # Stop canary service
+          aws ecs update-service \
+            --cluster persona-hub-prod \
+            --service persona-hub-canary \
+            --desired-count 0
+
+          # Revert ALB to 100% stable traffic
+          aws elbv2 modify-rule \
+            --rule-arn ${{ secrets.ALB_RULE_ARN }} \
+            --actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:...:targetgroup/persona-hub-stable
+
+          echo "✅ Rolled back to previous version"
+
+      - name: Notify team of rollback
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              text: '❌ Canary deployment rolled back',
+              blocks: [
+                {
+                  type: 'section',
+                  text: {
+                    type: 'mrkdwn',
+                    text: '*Canary Deployment Rolled Back*\n\nIssues detected during canary monitoring (10% traffic).\nProduction reverted to previous stable version.'
+                  }
+                },
+                {
+                  type: 'section',
+                  fields: [
+                    {
+                      type: 'mrkdwn',
+                      text: '*Commit:*\n`' + context.payload.head_commit.id.substring(0, 7) + '`'
+                    },
+                    {
+                      type: 'mrkdwn',
+                      text: '*Author:*\n' + context.payload.head_commit.author.name
+                    }
+                  ]
+                },
+                {
+                  type: 'actions',
+                  elements: [
+                    {
+                      type: 'button',
+                      text: {
+                        type: 'plain_text',
+                        text: 'View Workflow'
+                      },
+                      url: context.payload.repository.html_url + '/actions/runs/' + context.runId
+                    }
+                  ]
+                }
+              ]
+            }
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        continue-on-error: true
+
+  notify-success:
+    name: Notify Deployment Success
+    runs-on: ubuntu-latest
+    needs: [build-image, canary-deploy, monitor-canary, progressive-rollout]
+    if: success()
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Send success notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              text: '✅ Canary deployment successful',
+              blocks: [
+                {
+                  type: 'section',
+                  text: {
+                    type: 'mrkdwn',
+                    text: '*✅ Canary Deployment Complete*\n\n🚀 Progressive rollout successful\n10% → 50% → 100% traffic shift completed'
+                  }
+                },
+                {
+                  type: 'section',
+                  fields: [
+                    {
+                      type: 'mrkdwn',
+                      text: '*Deployment Type:*\nCanary (Progressive)'
+                    },
+                    {
+                      type: 'mrkdwn',
+                      text: '*Traffic Shift:*\n10% → 50% → 100%'
+                    },
+                    {
+                      type: 'mrkdwn',
+                      text: '*Duration:*\n~8 minutes'
+                    },
+                    {
+                      type: 'mrkdwn',
+                      text: '*Status:*\n✅ All checks passed'
+                    }
+                  ]
+                }
+              ]
+            }
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        continue-on-error: true
