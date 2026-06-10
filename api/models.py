@@ -2,7 +2,7 @@
 
 from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, EmailStr
 
 
 # ── Request Models (Input Validation with extra='forbid') ───────────────────────
@@ -10,8 +10,22 @@ from pydantic import BaseModel, Field, ConfigDict
 class RegisterRequest(BaseModel):
     """User registration request."""
 
-    model_config = ConfigDict(extra='forbid')  # Reject unknown fields
-    email: str = Field(..., description="Your email address")
+    model_config = ConfigDict(extra='forbid')
+    email: EmailStr = Field(..., description="Your email address")
+
+
+class VerifyEmailRequest(BaseModel):
+    """Email verification via token (query param or body)."""
+
+    model_config = ConfigDict(extra='forbid')
+    token: str = Field(..., min_length=20, max_length=128, description="Verification token from email")
+
+
+class RequestVerificationRequest(BaseModel):
+    """Re-send email verification link."""
+
+    model_config = ConfigDict(extra='forbid')
+    email: EmailStr = Field(..., description="Email address to resend verification to")
 
 
 class CompileRequest(BaseModel):
@@ -87,10 +101,10 @@ class PersonaDetailResponse(PersonaBasicResponse):
     model_config = ConfigDict(extra='forbid')
     tags: Optional[list[str]]
     system_instruction_preview: Optional[str]
-    ceid_score: Optional[float]  # Only if requested
-    metallic_score: Optional[float]  # Only if requested
-    quadrant: Optional[str]  # Only if requested
-    power_ethics_ratio: Optional[float]  # Only if requested
+    ceid_score: Optional[float]
+    metallic_score: Optional[float]
+    quadrant: Optional[str]
+    power_ethics_ratio: Optional[float]
 
 
 class HealthResponse(BaseModel):

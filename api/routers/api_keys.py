@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from api.db import User, APIKeyRotation, get_db
+from api.db import User, APIKeyRotation, get_db, hash_api_key
 from api.auth import get_current_user
 
 router = APIRouter(prefix="/me/api-keys", tags=["api-keys"])
@@ -15,7 +15,7 @@ class RotateKeyResponse(BaseModel):
     """Response when rotating API key."""
 
     new_api_key: str
-    old_api_key_deprecated: str
+    old_key_prefix: str
     message: str
 
 
@@ -23,7 +23,7 @@ class APIKeyInfo(BaseModel):
     """Information about an API key."""
 
     key_id: str
-    key_preview: str  # First 8 chars + last 4 chars
+    key_preview: str
     created_at: datetime
     deprecated_at: datetime | None
     status: str  # "active" | "deprecated" | "revoked"
@@ -43,29 +43,34 @@ def rotate_api_key(
 ):
     """
     Rotate API key: Generate new key, deprecate old key.
-    Old key remains valid for grace period (7 days) before expiration.
+    New key is shown once — store it safely.
+    Old key prefix remains valid for 7 days to allow client migration.
     """
-    old_key = user.api_key
+    old_prefix = user.api_key  # Already a prefix after migration
 
     # Generate new key
-    new_key = User.generate_api_key()
-    user.api_key = new_key
+    full_key = User.generate_api_key()
+    new_prefix = full_key[:20]
+    new_hash = hash_api_key(full_key)
+
+    user.api_key = new_prefix
+    user.api_key_hash = new_hash
     db.add(user)
     db.flush()
 
-    # Log old key as deprecated in rotation history
+    # Log old key as deprecated
     old_rotation = APIKeyRotation(
         user_id=user.id,
-        api_key=old_key,
+        api_key=old_prefix,
         deprecated_at=datetime.now(timezone.utc),
         reason="rotation",
     )
     db.add(old_rotation)
 
-    # Log new key in rotation history
+    # Log new key
     new_rotation = APIKeyRotation(
         user_id=user.id,
-        api_key=new_key,
+        api_key=new_prefix,
         reason="rotation",
     )
     db.add(new_rotation)
@@ -73,11 +78,11 @@ def rotate_api_key(
     db.commit()
 
     return RotateKeyResponse(
-        new_api_key=new_key,
-        old_api_key_deprecated=old_key,
+        new_api_key=full_key,
+        old_key_prefix=old_prefix,
         message=(
-            "API key rotated successfully. Old key is deprecated but still valid. "
-            "Update your clients within 7 days."
+            "API key rotated. Store the new key safely — it won't be shown again. "
+            "Old key prefix is deprecated; update your clients within 7 days."
         ),
     )
 
@@ -88,45 +93,42 @@ def revoke_api_key(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """
-    Revoke a specific API key by ID.
-    Note: Currently only supports revoking the current key.
-    """
-    # For MVP, only allow revoking the current key
-    if key_id != user.api_key[:8]:  # Compare preview (first 8 chars)
+    """Revoke a specific API key by ID and issue a replacement."""
+    current_prefix = user.api_key
+    if key_id != current_prefix[:8]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Can only revoke the current API key. Use /rotate to create a new one.",
         )
 
-    # Mark current key as revoked in history
+    # Mark current key as revoked
     current_rotation = APIKeyRotation(
         user_id=user.id,
-        api_key=user.api_key,
+        api_key=current_prefix,
         deprecated_at=datetime.now(timezone.utc),
         reason="revocation",
     )
     db.add(current_rotation)
 
-    # Generate and assign new key
-    new_key = User.generate_api_key()
-    user.api_key = new_key
+    # Issue replacement
+    full_key = User.generate_api_key()
+    new_prefix = full_key[:20]
+    user.api_key = new_prefix
+    user.api_key_hash = hash_api_key(full_key)
     db.add(user)
 
-    # Log new key
     new_rotation = APIKeyRotation(
         user_id=user.id,
-        api_key=new_key,
-        reason="rotation",  # After revocation
+        api_key=new_prefix,
+        reason="rotation",
     )
     db.add(new_rotation)
-
     db.commit()
 
     return {
         "status": "revoked",
-        "new_api_key": new_key,
-        "message": "Previous API key revoked. New key generated.",
+        "new_api_key": full_key,
+        "message": "Previous API key revoked. Store the new key safely.",
     }
 
 
@@ -135,31 +137,26 @@ def list_api_keys(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """
-    List all API keys (current and history) for the user.
-    Shows creation date, deprecation date, and status.
-    """
+    """List all API key entries (current and history) for the user."""
     rotations = db.query(APIKeyRotation).filter_by(user_id=user.id).order_by(
         APIKeyRotation.created_at.desc()
     ).all()
 
     keys = []
     for rotation in rotations:
-        key_preview = rotation.api_key[:8] + "..." + rotation.api_key[-4:]
+        prefix = rotation.api_key
+        key_preview = prefix[:8] + "..." + prefix[-4:] if len(prefix) >= 12 else prefix
+        is_active = prefix == user.api_key
         status_str = (
-            "active"
-            if rotation.api_key == user.api_key
-            else ("deprecated" if rotation.deprecated_at else "revoked")
+            "active" if is_active
+            else ("deprecated" if rotation.deprecated_at else "active")
         )
-
-        keys.append(
-            APIKeyInfo(
-                key_id=rotation.id,
-                key_preview=key_preview,
-                created_at=rotation.created_at,
-                deprecated_at=rotation.deprecated_at,
-                status=status_str,
-            )
-        )
+        keys.append(APIKeyInfo(
+            key_id=rotation.id,
+            key_preview=key_preview,
+            created_at=rotation.created_at,
+            deprecated_at=rotation.deprecated_at,
+            status=status_str,
+        ))
 
     return APIKeyListResponse(total=len(keys), keys=keys)

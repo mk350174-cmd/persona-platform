@@ -1,0 +1,95 @@
+name: Security Scanning
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 3 * * *"   # Daily 03:00 UTC
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+
+jobs:
+  gitleaks:
+    name: Secret Detection (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  bandit:
+    name: SAST Python (bandit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install bandit
+        run: pip install bandit[toml]
+
+      - name: Run bandit
+        run: |
+          bandit -r api/ persona_math/ needle/ persona_mcp/ \
+            --severity-level medium \
+            --confidence-level medium \
+            -f json -o bandit-report.json || true
+          bandit -r api/ persona_math/ needle/ persona_mcp/ \
+            --severity-level medium \
+            --confidence-level medium \
+            --exit-zero -f txt
+
+      - name: Upload bandit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json
+
+      - name: Fail on HIGH severity findings
+        run: |
+          python - <<'EOF'
+          import json, sys
+          with open("bandit-report.json") as f:
+              data = json.load(f)
+          highs = [r for r in data.get("results", []) if r.get("issue_severity") == "HIGH"]
+          if highs:
+              print(f"FAIL: {len(highs)} HIGH severity finding(s):")
+              for h in highs:
+                  print(f"  {h['filename']}:{h['line_number']} — {h['issue_text']}")
+              sys.exit(1)
+          print(f"OK: 0 HIGH severity findings")
+          EOF
+
+  trivy:
+    name: Dependency & Container Scan (trivy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          severity: "CRITICAL,HIGH"
+          exit-code: "1"
+          format: "sarif"
+          output: "trivy-results.sarif"
+
+      - name: Upload trivy SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-results.sarif

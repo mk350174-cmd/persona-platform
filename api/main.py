@@ -52,6 +52,8 @@ import os
 
 from api.db import (
     init_db, get_db, create_user, get_user_by_email,
+    create_email_verification_token, consume_verification_token,
+    has_pending_verification,
     User, log_usage,
 )
 from api.auth import get_current_user, require_persona_access
@@ -84,11 +86,14 @@ from api.exceptions import (
 )
 from api.models import (
     RegisterRequest,
+    VerifyEmailRequest,
+    RequestVerificationRequest,
     CompileRequest,
     AllPlatformsRequest,
     AllTiersRequest,
     VoiceRequest,
 )
+from api.email_service import send_verification_email
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 
@@ -490,12 +495,15 @@ def get_persona_detail(request: Request, persona_id: str):
     return data
 
 
+_REQUIRE_EMAIL_VERIFICATION = os.getenv("REQUIRE_EMAIL_VERIFICATION", "false").lower() == "true"
+
+
 @app.post("/auth/register", tags=["auth"])
 @limiter.limit("5/hour")
 def register(request: Request, req: RegisterRequest, db: Session = Depends(get_db)):
     """
     Register a new account. Returns your API key — store it safely.
-    One account per email address.
+    One account per email address. A verification email is sent to confirm your address.
     """
     existing = get_user_by_email(db, req.email)
     if existing:
@@ -503,15 +511,73 @@ def register(request: Request, req: RegisterRequest, db: Session = Depends(get_d
             status_code=409,
             detail="Email already registered. If you lost your API key, contact support.",
         )
-    user = create_user(db, req.email)
+    user, full_key = create_user(db, req.email)
+
+    # Send verification email (non-blocking; failure logged but doesn't block registration)
+    token = create_email_verification_token(db, user.id)
+    send_verification_email(req.email, token)
+
+    if _REQUIRE_EMAIL_VERIFICATION:
+        return {
+            "email": user.email,
+            "email_verified": False,
+            "message": (
+                "Account created. Check your email to verify your address "
+                "and receive your API key."
+            ),
+        }
+
     return {
-        "api_key": user.api_key,
+        "api_key": full_key,
         "email": user.email,
+        "email_verified": user.email_verified,
         "message": (
             "Store your API key safely — it won't be shown again. "
-            "Use it in the X-API-Key header."
+            "Use it in the X-API-Key header. "
+            "A verification email has been sent."
         ),
     }
+
+
+@app.post("/auth/verify-email", tags=["auth"])
+@limiter.limit("10/hour")
+def verify_email(request: Request, req: VerifyEmailRequest, db: Session = Depends(get_db)):
+    """
+    Verify email address using the token sent to your inbox.
+    Returns the API key if REQUIRE_EMAIL_VERIFICATION is enabled.
+    """
+    user = consume_verification_token(db, req.token)
+    if user is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid or expired verification token.",
+        )
+    response: dict = {"email": user.email, "email_verified": True, "message": "Email verified."}
+    if _REQUIRE_EMAIL_VERIFICATION:
+        # Regenerate and return the full key now that email is verified
+        from api.db import hash_api_key, User as UserModel
+        full_key = UserModel.generate_api_key()
+        user.api_key = full_key[:20]
+        user.api_key_hash = hash_api_key(full_key)
+        db.commit()
+        response["api_key"] = full_key
+        response["message"] = "Email verified. Store your API key safely — it won't be shown again."
+    return response
+
+
+@app.post("/auth/request-verification", tags=["auth"])
+@limiter.limit("3/hour")
+def request_verification(request: Request, req: RequestVerificationRequest, db: Session = Depends(get_db)):
+    """Re-send a verification email. No-op if email is already verified."""
+    user = get_user_by_email(db, req.email)
+    # Always return 200 to avoid email enumeration
+    if user is None or user.email_verified:
+        return {"message": "If the email exists and is unverified, a link has been sent."}
+    if has_pending_verification(db, user.id):
+        return {"message": "A verification email was recently sent. Please check your inbox."}
+    token = create_email_verification_token(db, user.id)
+    send_verification_email(req.email, token)
+    return {"message": "Verification email sent."}
 
 
 # ── Authenticated endpoints ────────────────────────────────────────────────────
