@@ -1,7 +1,6 @@
 """Security headers middleware for OWASP compliance."""
 
 from fastapi import Request
-from fastapi.responses import Response
 
 
 class SecurityHeadersMiddleware:

@@ -33,9 +33,7 @@ Pricing enforcement:
 import json
 import base64
 import asyncio
-from typing import Optional
-
-from fastapi import WebSocket, WebSocketDisconnect, Query, status
+from fastapi import WebSocket, WebSocketDisconnect, status
 
 from api.db import get_user_by_api_key
 from api.auth import require_persona_access

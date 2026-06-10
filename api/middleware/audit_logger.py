@@ -1,7 +1,6 @@
 """Audit logging middleware for security events."""
 
 import logging
-import json
 from fastapi import Request
 from typing import Optional
 

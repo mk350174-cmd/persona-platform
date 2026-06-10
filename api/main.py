@@ -32,12 +32,11 @@ Env vars:
 See ASSET_MIGRATION.md for image URL migration guide (public → authenticated).
 """
 
-from fastapi import FastAPI, HTTPException, Depends, Request, Header, WebSocket
+from fastapi import FastAPI, HTTPException, Depends, Request, Header, WebSocket, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
 from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
@@ -89,11 +88,6 @@ from api.models import (
     AllPlatformsRequest,
     AllTiersRequest,
     VoiceRequest,
-    HealthResponse,
-    UserResponse,
-    PersonaBasicResponse,
-    PersonaDetailResponse,
-    CatalogResponse,
 )
 
 # ── Logging ───────────────────────────────────────────────────────────────────
