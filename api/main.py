@@ -221,7 +221,10 @@ def _persona_image_url(persona_id: str) -> str | None:
 
 @app.get("/demo", include_in_schema=False)
 def serve_demo():
-    """Simulation page (GET /demo?persona=machiavelli&tier=full&api_key=prs_...)."""
+    """
+    Simulation page (GET /demo?persona=machiavelli&tier=text).
+    WebSocket auth: Connect with Authorization header (Authorization: Bearer prs_...).
+    """
     demo_file = _DEMO_DIR / "index.html"
     if demo_file.exists():
         return FileResponse(str(demo_file))
@@ -308,18 +311,28 @@ def serve_config_js():
 async def ws_chat(
     websocket: WebSocket,
     persona_id: str,
-    api_key: Optional[str] = None,
     tier: str = "text",
     platform: str = "raw",
 ):
     """
     Real-time persona conversation with streaming text + optional voice + visual params.
-    Query params: api_key=prs_..., tier=text|voice|full, platform=gemini|claude|openai|raw
+    Auth: Authorization header required (Authorization: Bearer prs_...)
+    Query params: tier=text|voice|full, platform=raw
     """
-    _api_key  = websocket.query_params.get("api_key", api_key)
+    # Extract API key from Authorization header
+    auth_header = websocket.headers.get("authorization", "")
+    api_key = None
+
+    if auth_header.startswith("Bearer "):
+        api_key = auth_header[7:]  # Remove "Bearer " prefix
+
+    if not api_key or not api_key.startswith("prs_"):
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Missing Authorization header")
+        return
+
     _tier     = websocket.query_params.get("tier", tier)
     _platform = websocket.query_params.get("platform", platform)
-    await persona_chat_ws(websocket, persona_id, _api_key, _tier, _platform)
+    await persona_chat_ws(websocket, persona_id, api_key, _tier, _platform)
 
 
 # ── Request models ─────────────────────────────────────────────────────────────

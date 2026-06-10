@@ -2,7 +2,8 @@
 WebSocket Streaming Endpoint — Real-time Persona Conversation
 
 Protocol:
-  Connect:  ws://host/ws/chat/{persona_id}?api_key=prs_...&tier=standard
+  Connect:  ws://host/ws/chat/{persona_id}?tier=text
+  Auth: Authorization header required (Authorization: Bearer prs_...)
 
   Client → Server:
     {"type": "message", "text": "..."}
@@ -124,17 +125,17 @@ def _compile_system_instruction(
 async def persona_chat_ws(
     websocket: WebSocket,
     persona_id: str,
-    api_key: Optional[str] = Query(default=None, alias="api_key"),
-    tier: str = Query(default=TIER_TEXT),
-    platform: str = Query(default="raw"),
+    api_key: str,
+    tier: str = TIER_TEXT,
+    platform: str = "raw",
 ):
     """
     WebSocket handler for real-time persona conversation.
-    Register via: app.add_api_websocket_route("/ws/chat/{persona_id}", persona_chat_ws)
+    API key is passed from the endpoint handler (extracted from Authorization header).
     """
     # ── Auth ───────────────────────────────────────────────────────────────────
     if not api_key or not api_key.startswith("prs_"):
-        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Invalid API key")
         return
 
     # We need a DB session — open one manually (can't use Depends in raw handler)
