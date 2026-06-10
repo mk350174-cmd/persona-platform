@@ -14,7 +14,7 @@ from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from sqlalchemy import (
     Column, String, DateTime, Boolean, ForeignKey,
-    Integer, Index, create_engine, UniqueConstraint,
+    Integer, Index, create_engine, UniqueConstraint, JSON,
 )
 from sqlalchemy.orm import DeclarativeBase, relationship, sessionmaker, Session
 
@@ -303,6 +303,45 @@ class PromoCode(Base):
     redemption_count     = Column(Integer, nullable=False, server_default="0")
     created_at           = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     created_by           = Column(String(36), nullable=True)  # admin user_id
+
+
+# ── Feature Flags (A/B Testing) ───────────────────────────────────────────────
+
+class FeatureFlag(Base):
+    """Server-side feature flags for gradual rollouts and A/B testing."""
+    __tablename__ = "feature_flags"
+    __table_args__ = (
+        Index("ix_feature_flags_name_enabled", "name", "enabled"),
+    )
+
+    id                  = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    name                = Column(String(128), nullable=False, unique=True, index=True)
+    description         = Column(String(500), nullable=True)
+    enabled             = Column(Boolean, nullable=False, server_default="0", index=True)
+    rollout_percentage  = Column(Integer, nullable=False, server_default="0")  # 0-100
+    variants            = Column(JSON, nullable=False, server_default="[]")  # ["control", "variant_a", "variant_b"]
+    targeted_user_ids   = Column(JSON, nullable=False, server_default="[]")  # ["usr_abc", "usr_def"]
+    target_segments     = Column(JSON, nullable=False, server_default="[]")  # ["premium", "beta_testers"]
+    target_tiers        = Column(JSON, nullable=False, server_default="[]")  # ["pro", "enterprise"]
+    expires_at          = Column(DateTime, nullable=True, index=True)
+    created_at          = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    updated_at          = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+
+
+class FlagEvaluation(Base):
+    """Analytics log for flag evaluations (A/B test metrics)."""
+    __tablename__ = "flag_evaluations"
+    __table_args__ = (
+        Index("ix_flag_evaluations_flag_user", "flag_id", "user_id"),
+        Index("ix_flag_evaluations_evaluated_at", "evaluated_at"),
+    )
+
+    id              = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    flag_id         = Column(String(36), ForeignKey("feature_flags.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id         = Column(String(36), nullable=False, index=True)
+    variant         = Column(String(64), nullable=False)  # "control", "variant_a", etc.
+    enabled         = Column(Boolean, nullable=False)
+    evaluated_at    = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
 
 
 # ── Init ───────────────────────────────────────────────────────────────────────
