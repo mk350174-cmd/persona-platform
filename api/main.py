@@ -78,6 +78,18 @@ from api.exceptions import (
     database_exception_handler,
     value_error_handler,
 )
+from api.models import (
+    RegisterRequest,
+    CompileRequest,
+    AllPlatformsRequest,
+    AllTiersRequest,
+    VoiceRequest,
+    HealthResponse,
+    UserResponse,
+    PersonaBasicResponse,
+    PersonaDetailResponse,
+    CatalogResponse,
+)
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 
@@ -336,23 +348,6 @@ async def ws_chat(
 
 
 # ── Request models ─────────────────────────────────────────────────────────────
-
-class RegisterRequest(BaseModel):
-    email: str = Field(..., description="Your email address")
-
-
-class CompileRequest(BaseModel):
-    platform: str = Field(default="gemini", description="gemini | claude | openai | raw")
-    tier: str = Field(default="standard", description="nano | standard | rich")
-
-
-class AllPlatformsRequest(BaseModel):
-    tier: str = Field(default="standard")
-
-
-class AllTiersRequest(BaseModel):
-    platform: str = Field(default="gemini")
-
 
 # ── Public endpoints ───────────────────────────────────────────────────────────
 
@@ -710,10 +705,6 @@ def compile_tiers(
     result = compile_all_tiers(P, persona_id=persona_id, platform=req.platform)
     _check_and_count(db, user, f"/v1/compile/{persona_id}/all-tiers", persona_id)
     return result
-
-
-class VoiceRequest(BaseModel):
-    text: str = Field(..., description="Text to synthesize as speech", min_length=1, max_length=2000)
 
 
 @app.post("/v1/compile/{persona_id}/voice", tags=["compile"])
