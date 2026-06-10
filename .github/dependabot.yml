@@ -1,0 +1,74 @@
+# Dependabot configuration - Auto-update dependencies (H89)
+version: 2
+updates:
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+    allow:
+      - dependency-type: "all"
+    reviewers:
+      - "mk350174-cmd"
+    assignees:
+      - "mk350174-cmd"
+    commit-message:
+      prefix: "chore"
+      prefix-scope: "deps"
+      include: "scope"
+    pull-request-branch-name:
+      separator: "/"
+    # Group updates
+    groups:
+      development-dependencies:
+        dependency-types:
+          - "dev"
+        update-types:
+          - "minor"
+          - "patch"
+      production-dependencies:
+        dependency-types:
+          - "production"
+        update-types:
+          - "patch"
+      major-updates:
+        dependency-types:
+          - "all"
+        update-types:
+          - "major"
+    # Skip major version updates automatically
+    ignore:
+      - dependency-name: "sqlalchemy"
+        update-types:
+          - "major"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+    reviewers:
+      - "mk350174-cmd"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+
+  # Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+    reviewers:
+      - "mk350174-cmd"
+
+# Version requirements strategy
+version-strategy: "auto"
+
+# Rebase strategy
+rebase-strategy: "auto"

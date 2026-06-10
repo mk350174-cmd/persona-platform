@@ -1,0 +1,148 @@
+name: Notifications - Build & Deploy Status (H89)
+
+on:
+  workflow_run:
+    workflows:
+      - "CI - Multi-Python Matrix Tests"
+      - "Deploy - Auto-Deploy on Merge"
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  notify-slack:
+    name: Slack Notifications
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        continue-on-error: true
+
+      - name: Determine status and message
+        id: status
+        env:
+          WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          ACTOR: ${{ github.event.workflow_run.actor.login }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          if [ "$WORKFLOW_CONCLUSION" = "success" ]; then
+            EMOJI="✅"
+            COLOR="good"
+            STATUS="succeeded"
+          else
+            EMOJI="❌"
+            COLOR="danger"
+            STATUS="failed"
+          fi
+
+          echo "emoji=$EMOJI" >> $GITHUB_OUTPUT
+          echo "color=$COLOR" >> $GITHUB_OUTPUT
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          echo "workflow=$WORKFLOW_NAME" >> $GITHUB_OUTPUT
+          echo "actor=$ACTOR" >> $GITHUB_OUTPUT
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
+        if: secrets.SLACK_WEBHOOK
+        with:
+          status: ${{ job.status }}
+          text: |
+            ${{ steps.status.outputs.emoji }} *${{ steps.status.outputs.workflow }}* ${{ steps.status.outputs.status }}
+
+            Branch: `${{ steps.status.outputs.branch }}`
+            Author: ${{ steps.status.outputs.actor }}
+            Commit: <https://github.com/${{ github.repository }}/commit/${{ github.event.workflow_run.head_commit.id }}|${{ github.event.workflow_run.head_commit.message }}>
+
+            <https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}|View workflow>
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          fields: |
+            repo,workflow,ref,eventName
+        continue-on-error: true
+
+      - name: Send email notification (failure only)
+        if: |
+          github.event.workflow_run.conclusion == 'failure' &&
+          secrets.NOTIFICATION_EMAIL
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: |
+            ❌ Build Failed: ${{ github.event.workflow_run.name }}
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
+          from: ci@persona-platform.dev
+          body: |
+            Build Failure Alert
+
+            Workflow: ${{ github.event.workflow_run.name }}
+            Branch: ${{ github.event.workflow_run.head_branch }}
+            Author: ${{ github.event.workflow_run.actor.login }}
+            Commit: ${{ github.event.workflow_run.head_commit.message }}
+
+            View details: https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}
+
+            Please investigate and fix the issues.
+        continue-on-error: true
+
+  notify-github:
+    name: GitHub Status Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create status check
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const conclusion = '${{ github.event.workflow_run.conclusion }}';
+            const status = conclusion === 'success' ? 'success' : 'failure';
+
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: '${{ github.event.workflow_run.head_commit.id }}',
+              state: status,
+              description: 'Build ' + status,
+              context: 'ci/build-status',
+              target_url: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}'
+            });
+
+      - name: Auto-assign on failure
+        if: github.event.workflow_run.conclusion == 'failure'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            // Find PRs associated with this workflow run
+            const { data: pullRequests } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: '${{ github.event.workflow_run.head_commit.id }}'
+            });
+
+            for (const pr of pullRequests) {
+              // Assign to PR author on failure
+              github.rest.issues.addAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                assignees: [pr.user.login]
+              }).catch(() => {}); // Ignore if already assigned
+
+              // Add "needs-review" label
+              github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                labels: ['needs-review']
+              }).catch(() => {});
+            }
