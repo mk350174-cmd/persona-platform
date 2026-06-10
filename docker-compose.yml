@@ -26,6 +26,56 @@ services:
         reservations:
           memory: 256M
 
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: persona_hub
+      POSTGRES_USER: ${POSTGRES_USER:-persona}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-persona_dev_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-persona}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+
+  backup:
+    image: postgres:16-alpine
+    volumes:
+      - ./scripts/backup:/backup:ro
+      - backup_data:/backups
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-persona}:${POSTGRES_PASSWORD:-persona_dev_password}@postgres:5432/persona_hub
+      BACKUP_S3_BUCKET: ${BACKUP_S3_BUCKET:-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      BACKUP_DIR: /backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: |
+      /bin/sh -c "
+      apk add --no-cache aws-cli bash
+      (crontab -l 2>/dev/null || true; echo '0 2 * * * /backup/pg_backup.sh') | crontab -
+      (crontab -l 2>/dev/null || true; echo '0 * * * * /backup/validate_backup.sh') | crontab -
+      exec crond -f -l 0
+      "
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
   nginx:
     image: nginx:1.27-alpine
     ports:
@@ -43,3 +93,7 @@ services:
         limits:
           cpus: "0.5"
           memory: 128M
+
+volumes:
+  postgres_data:
+  backup_data:
