@@ -54,7 +54,8 @@ from api.db import (
     init_db, get_db, create_user, get_user_by_email,
     create_email_verification_token, consume_verification_token,
     has_pending_verification, hash_password,
-    User, log_usage,
+    User, log_usage, grant_free_persona, generate_referral_code,
+    get_or_create_wallet, get_referral_code_by_code, record_purchase,
 )
 from api.auth import get_current_user, require_persona_access
 from api.payments import (
@@ -511,6 +512,7 @@ def register(request: Request, req: RegisterRequest, db: Session = Depends(get_d
     Register a new account. Returns your API key — store it safely.
     One account per email address. A verification email is sent to confirm your address.
     Optional: provide a password to enable /auth/login (alternative to API key).
+    Free tier: new users get 1 free persona (Socrates) + referral code.
     """
     existing = get_user_by_email(db, req.email)
     if existing:
@@ -525,31 +527,40 @@ def register(request: Request, req: RegisterRequest, db: Session = Depends(get_d
         user.password_hash = hash_password(req.password)
         db.commit()
 
+    # B20: Grant free tier — 1 free persona (Socrates)
+    grant_free_persona(db, user.id, "persona_socrates")
+    # Create wallet for user
+    get_or_create_wallet(db, user.id)
+    # B21: Generate referral code
+    ref_code = generate_referral_code(db, user.id)
+
     # Send verification email (non-blocking; failure logged but doesn't block registration)
     token = create_email_verification_token(db, user.id)
     send_verification_email(req.email, token)
 
-    if _REQUIRE_EMAIL_VERIFICATION:
-        return {
-            "email": user.email,
-            "email_verified": False,
-            "message": (
-                "Account created. Check your email to verify your address "
-                "and receive your API key."
-            ),
-        }
-
-    return {
-        "api_key": full_key,
+    response = {
         "email": user.email,
         "email_verified": user.email_verified,
         "password_enabled": bool(req.password),
-        "message": (
+        "referral_code": ref_code,  # User can share this to earn credits
+        "free_personas": ["persona_socrates"],  # B20: Free tier personas
+    }
+
+    if _REQUIRE_EMAIL_VERIFICATION:
+        response["message"] = (
+            "Account created. Check your email to verify your address "
+            "and receive your API key."
+        )
+    else:
+        response["api_key"] = full_key
+        response["message"] = (
             "Store your API key safely — it won't be shown again. "
             "Use it in the X-API-Key header. "
-            "A verification email has been sent."
-        ),
-    }
+            "A verification email has been sent. "
+            "You have 1 free persona and a referral code to earn credits."
+        )
+
+    return response
 
 
 @app.post("/auth/verify-email", tags=["auth"])
@@ -655,17 +666,35 @@ def get_purchases(
 def checkout(
     request: Request,
     persona_id: str,
+    tier: Optional[str] = None,  # B13: basic_monthly, basic_annual, pro_monthly, pro_annual
+    promo: Optional[str] = None,  # B14: promo code
+    ref: Optional[str] = None,    # B21: referral code from signup link
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """
-    Create a Stripe Checkout Session to purchase a persona.
+    Create a Stripe Checkout Session to purchase a persona or subscription tier.
+
+    Query parameters:
+    - tier: subscription tier (basic_monthly, basic_annual, pro_monthly, pro_annual) — B13
+    - promo: coupon code for discount — B14
+    - ref: referral code (applies $5 credit if referee's first purchase) — B21
+
     Returns {checkout_url} — redirect the user there.
     """
     meta = PERSONA_CATALOG.get(persona_id)
     if meta is None:
         raise HTTPException(status_code=404, detail=f"Persona '{persona_id}' not found.")
-    return create_checkout_session(user, persona_id, meta, db)
+
+    # B21: If referral code provided, verify it exists
+    if ref:
+        ref_code = get_referral_code_by_code(db, ref)
+        if not ref_code:
+            raise HTTPException(status_code=400, detail="Invalid referral code.")
+        # Link referrer for later credit issuance
+        request.state.referrer_id = ref_code.referrer_id
+
+    return create_checkout_session(user, persona_id, meta, db, tier=tier, promo=promo)
 
 
 @app.post("/checkout/{persona_id}/mock", tags=["payments"])

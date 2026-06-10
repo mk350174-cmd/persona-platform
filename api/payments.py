@@ -21,6 +21,8 @@ from sqlalchemy.orm import Session
 
 from api.db import (
     User, record_purchase, has_purchased, upsert_subscription, SUBSCRIPTION_TIERS, is_stripe_event_processed, mark_stripe_event_processed,
+    get_promo_code, apply_promo_code, deduct_wallet_credit, get_or_create_wallet,
+    issue_referral_credit, record_invoice,
 )
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "")
@@ -37,9 +39,19 @@ def create_checkout_session(
     persona_id: str,
     persona_meta: dict,
     db: Session,
+    tier: str | None = None,
+    promo: str | None = None,
 ) -> dict:
     """
-    Create a Stripe Checkout Session for a persona purchase.
+    Create a Stripe Checkout Session for a persona purchase or subscription.
+
+    Parameters
+    ----------
+    tier : str, optional
+        Subscription tier (basic_monthly, basic_annual, pro_monthly, pro_annual).
+        If provided, creates a subscription checkout instead of one-time purchase.
+    promo : str, optional
+        Promo code for discount (B14). Applies to both persona and subscription checkouts.
 
     Returns
     -------
@@ -51,6 +63,11 @@ def create_checkout_session(
             detail="Payment system not configured. Set STRIPE_SECRET_KEY.",
         )
 
+    # Handle subscription tier checkout (B13)
+    if tier:
+        return create_subscription_session(user, tier, db, promo=promo)
+
+    # One-time persona purchase
     price_usd = persona_meta.get("price_usd", 0)
     if price_usd == 0:
         raise HTTPException(status_code=400, detail="This persona is free — no checkout needed.")
@@ -58,13 +75,36 @@ def create_checkout_session(
     if has_purchased(db, user.id, persona_id):
         raise HTTPException(status_code=400, detail="Already purchased.")
 
+    # B14: Apply promo code if provided
+    discount_cents = 0
+    if promo:
+        promo_code = apply_promo_code(db, promo)
+        if promo_code:
+            discount_cents = int(price_usd * 100 * promo_code.discount_percent / 100)
+        else:
+            raise HTTPException(status_code=400, detail="Invalid or expired promo code.")
+
+    # B22: Deduct from wallet first
+    price_cents = _price_cents(price_usd) - discount_cents
+    wallet = get_or_create_wallet(db, user.id)
+    wallet_deduction = min(wallet.balance_cents or 0, price_cents)
+    charge_cents = price_cents - wallet_deduction
+
+    if wallet_deduction > 0:
+        deduct_wallet_credit(db, user.id, wallet_deduction)
+
+    # If fully covered by wallet, process as free purchase
+    if charge_cents <= 0:
+        record_purchase(db, user_id=user.id, persona_id=persona_id, amount_cents=price_cents)
+        return {"checkout_url": None, "status": "free_grant", "message": "Purchased with wallet credit."}
+
     try:
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             line_items=[{
                 "price_data": {
                     "currency": "usd",
-                    "unit_amount": _price_cents(price_usd),
+                    "unit_amount": charge_cents,
                     "product_data": {
                         "name": persona_meta["name"],
                         "description": persona_meta.get("tagline", ""),
@@ -79,6 +119,8 @@ def create_checkout_session(
             metadata={
                 "user_id": user.id,
                 "persona_id": persona_id,
+                "original_price_cents": _price_cents(price_usd),
+                "discount_cents": discount_cents,
             },
             customer_email=user.email,
         )
@@ -157,11 +199,23 @@ def handle_webhook(raw_body: bytes, stripe_signature: str, db: Session) -> dict:
     return {"received": True, "type": event_type}
 
 
-def create_subscription_session(user: User, tier: str, db: Session) -> dict:
+def create_subscription_session(
+    user: User,
+    tier: str,
+    db: Session,
+    promo: str | None = None,
+) -> dict:
     """
-    Create a Stripe Checkout Session for a monthly subscription.
+    Create a Stripe Checkout Session for a subscription (monthly or annual — B13).
 
-    Returns {checkout_url, session_id}
+    Parameters
+    ----------
+    tier : str
+        Subscription tier: basic_monthly, basic_annual, pro_monthly, pro_annual
+    promo : str, optional
+        Promo code for discount (B14).
+
+    Returns {checkout_url, session_id, tier, discount_percent}
     """
     if not stripe.api_key:
         raise HTTPException(
@@ -173,7 +227,23 @@ def create_subscription_session(user: User, tier: str, db: Session) -> dict:
     if not tier_cfg:
         raise HTTPException(status_code=400, detail=f"Unknown tier '{tier}'. Choose: {list(SUBSCRIPTION_TIERS.keys())}")
 
+    billing_period = tier_cfg.get("billing_period", "month")  # "month" or "year"
     price_cents = _price_cents(tier_cfg["price_usd"])
+
+    # B14: Apply promo code
+    discount_percent = 0
+    discount_cents = 0
+    discounts = []
+    if promo:
+        promo_code = apply_promo_code(db, promo)
+        if promo_code:
+            discount_percent = promo_code.discount_percent
+            discount_cents = int(price_cents * discount_percent / 100)
+            price_cents = price_cents - discount_cents
+            # In Stripe, discounts are applied differently for subscriptions
+            # For simplicity, we adjust the price; for production, use Stripe coupons
+        else:
+            raise HTTPException(status_code=400, detail="Invalid or expired promo code.")
 
     try:
         session = stripe.checkout.Session.create(
@@ -181,12 +251,13 @@ def create_subscription_session(user: User, tier: str, db: Session) -> dict:
             line_items=[{
                 "price_data": {
                     "currency": "usd",
-                    "recurring": {"interval": "month"},
+                    "recurring": {"interval": billing_period, "interval_count": 1},
                     "unit_amount": price_cents,
                     "product_data": {
                         "name": f"Persona Hub — {tier_cfg['label']}",
                         "description": (
-                            f"{tier_cfg['monthly_requests'] or 'Unlimited'} API calls/month"
+                            f"{tier_cfg['monthly_requests'] or 'Unlimited'} API calls/month. "
+                            f"Billing: {'Annually' if billing_period == 'year' else 'Monthly'}"
                         ),
                     },
                 },
@@ -198,10 +269,18 @@ def create_subscription_session(user: User, tier: str, db: Session) -> dict:
             metadata={
                 "user_id": user.id,
                 "subscription_tier": tier,
+                "billing_period": billing_period,
+                "discount_percent": discount_percent,
             },
             customer_email=user.email,
         )
-        return {"checkout_url": session.url, "session_id": session.id, "tier": tier}
+        return {
+            "checkout_url": session.url,
+            "session_id": session.id,
+            "tier": tier,
+            "billing_period": billing_period,
+            "discount_percent": discount_percent,
+        }
     except stripe.StripeError as e:
         raise HTTPException(status_code=502, detail=f"Stripe error: {e.user_message}")
 
