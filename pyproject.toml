@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "persona-platform"
+version = "0.1.0"
+description = "Production REST API and MCP platform for Persona knowledge graphs"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.setuptools]
+packages = ["api", "persona_math", "needle", "persona_mcp"]
