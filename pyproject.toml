@@ -10,4 +10,7 @@ requires-python = ">=3.11"
 dependencies = []
 
 [tool.setuptools]
-packages = ["api", "persona_math", "needle", "persona_mcp"]
+packages = ["api", "needle", "persona_math", "persona_mcp", "tests"]
+
+[tool.setuptools.package-data]
+"*" = ["*.py", "*.json", "*.yaml", "*.yml"]
