@@ -782,3 +782,30 @@ def grant_free_persona(db: Session, user_id: str, persona_id: str = "persona_soc
     """Grant a free persona to a new user."""
     purchase = record_purchase(db, user_id, persona_id, amount_cents=0)
     return purchase
+
+
+# ── Bundle pricing (B15) ──────────────────────────────────────────────────────
+
+BUNDLE_PRICING = {
+    "bundle_10": {
+        "name": "Starter Bundle",
+        "personas": 10,
+        "price_usd": 49.0,
+        "savings_pct": 8,
+        "description": "10 personas at a discount"
+    },
+    "bundle_50": {
+        "name": "Professional Bundle",
+        "personas": 50,
+        "price_usd": 199.0,
+        "savings_pct": 20,
+        "description": "50 personas at 20% savings"
+    },
+    "bundle_495": {
+        "name": "Complete Library",
+        "personas": 495,
+        "price_usd": 999.0,
+        "savings_pct": 50,
+        "description": "All 495 personas in the library"
+    },
+}

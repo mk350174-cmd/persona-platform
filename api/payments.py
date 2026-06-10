@@ -34,6 +34,37 @@ def _price_cents(price_usd: float) -> int:
     return int(round(price_usd * 100))
 
 
+# ── Multi-currency support (B23) ──────────────────────────────────────────────
+
+def locale_to_currency(locale: str) -> str:
+    """Convert locale code to Stripe currency code."""
+    locale_map = {
+        "usd": "usd",
+        "eur": "eur",
+        "try": "try",  # Turkish Lira
+        "gbp": "gbp",
+        "jpy": "jpy",
+        "aud": "aud",
+        "cad": "cad",
+    }
+    return locale_map.get(locale.lower(), "usd")
+
+
+def get_localized_price(price_usd: float, locale: str) -> float:
+    """Get localized price based on currency (simplified: use fixed exchange rates)."""
+    exchange_rates = {
+        "usd": 1.0,
+        "eur": 0.92,     # 1 USD = 0.92 EUR
+        "try": 32.5,     # 1 USD = 32.5 TRY
+        "gbp": 0.79,     # 1 USD = 0.79 GBP
+        "jpy": 149.5,    # 1 USD = 149.5 JPY
+        "aud": 1.52,     # 1 USD = 1.52 AUD
+        "cad": 1.37,     # 1 USD = 1.37 CAD
+    }
+    rate = exchange_rates.get(locale.lower(), 1.0)
+    return price_usd * rate
+
+
 def create_checkout_session(
     user: User,
     persona_id: str,
@@ -42,6 +73,7 @@ def create_checkout_session(
     tier: str | None = None,
     promo: str | None = None,
     referrer_id: str | None = None,
+    locale: str = "usd",
 ) -> dict:
     """
     Create a Stripe Checkout Session for a persona purchase or subscription.
@@ -55,6 +87,8 @@ def create_checkout_session(
         Promo code for discount (B14). Applies to both persona and subscription checkouts.
     referrer_id : str, optional
         User ID of the referrer (B21). Used to issue referral credit on purchase.
+    locale : str, default "usd"
+        Currency locale for pricing (B23): usd, eur, try, gbp, jpy, aud, cad
 
     Returns
     -------
@@ -68,7 +102,7 @@ def create_checkout_session(
 
     # Handle subscription tier checkout (B13)
     if tier:
-        return create_subscription_session(user, tier, db, promo=promo, referrer_id=referrer_id)
+        return create_subscription_session(user, tier, db, promo=promo, referrer_id=referrer_id, locale=locale)
 
     # One-time persona purchase
     price_usd = persona_meta.get("price_usd", 0)
@@ -78,17 +112,21 @@ def create_checkout_session(
     if has_purchased(db, user.id, persona_id):
         raise HTTPException(status_code=400, detail="Already purchased.")
 
+    # B23: Get localized price and currency
+    currency = locale_to_currency(locale)
+    localized_price = get_localized_price(price_usd, locale)
+
     # B14: Apply promo code if provided
     discount_cents = 0
     if promo:
         promo_code = apply_promo_code(db, promo)
         if promo_code:
-            discount_cents = int(price_usd * 100 * promo_code.discount_percent / 100)
+            discount_cents = int(localized_price * 100 * promo_code.discount_percent / 100)
         else:
             raise HTTPException(status_code=400, detail="Invalid or expired promo code.")
 
-    # B22: Deduct from wallet first
-    price_cents = _price_cents(price_usd) - discount_cents
+    # B22: Deduct from wallet first (always in USD cents)
+    price_cents = _price_cents(localized_price) - discount_cents
     wallet = get_or_create_wallet(db, user.id)
     wallet_deduction = min(wallet.balance_cents or 0, price_cents)
     charge_cents = price_cents - wallet_deduction
@@ -106,7 +144,7 @@ def create_checkout_session(
             payment_method_types=["card"],
             line_items=[{
                 "price_data": {
-                    "currency": "usd",
+                    "currency": currency,
                     "unit_amount": charge_cents,
                     "product_data": {
                         "name": persona_meta["name"],
@@ -233,6 +271,7 @@ def create_subscription_session(
     db: Session,
     promo: str | None = None,
     referrer_id: str | None = None,
+    locale: str = "usd",
 ) -> dict:
     """
     Create a Stripe Checkout Session for a subscription (monthly or annual — B13).
@@ -245,6 +284,8 @@ def create_subscription_session(
         Promo code for discount (B14).
     referrer_id : str, optional
         User ID of the referrer (B21). Used to issue referral credit on purchase.
+    locale : str, default "usd"
+        Currency locale for pricing (B23): usd, eur, try, gbp, jpy, aud, cad
 
     Returns {checkout_url, session_id, tier, discount_percent}
     """
@@ -259,7 +300,10 @@ def create_subscription_session(
         raise HTTPException(status_code=400, detail=f"Unknown tier '{tier}'. Choose: {list(SUBSCRIPTION_TIERS.keys())}")
 
     billing_period = tier_cfg.get("billing_period", "month")  # "month" or "year"
-    price_cents = _price_cents(tier_cfg["price_usd"])
+    # B23: Get localized price and currency
+    currency = locale_to_currency(locale)
+    localized_price = get_localized_price(tier_cfg["price_usd"], locale)
+    price_cents = _price_cents(localized_price)
 
     # B14: Apply promo code
     discount_percent = 0
@@ -281,7 +325,7 @@ def create_subscription_session(
             payment_method_types=["card"],
             line_items=[{
                 "price_data": {
-                    "currency": "usd",
+                    "currency": currency,
                     "recurring": {"interval": billing_period, "interval_count": 1},
                     "unit_amount": price_cents,
                     "product_data": {

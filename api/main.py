@@ -57,6 +57,7 @@ from api.db import (
     has_pending_verification, hash_password,
     User, log_usage, grant_free_persona, generate_referral_code,
     get_or_create_wallet, get_referral_code_by_code, record_purchase,
+    BUNDLE_PRICING,
 )
 from api.auth import get_current_user, require_persona_access
 from api.payments import (
@@ -670,9 +671,10 @@ def get_purchases(
 def checkout(
     request: Request,
     persona_id: str,
-    tier: Optional[str] = None,  # B13: basic_monthly, basic_annual, pro_monthly, pro_annual
-    promo: Optional[str] = None,  # B14: promo code
-    ref: Optional[str] = None,    # B21: referral code from signup link
+    tier: Optional[str] = None,     # B13: basic_monthly, basic_annual, pro_monthly, pro_annual
+    promo: Optional[str] = None,    # B14: promo code
+    ref: Optional[str] = None,      # B21: referral code from signup link
+    locale: str = "usd",            # B23: currency locale (usd, eur, try, gbp, jpy, aud, cad)
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -683,6 +685,7 @@ def checkout(
     - tier: subscription tier (basic_monthly, basic_annual, pro_monthly, pro_annual) — B13
     - promo: coupon code for discount — B14
     - ref: referral code (applies $5 credit if referee's first purchase) — B21
+    - locale: currency locale (usd, eur, try, gbp, jpy, aud, cad) — B23
 
     Returns {checkout_url} — redirect the user there.
     """
@@ -698,7 +701,45 @@ def checkout(
             raise HTTPException(status_code=400, detail="Invalid referral code.")
         referrer_id = ref_code.referrer_id
 
-    return create_checkout_session(user, persona_id, meta, db, tier=tier, promo=promo, referrer_id=referrer_id)
+    return create_checkout_session(user, persona_id, meta, db, tier=tier, promo=promo, referrer_id=referrer_id, locale=locale)
+
+
+@app.post("/checkout/bundle/{bundle_id}", tags=["payments"])
+@limiter.limit("20/hour")
+def checkout_bundle(
+    request: Request,
+    bundle_id: str,
+    locale: str = "usd",  # B23: currency locale
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Purchase a bundle of personas at a discounted price (B15).
+    Bundle IDs: bundle_10 (10 personas, $49), bundle_50 (50 personas, $199), bundle_495 (all 495, $999)
+    Query parameter: locale (usd, eur, try, gbp, jpy, aud, cad) for multi-currency pricing (B23)
+    Returns {checkout_url} — redirect the user there.
+    """
+    bundle = BUNDLE_PRICING.get(bundle_id)
+    if not bundle:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Bundle '{bundle_id}' not found. Choose: {list(BUNDLE_PRICING.keys())}"
+        )
+
+    # Create a bundle "meta" object for checkout
+    bundle_meta = {
+        "name": bundle["name"],
+        "description": bundle["description"],
+        "price_usd": bundle["price_usd"],
+        "bundle_id": bundle_id,
+    }
+
+    # Pass bundle_id as the persona_id to distinguish from individual persona purchases
+    result = create_checkout_session(user, bundle_id, bundle_meta, db, locale=locale)
+    result["bundle"] = bundle_id
+    result["personas_count"] = bundle["personas"]
+    result["savings_percent"] = bundle["savings_pct"]
+    return result
 
 
 @app.post("/checkout/{persona_id}/mock", tags=["payments"])
