@@ -344,6 +344,46 @@ class FlagEvaluation(Base):
     evaluated_at    = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
 
 
+# ── Performance Monitoring (H93) ──────────────────────────────────────────────
+
+class PerformanceMetric(Base):
+    """Performance metrics for regression detection."""
+    __tablename__ = "performance_metrics"
+    __table_args__ = (
+        Index("ix_performance_metrics_type_endpoint", "metric_type", "endpoint"),
+        Index("ix_performance_metrics_recorded_at", "recorded_at"),
+    )
+
+    id              = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    metric_type     = Column(String(64), nullable=False, index=True)  # response_time_ms, error_rate_percent, etc.
+    value           = Column(Integer, nullable=False)  # Metric value (milliseconds, percent, etc.)
+    endpoint        = Column(String(256), nullable=True, index=True)  # API endpoint (optional)
+    tags            = Column(JSON, nullable=False, server_default="{}")  # Additional metadata
+    recorded_at     = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
+
+
+class PerformanceBaseline(Base):
+    """Baseline performance metrics for regression detection."""
+    __tablename__ = "performance_baselines"
+    __table_args__ = (
+        Index("ix_performance_baselines_type_endpoint", "metric_type", "endpoint"),
+        Index("ix_performance_baselines_created_at", "created_at"),
+    )
+
+    id              = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    metric_type     = Column(String(64), nullable=False, index=True)
+    endpoint        = Column(String(256), nullable=True)
+    p50             = Column(Integer, nullable=False)  # 50th percentile
+    p95             = Column(Integer, nullable=False)  # 95th percentile (main metric)
+    p99             = Column(Integer, nullable=False)  # 99th percentile
+    mean            = Column(Integer, nullable=False)
+    stddev          = Column(Integer, nullable=False)  # Standard deviation
+    min_val         = Column(Integer, nullable=False)
+    max_val         = Column(Integer, nullable=False)
+    sample_count    = Column(Integer, nullable=False)  # Number of samples used
+    created_at      = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
+
+
 # ── Init ───────────────────────────────────────────────────────────────────────
 
 def init_db() -> None:

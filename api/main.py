@@ -73,6 +73,7 @@ from api.visual_params import get_visual_params
 from api.routers.persona_router import router as persona_router
 from api.routers.api_keys import router as api_keys_router
 from api.routers.feature_flags import router as feature_flags_router
+from api.routers.performance import router as performance_router
 from persona_math.compiler import (
     compile_persona,
     compile_all_platforms,
@@ -186,6 +187,9 @@ app.include_router(api_keys_router)
 
 # Feature Flags endpoints (A/B testing, rollouts, targeting) — see api/routers/feature_flags.py
 app.include_router(feature_flags_router)
+
+# Performance Monitoring endpoints (metrics, regression detection) — see api/routers/performance.py
+app.include_router(performance_router)
 
 
 @app.middleware("http")
