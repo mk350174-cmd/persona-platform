@@ -757,8 +757,14 @@ def get_promo_code(db: Session, code: str) -> "PromoCode | None":
     if not promo:
         return None
     # Check expiration
-    if promo.expires_at and datetime.now(timezone.utc) > promo.expires_at:
-        return None
+    if promo.expires_at:
+        now = datetime.now(timezone.utc)
+        expires_at = promo.expires_at
+        # Handle both naive and aware datetimes
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        if now > expires_at:
+            return None
     # Check max redemptions
     if promo.max_redemptions and promo.redemption_count >= promo.max_redemptions:
         return None
