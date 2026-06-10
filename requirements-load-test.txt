@@ -1,0 +1,12 @@
+# Load testing dependencies (H86)
+
+# Locust - Python-based load testing framework
+locust>=2.14.0
+
+# K6 - Install separately via system package manager:
+# Ubuntu/Debian: sudo apt-get install k6
+# macOS: brew install k6
+# Or download from: https://k6.io/docs/getting-started/installation/
+
+# For result analysis
+numpy>=1.24.0
