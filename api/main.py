@@ -76,6 +76,7 @@ from api.routers.feature_flags import router as feature_flags_router
 from api.routers.performance import router as performance_router
 from api.routers.rollback import router as rollback_router
 from api.routers.observability import router as observability_router
+from api.routers.advanced_auth import router as advanced_auth_router
 from persona_math.compiler import (
     compile_persona,
     compile_all_platforms,
@@ -198,6 +199,9 @@ app.include_router(rollback_router)
 
 # Observability & Monitoring endpoints (metrics, traces, logs) — see api/routers/observability.py
 app.include_router(observability_router)
+
+# Advanced Authentication endpoints (OAuth2, JWT, RBAC, sessions) — see api/routers/advanced_auth.py
+app.include_router(advanced_auth_router)
 
 
 @app.middleware("http")

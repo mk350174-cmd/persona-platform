@@ -83,6 +83,8 @@ class User(Base):
     lockout_until         = Column(DateTime, nullable=True)
     # Stripe integration
     stripe_customer_id = Column(String(128), nullable=True, unique=True, index=True)
+    # RBAC: user role (admin, moderator, user, free)
+    role               = Column(String(32), default="user", nullable=False, index=True)
 
     purchases             = relationship("Purchase", back_populates="user", lazy="select")
     usage_logs            = relationship("APIKeyUsage", back_populates="user", lazy="select")
@@ -94,6 +96,8 @@ class User(Base):
     referral_code         = relationship("ReferralCode", back_populates="referrer", uselist=False, lazy="select")
     referral_credits_given = relationship("ReferralCredit", foreign_keys="ReferralCredit.referrer_id", back_populates="referrer", lazy="select")
     referral_credits_received = relationship("ReferralCredit", foreign_keys="ReferralCredit.referee_id", back_populates="referee", lazy="select")
+    oauth_credentials     = relationship("OAuth2Credential", back_populates="user", lazy="select")
+    invalidated_sessions  = relationship("InvalidatedSession", back_populates="user", lazy="select")
 
     @staticmethod
     def generate_api_key() -> str:
@@ -419,6 +423,45 @@ class RollbackHistory(Base):
     details         = Column(JSON, nullable=False, server_default="{}")  # Error details, metrics, etc.
     initiated_at    = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
     completed_at    = Column(DateTime, nullable=True, index=True)
+
+
+class OAuth2Credential(Base):
+    """OAuth2 provider credentials (Google, GitHub, etc.)."""
+    __tablename__ = "oauth2_credentials"
+    __table_args__ = (
+        Index("ix_oauth2_user_provider", "user_id", "provider"),
+        Index("ix_oauth2_provider_id", "provider", "provider_user_id"),
+    )
+
+    id                 = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    user_id            = Column(String(36), ForeignKey("users.id"), nullable=False)
+    provider           = Column(String(64), nullable=False)  # google, github
+    provider_user_id   = Column(String(256), nullable=False)  # ID from provider
+    access_token       = Column(String(1024), nullable=False)  # Encrypted in production
+    refresh_token      = Column(String(1024), nullable=True)  # May not be available for all providers
+    token_expires_at   = Column(DateTime, nullable=True)
+    connected_at       = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
+    last_used_at       = Column(DateTime, nullable=True)
+
+    user = relationship("User", back_populates="oauth_credentials")
+
+
+class InvalidatedSession(Base):
+    """Tracks invalidated JWT sessions (logouts)."""
+    __tablename__ = "invalidated_sessions"
+    __table_args__ = (
+        Index("ix_invalidated_sessions_user_expires", "user_id", "expires_at"),
+        Index("ix_invalidated_sessions_expires", "expires_at"),
+    )
+
+    id          = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    user_id     = Column(String(36), ForeignKey("users.id"), nullable=False)
+    token_hash  = Column(String(64), nullable=False, unique=True, index=True)  # Hash of JWT
+    invalidated_at = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
+    expires_at  = Column(DateTime, nullable=False)  # When to purge this record
+    reason      = Column(String(64), nullable=False)  # logout, password_change, security_lock
+
+    user = relationship("User", back_populates="invalidated_sessions")
 
 
 # ── Init ───────────────────────────────────────────────────────────────────────
