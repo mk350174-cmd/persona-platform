@@ -64,6 +64,7 @@ from api.ws import persona_chat_ws
 from api.voice import synthesize_speech, tts_available
 from api.visual_params import get_visual_params
 from api.routers.persona_router import router as persona_router
+from api.routers.api_keys import router as api_keys_router
 from persona_math.compiler import (
     compile_persona,
     compile_all_platforms,
@@ -164,6 +165,9 @@ app.add_exception_handler(ValueError, value_error_handler)
 
 # PersonaNeedle endpoints (CEID / drift / voice / profile / history) — see api/routers/persona_router.py
 app.include_router(persona_router, prefix="/api/v1")
+
+# API Key management endpoints (rotation, revocation, list) — see api/routers/api_keys.py
+app.include_router(api_keys_router)
 
 
 @app.middleware("http")
