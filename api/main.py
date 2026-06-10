@@ -121,6 +121,26 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+# Request body size limit middleware (prevent DoS via large payloads)
+# Limit: 10 MB (matches nginx client_max_body_size)
+@app.middleware("http")
+async def limit_request_size(request: Request, call_next):
+    """Limit request body size to prevent DoS attacks."""
+    if request.method in ["POST", "PUT", "PATCH"]:
+        content_length = request.headers.get("content-length", "0")
+        try:
+            size = int(content_length)
+            if size > 10_000_000:  # 10 MB limit
+                from fastapi.responses import JSONResponse
+                return JSONResponse(
+                    status_code=413,
+                    content={"error": "Payload too large (max 10 MB)"},
+                )
+        except ValueError:
+            pass  # Invalid content-length, let nginx handle it
+    return await call_next(request)
+
+
 # Audit logging middleware (logs security events)
 app.add_middleware(AuditLoggerMiddleware)
 
@@ -360,7 +380,8 @@ async def ws_chat(
 # ── Public endpoints ───────────────────────────────────────────────────────────
 
 @app.get("/health", tags=["system"])
-def health(db: Session = Depends(get_db)):
+@limiter.limit("100/hour")  # Allow monitoring, but prevent enumeration DoS
+async def health(request: Request, db: Session = Depends(get_db)):
     try:
         db.execute(text("SELECT 1"))
         db_ok = True
@@ -375,7 +396,9 @@ def health(db: Session = Depends(get_db)):
 
 
 @app.get("/personas", tags=["catalog"])
+@limiter.limit("100/hour")  # Per-IP rate limit to prevent enumeration/scraping
 def get_catalog(
+    request: Request,
     domain: Optional[str] = None,
     tags: Optional[str] = None,
     q: Optional[str] = None,
@@ -430,7 +453,8 @@ def get_catalog(
 
 
 @app.get("/personas/stats/library", tags=["catalog"])
-def get_library_stats():
+@limiter.limit("50/hour")  # Prevent repeated scraping of stats data
+def get_library_stats(request: Request):
     """Library statistics: total personas, domain breakdown, avg price."""
     stats = library_stats()
     stats["catalog_ids_preview"] = list(PERSONA_LIBRARY.keys())[:20]
@@ -438,7 +462,8 @@ def get_library_stats():
 
 
 @app.get("/personas/{persona_id}", tags=["catalog"])
-def get_persona_detail(persona_id: str):
+@limiter.limit("200/hour")  # Higher limit for detail requests, but prevent scraping
+def get_persona_detail(request: Request, persona_id: str):
     """Persona detail with pricing. No auth required."""
     spec = PERSONA_LIBRARY.get(persona_id)
     if spec:
