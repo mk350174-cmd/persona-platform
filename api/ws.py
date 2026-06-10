@@ -196,10 +196,23 @@ async def persona_chat_ws(
 
         # ── Conversation loop ──────────────────────────────────────────────────
         history: list[dict] = []
+        # Idle timeout: Close connection if no messages for 5 minutes
+        WS_IDLE_TIMEOUT = 300  # 5 minutes in seconds
 
         while True:
             try:
-                raw = await websocket.receive_text()
+                raw = await asyncio.wait_for(websocket.receive_text(), timeout=WS_IDLE_TIMEOUT)
+            except asyncio.TimeoutError:
+                # Send warning before closing
+                try:
+                    await websocket.send_text(json.dumps({
+                        "type": "error",
+                        "detail": "Connection idle timeout (5 minutes). Closing connection.",
+                    }))
+                except Exception:
+                    pass
+                await websocket.close(code=status.WS_1000_NORMAL_CLOSURE, reason="Idle timeout")
+                break
             except WebSocketDisconnect:
                 break
 
