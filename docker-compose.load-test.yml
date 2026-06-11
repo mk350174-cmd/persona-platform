@@ -1,0 +1,262 @@
+version: "3.9"
+
+# Distributed Load Testing Infrastructure for Persona Platform
+#
+# Usage:
+#   # Start master + workers
+#   docker-compose -f docker-compose.load-test.yml up -d
+#
+#   # Access dashboard
+#   open http://localhost:8089
+#
+#   # Monitor logs
+#   docker-compose -f docker-compose.load-test.yml logs -f locust-master
+#
+#   # Stop
+#   docker-compose -f docker-compose.load-test.yml down
+#
+# Generates load for up to 1000+ concurrent users across multiple workers
+
+services:
+  # ── Locust Master ──────────────────────────────────────────────────────────
+
+  locust-master:
+    image: locustio/locust:2.15.1
+    container_name: persona-locust-master
+    command: >
+      -f /home/locust/tests/load_test_platform.py
+      --master
+      --master-bind-host=0.0.0.0
+      --master-bind-port=5557
+      --host=${LOAD_TEST_HOST:-http://api:8000}
+      --users=${LOAD_TEST_USERS:-100}
+      --spawn-rate=${LOAD_TEST_SPAWN_RATE:-10}
+      --run-time=${LOAD_TEST_DURATION:-10m}
+      --headless
+      --csv=/home/locust/results/load_test_${LOAD_TEST_SCENARIO:-normal}
+    ports:
+      - "8089:8089"      # Web UI
+      - "5557:5557"      # Master socket (internal)
+    volumes:
+      - ./tests:/home/locust/tests:ro
+      - ./results:/home/locust/results
+    environment:
+      LOCUST_LOGLEVEL: ${LOCUST_LOGLEVEL:-INFO}
+      LOAD_TEST_HOST: ${LOAD_TEST_HOST:-http://api:8000}
+      LOAD_TEST_USERS: ${LOAD_TEST_USERS:-100}
+      LOAD_TEST_SPAWN_RATE: ${LOAD_TEST_SPAWN_RATE:-10}
+      LOAD_TEST_DURATION: ${LOAD_TEST_DURATION:-10m}
+      LOAD_TEST_SCENARIO: ${LOAD_TEST_SCENARIO:-normal}
+    networks:
+      - load-test
+    depends_on:
+      - locust-worker-1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8089/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  # ── Locust Worker 1 ───────────────────────────────────────────────────────
+
+  locust-worker-1:
+    image: locustio/locust:2.15.1
+    container_name: persona-locust-worker-1
+    command: >
+      -f /home/locust/tests/load_test_platform.py
+      --worker
+      --master-host=locust-master
+      --master-port=5557
+    volumes:
+      - ./tests:/home/locust/tests:ro
+    environment:
+      LOCUST_LOGLEVEL: ${LOCUST_LOGLEVEL:-INFO}
+    networks:
+      - load-test
+    depends_on:
+      - locust-master
+    restart: unless-stopped
+
+  # ── Locust Worker 2 ───────────────────────────────────────────────────────
+
+  locust-worker-2:
+    image: locustio/locust:2.15.1
+    container_name: persona-locust-worker-2
+    command: >
+      -f /home/locust/tests/load_test_platform.py
+      --worker
+      --master-host=locust-master
+      --master-port=5557
+    volumes:
+      - ./tests:/home/locust/tests:ro
+    environment:
+      LOCUST_LOGLEVEL: ${LOCUST_LOGLEVEL:-INFO}
+    networks:
+      - load-test
+    depends_on:
+      - locust-master
+    restart: unless-stopped
+
+  # ── Locust Worker 3 ───────────────────────────────────────────────────────
+
+  locust-worker-3:
+    image: locustio/locust:2.15.1
+    container_name: persona-locust-worker-3
+    command: >
+      -f /home/locust/tests/load_test_platform.py
+      --worker
+      --master-host=locust-master
+      --master-port=5557
+    volumes:
+      - ./tests:/home/locust/tests:ro
+    environment:
+      LOCUST_LOGLEVEL: ${LOCUST_LOGLEVEL:-INFO}
+    networks:
+      - load-test
+    depends_on:
+      - locust-master
+    restart: unless-stopped
+
+  # ── Optional: API Under Test ────────────────────────────────────────────────
+
+  api:
+    image: persona-api:latest
+    container_name: persona-api-load-test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://persona:persona_dev_password@postgres:5432/persona_hub
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_dummy}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_dummy}
+      BASE_URL: http://localhost:8000
+      REDIS_URL: redis://redis:6379
+      ENVIRONMENT: test
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - load-test
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: 2G
+
+  # ── PostgreSQL Database ────────────────────────────────────────────────────
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: persona-postgres-load-test
+    environment:
+      POSTGRES_DB: persona_hub
+      POSTGRES_USER: persona
+      POSTGRES_PASSWORD: persona_dev_password
+    volumes:
+      - postgres_data_load_test:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - load-test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U persona"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 512M
+
+  # ── Redis Cache ────────────────────────────────────────────────────────────
+
+  redis:
+    image: redis:7-alpine
+    container_name: persona-redis-load-test
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    networks:
+      - load-test
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+
+  # ── Prometheus Metrics ────────────────────────────────────────────────────
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: persona-prometheus-load-test
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - load-test
+    restart: unless-stopped
+
+  # ── Grafana Dashboards ────────────────────────────────────────────────────
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: persona-grafana-load-test
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - load-test
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  # ── Network Traffic Monitoring ──────────────────────────────────────────────
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: persona-cadvisor-load-test
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - load-test
+    restart: unless-stopped
+    privileged: true
+
+networks:
+  load-test:
+    driver: bridge
+
+volumes:
+  postgres_data_load_test:
+  prometheus_data:
+  grafana_data:

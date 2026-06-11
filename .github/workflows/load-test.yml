@@ -1,0 +1,428 @@
+name: Load Testing
+
+on:
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: 'Load test scenario'
+        required: true
+        default: 'normal'
+        type: choice
+        options:
+          - light
+          - normal
+          - heavy
+          - spike
+          - all
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+  schedule:
+    # Run weekly load test on staging (Sundays at 2 AM UTC)
+    - cron: '0 2 * * 0'
+
+concurrency:
+  group: load-test-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  RESULTS_BUCKET: persona-load-test-results
+  AWS_REGION: us-east-1
+
+jobs:
+  load-test:
+    name: Load Test (${{ inputs.scenario || 'normal' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    # Security and access control
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+      id-token: write
+
+    steps:
+      # ── Setup ───────────────────────────────────────────────────────────────
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install locust[fast] pytest pandas matplotlib
+
+      - name: Validate environment config
+        run: |
+          SCENARIO="${{ inputs.scenario || 'normal' }}"
+          ENV="${{ inputs.environment || 'staging' }}"
+
+          echo "📋 Load Test Configuration"
+          echo "  Scenario: $SCENARIO"
+          echo "  Environment: $ENV"
+
+          if [[ "$SCENARIO" == "all" ]]; then
+            echo "  Duration: ~30 minutes"
+          else
+            echo "  Duration: ~15 minutes"
+          fi
+
+      # ── Staging Environment ─────────────────────────────────────────────────
+
+      - name: Check Staging API Health
+        if: inputs.environment == 'staging' || inputs.environment == null
+        run: |
+          echo "🔍 Checking staging API health..."
+          for attempt in {1..10}; do
+            if curl -s http://staging-api.persona.local:8000/health | grep -q healthy; then
+              echo "✅ API is healthy"
+              exit 0
+            fi
+            echo "  Attempt $attempt/10 - waiting..."
+            sleep 5
+          done
+          echo "❌ API failed health check"
+          exit 1
+        continue-on-error: true
+
+      - name: Set Staging Host
+        if: inputs.environment == 'staging' || inputs.environment == null
+        run: |
+          echo "HOST=http://staging-api.persona.local:8000" >> $GITHUB_ENV
+
+      # ── Production Environment (High Security) ──────────────────────────────
+
+      - name: Configure AWS credentials (Production)
+        if: inputs.environment == 'production'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubLoadTestRunner
+          role-session-name: github-load-test-${{ github.run_id }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Get Production API Endpoint
+        if: inputs.environment == 'production'
+        run: |
+          ENDPOINT=$(aws ssm get-parameter \
+            --name /persona/api/production-endpoint \
+            --query 'Parameter.Value' \
+            --output text)
+          echo "HOST=$ENDPOINT" >> $GITHUB_ENV
+          echo "🔒 Production API endpoint configured"
+
+      - name: Verify Production Endpoint
+        if: inputs.environment == 'production'
+        run: |
+          if curl -s -m 5 "${{ env.HOST }}/health" | grep -q healthy; then
+            echo "✅ Production API is healthy"
+          else
+            echo "❌ Production API health check failed"
+            exit 1
+          fi
+
+      # ── Run Load Tests ──────────────────────────────────────────────────────
+
+      - name: Run Load Tests
+        env:
+          HOST: ${{ env.HOST }}
+          SCENARIO: ${{ inputs.scenario || 'normal' }}
+        run: |
+          mkdir -p results
+
+          echo "🚀 Starting load test: $SCENARIO"
+          echo "Target: $HOST"
+          echo ""
+
+          # Set test parameters based on scenario
+          case "$SCENARIO" in
+            light)
+              USERS=20
+              SPAWN_RATE=2
+              DURATION=5m
+              ;;
+            normal)
+              USERS=50
+              SPAWN_RATE=5
+              DURATION=10m
+              ;;
+            heavy)
+              USERS=100
+              SPAWN_RATE=10
+              DURATION=10m
+              ;;
+            spike)
+              USERS=200
+              SPAWN_RATE=50
+              DURATION=5m
+              ;;
+            all)
+              # Run all scenarios sequentially
+              for scenario in light normal heavy spike; do
+                ./run_load_tests.sh "$scenario"
+              done
+              exit 0
+              ;;
+            *)
+              echo "Unknown scenario: $SCENARIO"
+              exit 1
+              ;;
+          esac
+
+          # Run the load test
+          locust \
+            -f tests/load_test_platform.py \
+            --host="$HOST" \
+            --users="$USERS" \
+            --spawn-rate="$SPAWN_RATE" \
+            --run-time="$DURATION" \
+            --headless \
+            --csv=results/${SCENARIO}_${GITHUB_RUN_ID} \
+            --stop-timeout=30 \
+            2>&1 | tee results/load_test.log
+
+          echo ""
+          echo "✅ Load test completed"
+
+      # ── Analyze Results ────────────────────────────────────────────────────
+
+      - name: Analyze Results
+        if: always()
+        run: |
+          python tests/analyze_load_results.py results/ > results/analysis_report.txt
+
+          echo "📊 Load Test Analysis"
+          echo "===================="
+          cat results/analysis_report.txt
+
+      - name: Parse Metrics for Summary
+        if: always()
+        run: |
+          python3 << 'EOF'
+          import csv
+          import os
+
+          # Find stats CSV
+          stats_files = [f for f in os.listdir('results') if f.endswith('_stats.csv')]
+          if not stats_files:
+              print("No stats found")
+              exit(0)
+
+          stats_file = f"results/{stats_files[0]}"
+
+          with open(stats_file) as f:
+              reader = csv.DictReader(f)
+              for row in reader:
+                  if row.get('Name') == 'Aggregated':
+                      requests = int(row.get('Number of requests', 0))
+                      failures = int(row.get('Number of failures', 0))
+                      error_rate = (failures / requests * 100) if requests > 0 else 0
+                      p95 = float(row.get('95th percentile', 0))
+                      p99 = float(row.get('99th percentile', 0))
+                      rps = requests / 600 if requests > 0 else 0  # Assume 10min test
+
+                      # Write to GitHub output
+                      with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+                          out.write(f"requests={requests}\n")
+                          out.write(f"failures={failures}\n")
+                          out.write(f"error_rate={error_rate:.2f}\n")
+                          out.write(f"p95={p95:.0f}\n")
+                          out.write(f"p99={p99:.0f}\n")
+                          out.write(f"rps={rps:.1f}\n")
+          EOF
+        id: metrics
+
+      # ── Performance Validation ──────────────────────────────────────────────
+
+      - name: Validate Performance Targets
+        if: always()
+        run: |
+          python3 << 'EOF'
+          import sys
+
+          p95 = float("${{ steps.metrics.outputs.p95 }}" or "0")
+          p99 = float("${{ steps.metrics.outputs.p99 }}" or "0")
+          error_rate = float("${{ steps.metrics.outputs.error_rate }}" or "0")
+          rps = float("${{ steps.metrics.outputs.rps }}" or "0")
+
+          scenario = "${{ inputs.scenario || 'normal' }}"
+
+          # Define targets based on scenario
+          targets = {
+              "light": {"p95": 500, "p99": 1000, "error_rate": 2, "rps": 5},
+              "normal": {"p95": 800, "p99": 2000, "error_rate": 2, "rps": 15},
+              "heavy": {"p95": 1500, "p99": 3000, "error_rate": 3, "rps": 50},
+              "spike": {"p95": 2000, "p99": 4000, "error_rate": 5, "rps": 100},
+          }
+
+          if scenario not in targets:
+              scenario = "normal"
+
+          target = targets[scenario]
+          failures = []
+
+          if p95 > target["p95"]:
+              failures.append(f"p95 response time: {p95:.0f}ms exceeds target {target['p95']}ms")
+
+          if p99 > target["p99"]:
+              failures.append(f"p99 response time: {p99:.0f}ms exceeds target {target['p99']}ms")
+
+          if error_rate > target["error_rate"]:
+              failures.append(f"Error rate: {error_rate:.2f}% exceeds target {target['error_rate']}%")
+
+          if rps < target["rps"] / 2:
+              failures.append(f"Throughput: {rps:.1f} RPS below target {target['rps']} RPS")
+
+          if failures:
+              print("❌ Performance targets NOT met:")
+              for failure in failures:
+                  print(f"  • {failure}")
+              sys.exit(1)
+          else:
+              print("✅ All performance targets met")
+              print(f"  p95: {p95:.0f}ms (target: {target['p95']}ms)")
+              print(f"  p99: {p99:.0f}ms (target: {target['p99']}ms)")
+              print(f"  Error rate: {error_rate:.2f}% (target: {target['error_rate']}%)")
+              print(f"  Throughput: {rps:.1f} RPS (target: {target['rps']} RPS)")
+          EOF
+        continue-on-error: true
+
+      # ── Archive Results ────────────────────────────────────────────────────
+
+      - name: Upload Results to S3
+        if: always()
+        run: |
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          SCENARIO="${{ inputs.scenario || 'normal' }}"
+          ENV="${{ inputs.environment || 'staging' }}"
+
+          # Create backup
+          aws s3 sync results/ \
+            s3://${{ env.RESULTS_BUCKET }}/load-tests/${ENV}/${SCENARIO}/${TIMESTAMP}/ \
+            --region ${{ env.AWS_REGION }} || echo "S3 upload failed (non-critical)"
+
+      - name: Store Benchmark Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-test-results-${{ inputs.scenario || 'normal' }}
+          path: results/
+          retention-days: 90
+          if-no-files-found: ignore
+
+      # ── Report Results ─────────────────────────────────────────────────────
+
+      - name: Comment on Pull Request
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const analysisPath = 'results/analysis_report.txt';
+
+            if (!fs.existsSync(analysisPath)) {
+              console.log('No analysis report found');
+              return;
+            }
+
+            const analysis = fs.readFileSync(analysisPath, 'utf8');
+            const p95 = '${{ steps.metrics.outputs.p95 }}';
+            const p99 = '${{ steps.metrics.outputs.p99 }}';
+            const errorRate = '${{ steps.metrics.outputs.error_rate }}';
+
+            const comment = `## 📊 Load Test Results
+
+            **Scenario:** ${{ inputs.scenario || 'normal' }}
+
+            ### Performance Metrics
+            - **p95 Response Time:** ${p95}ms
+            - **p99 Response Time:** ${p99}ms
+            - **Error Rate:** ${errorRate}%
+            - **Total Requests:** ${{ steps.metrics.outputs.requests }}
+
+            [View full analysis](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Create Job Summary
+        if: always()
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## 📊 Load Test Report
+
+          | Metric | Value | Status |
+          |--------|-------|--------|
+          | Total Requests | ${{ steps.metrics.outputs.requests }} | ✅ |
+          | Failures | ${{ steps.metrics.outputs.failures }} | ${{ steps.metrics.outputs.error_rate < '2' && '✅' || '⚠️' }} |
+          | Error Rate | ${{ steps.metrics.outputs.error_rate }}% | ${{ steps.metrics.outputs.error_rate < '2' && '✅' || '⚠️' }} |
+          | p95 Response | ${{ steps.metrics.outputs.p95 }}ms | ✅ |
+          | p99 Response | ${{ steps.metrics.outputs.p99 }}ms | ✅ |
+          | Throughput | ${{ steps.metrics.outputs.rps }} RPS | ✅ |
+
+          **Scenario:** ${{ inputs.scenario || 'normal' }}
+          **Environment:** ${{ inputs.environment || 'staging' }}
+          **Run ID:** ${{ github.run_id }}
+
+          [View artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          EOF
+
+      # ── Notifications ──────────────────────────────────────────────────────
+
+      - name: Notify Slack on Failure
+        if: failure() && vars.SLACK_WEBHOOK_URL
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "⚠️ Load Test Failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Load Test Failed*\nScenario: ${{ inputs.scenario || 'normal' }}\nEnvironment: ${{ inputs.environment || 'staging' }}\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Details>"
+                  }
+                }
+              ]
+            }
+
+      - name: Notify Slack on Success
+        if: success() && vars.SLACK_WEBHOOK_URL
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "✅ Load Test Passed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Load Test Passed* ✅\nScenario: ${{ inputs.scenario || 'normal' }}\nEnvironment: ${{ inputs.environment || 'staging' }}\np95: ${{ steps.metrics.outputs.p95 }}ms | Error Rate: ${{ steps.metrics.outputs.error_rate }}%"
+                  }
+                }
+              ]
+            }
