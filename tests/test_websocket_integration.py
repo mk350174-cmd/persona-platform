@@ -43,31 +43,17 @@ os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 os.environ["STRIPE_SECRET_KEY"] = "sk_test_mock"
 
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 from api.db import (
-    Base, create_user, hash_password, get_or_create_wallet, grant_free_persona,
+    create_user, hash_password, get_or_create_wallet, grant_free_persona,
 )
 from api.main import app, get_db
 from api.catalog import PERSONA_CATALOG
 
 
 # ─────────────────────────────────────────────────────────────────────────────────
-# FIXTURES: Database, Client, User, WebSocket Helper
+# FIXTURES: Client, User, WebSocket Helper
 # ─────────────────────────────────────────────────────────────────────────────────
-
-@pytest.fixture(scope="session")
-def test_db():
-    """Create test database (in-memory SQLite)."""
-    engine = create_engine(
-        "sqlite:///:memory:",
-        connect_args={"check_same_thread": False}
-    )
-    Base.metadata.create_all(bind=engine)
-    TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-    return TestingSessionLocal()
-
 
 @pytest.fixture
 def client(test_db):

@@ -2,7 +2,7 @@
 Pytest configuration and shared fixtures for all integration tests.
 
 Fixtures provided:
-- test_db: Session-scoped SQLite in-memory database
+- test_db: Function-scoped SQLite in-memory database
 - client: Test HTTP client with FastAPI TestClient
 - test_user: User created in test DB with API key
 - authenticated_user_with_wallet: User with wallet setup
@@ -28,6 +28,10 @@ sys.path.insert(0, str(repo_root))
 
 # Configure pytest
 import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from api.db import Base
+from api.main import app, get_db
 
 
 def pytest_configure(config):
@@ -36,3 +40,15 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "integration: marks tests as integration tests")
     config.addinivalue_line("markers", "websocket: marks tests as WebSocket tests")
     config.addinivalue_line("markers", "load: marks tests as load tests")
+
+
+@pytest.fixture
+def test_db():
+    """Create test database (function-scoped for isolation)."""
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False}
+    )
+    Base.metadata.create_all(bind=engine)
+    TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+    return TestingSessionLocal()

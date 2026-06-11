@@ -30,7 +30,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     """Handle Pydantic validation errors with generic message."""
     request_id = request.headers.get("X-Request-ID", "unknown")
     logger.warning(
-        f"Validation error in {request.method} {request.url.path}: {exc.error_count()} errors",
+        f"Validation error in {request.method} {request.url.path}: {len(exc.errors())} errors",
         extra={"request_id": request_id},
     )
     return JSONResponse(
