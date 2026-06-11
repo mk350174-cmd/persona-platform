@@ -3,7 +3,9 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from fastapi import Request, HTTPException, status
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+from fastapi import HTTPException, status
 
 # In-memory rate limit tracking
 # {api_key_prefix: {endpoint: {remaining: int, reset_at: datetime}}}
@@ -50,13 +52,10 @@ def _get_reset_time():
     return now.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
 
 
-class RateLimitMiddleware:
+class RateLimitMiddleware(BaseHTTPMiddleware):
     """Per-API-key + per-endpoint rate limiting."""
 
-    def __init__(self, app):
-        self.app = app
-
-    async def __call__(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next):
         # Public endpoints: skip rate limiting
         if request.url.path in {"/health", "/personas", "/docs", "/redoc"}:
             return await call_next(request)

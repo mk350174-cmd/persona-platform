@@ -43,9 +43,9 @@ from api.catalog import PERSONA_CATALOG
 # FIXTURES: Database, Client, User, Persona
 # ─────────────────────────────────────────────────────────────────────────────────
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def test_db():
-    """Create test database (in-memory SQLite, session-scoped)."""
+    """Create test database (in-memory SQLite, function-scoped for isolation)."""
     engine = create_engine(
         "sqlite:///:memory:",
         connect_args={"check_same_thread": False}

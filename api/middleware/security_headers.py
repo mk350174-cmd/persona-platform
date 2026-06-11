@@ -2,16 +2,14 @@
 
 import secrets
 
-from fastapi import Request
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
 
 
-class SecurityHeadersMiddleware:
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Add security headers to all HTTP responses."""
 
-    def __init__(self, app):
-        self.app = app
-
-    async def __call__(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next):
         # Generate a per-request nonce for CSP (available via request.state.csp_nonce)
         nonce = secrets.token_urlsafe(16)
         request.state.csp_nonce = nonce

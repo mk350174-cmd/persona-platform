@@ -345,7 +345,7 @@ class FlagEvaluation(Base):
     user_id         = Column(String(36), nullable=False, index=True)
     variant         = Column(String(64), nullable=False)  # "control", "variant_a", etc.
     enabled         = Column(Boolean, nullable=False)
-    evaluated_at    = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
+    evaluated_at    = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
 
 # ── Performance Monitoring (H93) ──────────────────────────────────────────────
@@ -363,7 +363,7 @@ class PerformanceMetric(Base):
     value           = Column(Integer, nullable=False)  # Metric value (milliseconds, percent, etc.)
     endpoint        = Column(String(256), nullable=True, index=True)  # API endpoint (optional)
     tags            = Column(JSON, nullable=False, server_default="{}")  # Additional metadata
-    recorded_at     = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
+    recorded_at     = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
 
 class PerformanceBaseline(Base):
@@ -385,7 +385,7 @@ class PerformanceBaseline(Base):
     min_val         = Column(Integer, nullable=False)
     max_val         = Column(Integer, nullable=False)
     sample_count    = Column(Integer, nullable=False)  # Number of samples used
-    created_at      = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
+    created_at      = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
 
 # ── Automatic Rollback (H94) ──────────────────────────────────────────────────
@@ -419,10 +419,10 @@ class RollbackHistory(Base):
     from_version    = Column(String(128), nullable=False)  # Current version before rollback
     to_version      = Column(String(128), nullable=False)  # Version to rollback to
     reason          = Column(String(64), nullable=False)  # error_rate_spike, latency_degradation, etc.
-    status          = Column(String(32), nullable=False, index=True)  # pending, in_progress, completed, failed
+    status          = Column(String(32), nullable=False)  # pending, in_progress, completed, failed
     details         = Column(JSON, nullable=False, server_default="{}")  # Error details, metrics, etc.
-    initiated_at    = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
-    completed_at    = Column(DateTime, nullable=True, index=True)
+    initiated_at    = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    completed_at    = Column(DateTime, nullable=True)
 
 
 class OAuth2Credential(Base):

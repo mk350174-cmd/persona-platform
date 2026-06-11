@@ -3,7 +3,8 @@
 import logging
 from typing import Optional
 
-from fastapi import Request
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
 
 from api.db import SessionLocal, write_audit_log
 
@@ -29,13 +30,10 @@ _EVENT_TYPES = {
 }
 
 
-class AuditLoggerMiddleware:
+class AuditLoggerMiddleware(BaseHTTPMiddleware):
     """Log security-relevant HTTP events to Python logger and the audit_log DB table."""
 
-    def __init__(self, app):
-        self.app = app
-
-    async def __call__(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next):
         response = await call_next(request)
 
         status = response.status_code

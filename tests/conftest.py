@@ -18,8 +18,9 @@ import os
 from pathlib import Path
 
 # Set test environment before importing app modules
-os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
-os.environ.setdefault("STRIPE_SECRET_KEY", "sk_test_mock")
+# CRITICAL: Must use os.environ[] directly (not setdefault) to override defaults
+os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+os.environ["STRIPE_SECRET_KEY"] = "sk_test_mock"
 
 # Add repo root to sys.path so tests can import api, needle, persona_math, persona_mcp
 repo_root = Path(__file__).parent.parent
