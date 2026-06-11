@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@nivo/radar": "^0.99.0",
+    "intro.js": "^8.3.2",
+    "jspdf": "^4.2.1",
+    "papaparse": "^5.5.3",
+    "viem": "^2.52.2"
+  }
+}
