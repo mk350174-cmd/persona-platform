@@ -49,3 +49,25 @@ abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:687
 abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:723
 abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:753
 abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:790
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:834
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:872
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:1140
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:1146
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:1160
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:1177
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:1183
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:1187
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:1195
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:1205
+
+# ARCHITECTURE.md - generic-api-key example
+abe210576a347087a1322f6fce90df206b4d97e0:ARCHITECTURE.md:generic-api-key:445
+
+# test_security_units.py - placeholder API keys in test fixtures
+af933432d298895748e069350f7b4b98fe4e2ab7:tests/test_security_units.py:generic-api-key:25
+af933432d298895748e069350f7b4b98fe4e2ab7:tests/test_security_units.py:generic-api-key:33
+af933432d298895748e069350f7b4b98fe4e2ab7:tests/test_security_units.py:generic-api-key:41
+af933432d298895748e069350f7b4b98fe4e2ab7:tests/test_security_units.py:generic-api-key:140
+
+# test_security_auth.py - placeholder API keys in test fixtures
+af933432d298895748e069350f7b4b98fe4e2ab7:tests/test_security_auth.py:generic-api-key:42
