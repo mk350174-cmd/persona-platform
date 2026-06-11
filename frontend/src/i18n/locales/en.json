@@ -1,0 +1,73 @@
+{
+  "common": {
+    "appName": "Persona Hub",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous"
+  },
+  "nav": {
+    "home": "Home",
+    "catalog": "Catalog",
+    "dashboard": "Dashboard",
+    "ceidMonitor": "CEID Monitor",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "loginFailed": "Login failed",
+    "enterEmail": "Enter your email",
+    "enterPassword": "Enter your password"
+  },
+  "catalog": {
+    "title": "Persona Catalog",
+    "search": "Search personas",
+    "filter": "Filter",
+    "domain": "Domain",
+    "price": "Price",
+    "rating": "Rating",
+    "personas": "Personas",
+    "nothingFound": "No personas found"
+  },
+  "personas": {
+    "compile": "Compile",
+    "chat": "Chat",
+    "preview": "Preview",
+    "purchase": "Purchase",
+    "purchased": "Purchased",
+    "description": "Description",
+    "domain": "Domain",
+    "era": "Era",
+    "language": "Language",
+    "ceid": "CEID Score"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "dailyMessages": "Daily Messages",
+    "topPersonas": "Top Personas",
+    "usage": "Usage",
+    "revenue": "Revenue",
+    "activeUsers": "Active Users"
+  },
+  "errors": {
+    "notFound": "Not found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "serverError": "Server error",
+    "networkError": "Network error"
+  }
+}

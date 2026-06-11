@@ -1,0 +1,73 @@
+{
+  "common": {
+    "appName": "Persona Hub",
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "back": "Geri",
+    "next": "İleri",
+    "previous": "Önceki"
+  },
+  "nav": {
+    "home": "Anasayfa",
+    "catalog": "Katalog",
+    "dashboard": "Kontrol Paneli",
+    "ceidMonitor": "CEID İzleyici",
+    "profile": "Profil",
+    "logout": "Çıkış Yap"
+  },
+  "auth": {
+    "login": "Giriş Yap",
+    "signup": "Kaydol",
+    "email": "E-posta",
+    "password": "Şifre",
+    "rememberMe": "Beni hatırla",
+    "forgotPassword": "Şifremi unuttum",
+    "noAccount": "Hesabınız yok mu?",
+    "haveAccount": "Zaten bir hesabınız var mı?",
+    "loginFailed": "Giriş başarısız",
+    "enterEmail": "E-postanızı girin",
+    "enterPassword": "Şifrenizi girin"
+  },
+  "catalog": {
+    "title": "Persona Kataloğu",
+    "search": "Persona ara",
+    "filter": "Filtrele",
+    "domain": "Etki Alanı",
+    "price": "Fiyat",
+    "rating": "Derecelendirme",
+    "personas": "Personalar",
+    "nothingFound": "Persona bulunamadı"
+  },
+  "personas": {
+    "compile": "Derle",
+    "chat": "Sohbet",
+    "preview": "Önizle",
+    "purchase": "Satın Al",
+    "purchased": "Satın Alındı",
+    "description": "Açıklama",
+    "domain": "Etki Alanı",
+    "era": "Dönem",
+    "language": "Dil",
+    "ceid": "CEID Puanı"
+  },
+  "dashboard": {
+    "title": "Kontrol Paneli",
+    "dailyMessages": "Günlük Mesajlar",
+    "topPersonas": "En Popüler Personalar",
+    "usage": "Kullanım",
+    "revenue": "Gelir",
+    "activeUsers": "Aktif Kullanıcılar"
+  },
+  "errors": {
+    "notFound": "Bulunamadı",
+    "unauthorized": "Yetkisiz",
+    "forbidden": "Yasak",
+    "serverError": "Sunucu hatası",
+    "networkError": "Ağ hatası"
+  }
+}
