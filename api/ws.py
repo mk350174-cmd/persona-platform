@@ -16,6 +16,7 @@ Protocol:
     {"type": "audio_ready",    "audio_b64": "..."}     # if voice tier
     {"type": "visual_update",  "data": {...}}          # per-message delta
     {"type": "error",          "detail": "..."}
+    {"type": "backpressure",   "detail": "slow down"}  # queue depth exceeded
     {"type": "pong"}
     {"type": "done"}
 
@@ -28,11 +29,20 @@ Pricing enforcement:
   Tier is stored per-user in their subscription or passed as query param.
   The WebSocket validates that the user has purchased the persona
   (same gate as /v1/compile).
+
+Hardening (added):
+  - ConnectionManager: per-user connection limit (MAX_CONNECTIONS_PER_USER = 5)
+  - Message size limit: MAX_MESSAGE_SIZE = 4096 chars
+  - Per-connection rate limit: 30 messages / 60 seconds
+  - Structured logging: connect / disconnect / message events
+  - Backpressure: queue depth > 100 → send backpressure warning
 """
 
 import json
 import base64
 import asyncio
+import logging
+import time
 from fastapi import WebSocket, WebSocketDisconnect, status
 
 from api.db import get_user_by_api_key
@@ -41,6 +51,9 @@ from api.catalog import get_persona_vector, PERSONA_CATALOG
 from api.visual_params import compute_visual_params
 from api.voice import synthesize_speech, tts_available
 from integrations.phoenix_monitor import CEIDMonitor
+from api.ws_manager import manager as _ws_manager
+
+logger = logging.getLogger("persona_hub.ws")
 
 # Tier constants
 TIER_TEXT  = "text"
@@ -50,6 +63,12 @@ VALID_TIERS = {TIER_TEXT, TIER_VOICE, TIER_FULL}
 
 # Conversation history limit (keep last N turns)
 MAX_HISTORY_TURNS = 10
+
+# Hardening constants
+MAX_MESSAGE_SIZE = 4096          # characters per incoming text message
+RATE_LIMIT_MESSAGES = 30         # max messages per rate-limit window
+RATE_LIMIT_WINDOW   = 60.0       # seconds for rate-limit window
+BACKPRESSURE_QUEUE_DEPTH = 100   # queue items before sending backpressure
 
 SYSTEM_PROMPT_TEMPLATE = """\
 {system_instruction}
@@ -140,6 +159,7 @@ async def persona_chat_ws(
     from api.db import SessionLocal
     db = SessionLocal()
 
+    user = None
     try:
         user = get_user_by_api_key(db, api_key)
         if user is None:
@@ -167,6 +187,16 @@ async def persona_chat_ws(
             await websocket.close(code=status.WS_1003_UNSUPPORTED_DATA)
             return
 
+        # ── Connection limit check (ConnectionManager) ─────────────────────────
+        user_id = user.id
+        accepted = await _ws_manager.connect(websocket, user_id, persona_id)
+        if not accepted:
+            await websocket.close(
+                code=status.WS_1008_POLICY_VIOLATION,
+                reason="Connection limit exceeded",
+            )
+            return
+
         # ── Compile system instruction ─────────────────────────────────────────
         compile_tier = "rich" if tier == TIER_FULL else "standard"
         system_instruction = _compile_system_instruction(
@@ -179,12 +209,17 @@ async def persona_chat_ws(
             baseline_vector=P.copy(),
             offline=True,
         )
-        session_id = f"{user.id[:8]}_{persona_id}"
+        session_id = f"{user_id[:8]}_{persona_id}"
 
         # ── Initial visual params ──────────────────────────────────────────────
         visual = compute_visual_params(P, ceid_score=0.95, drift_val=0.0, tier=compile_tier)
 
         await websocket.accept()
+
+        logger.info(
+            "ws_session_start user=%s persona=%s tier=%s",
+            user_id, persona_id, tier,
+        )
 
         if tier == TIER_FULL:
             await websocket.send_text(json.dumps({
@@ -197,11 +232,19 @@ async def persona_chat_ws(
         # Idle timeout: Close connection if no messages for 5 minutes
         WS_IDLE_TIMEOUT = 300  # 5 minutes in seconds
 
+        # Per-connection rate-limit state
+        rate_window_start: float = time.monotonic()
+        rate_msg_count: int = 0
+
         while True:
             try:
                 raw = await asyncio.wait_for(websocket.receive_text(), timeout=WS_IDLE_TIMEOUT)
             except asyncio.TimeoutError:
                 # Send warning before closing
+                logger.info(
+                    "ws_idle_timeout user=%s persona=%s",
+                    user_id, persona_id,
+                )
                 try:
                     await websocket.send_text(json.dumps({
                         "type": "error",
@@ -212,11 +255,50 @@ async def persona_chat_ws(
                 await websocket.close(code=status.WS_1000_NORMAL_CLOSURE, reason="Idle timeout")
                 break
             except WebSocketDisconnect:
+                logger.info(
+                    "ws_disconnect user=%s persona=%s",
+                    user_id, persona_id,
+                )
                 break
+
+            # ── Message size limit ─────────────────────────────────────────────
+            if len(raw) > MAX_MESSAGE_SIZE:
+                logger.warning(
+                    "ws_message_too_large user=%s persona=%s size=%d",
+                    user_id, persona_id, len(raw),
+                )
+                await websocket.send_text(json.dumps({
+                    "type": "error",
+                    "detail": f"Message too large (max {MAX_MESSAGE_SIZE} chars)",
+                }))
+                continue
+
+            # ── Rate limiting ─────────────────────────────────────────────────
+            now = time.monotonic()
+            elapsed = now - rate_window_start
+            if elapsed >= RATE_LIMIT_WINDOW:
+                # Reset window
+                rate_window_start = now
+                rate_msg_count = 0
+            rate_msg_count += 1
+            if rate_msg_count > RATE_LIMIT_MESSAGES:
+                logger.warning(
+                    "ws_rate_limit user=%s persona=%s count=%d",
+                    user_id, persona_id, rate_msg_count,
+                )
+                await websocket.send_text(json.dumps({
+                    "type": "error",
+                    "detail": "Rate limit exceeded (30 messages/min). Please slow down.",
+                }))
+                continue
 
             try:
                 msg = json.loads(raw)
             except json.JSONDecodeError:
+                logger.warning(
+                    "ws_invalid_json user=%s persona=%s",
+                    user_id, persona_id,
+                )
                 await websocket.send_text(json.dumps({
                     "type": "error", "detail": "Invalid JSON"
                 }))
@@ -233,8 +315,24 @@ async def persona_chat_ws(
             if not user_text:
                 continue
 
+            logger.info(
+                "ws_message user=%s persona=%s text_len=%d",
+                user_id, persona_id, len(user_text),
+            )
+
             # ── Stream LLM response ────────────────────────────────────────────
             queue = await _stream_llm_response(system_instruction, history, user_text)
+
+            # ── Backpressure check ─────────────────────────────────────────────
+            if queue.qsize() > BACKPRESSURE_QUEUE_DEPTH:
+                logger.warning(
+                    "ws_backpressure user=%s persona=%s queue_size=%d",
+                    user_id, persona_id, queue.qsize(),
+                )
+                await websocket.send_text(json.dumps({
+                    "type": "backpressure",
+                    "detail": "slow down",
+                }))
 
             full_response = []
             try:
@@ -315,3 +413,5 @@ async def persona_chat_ws(
 
     finally:
         db.close()
+        if user is not None:
+            _ws_manager.disconnect(websocket, user.id, persona_id)

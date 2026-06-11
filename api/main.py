@@ -77,6 +77,7 @@ from api.routers.performance import router as performance_router
 from api.routers.rollback import router as rollback_router
 from api.routers.observability import router as observability_router
 from api.routers.advanced_auth import router as advanced_auth_router
+from api.routers.cache import router as cache_router
 from persona_math.compiler import (
     compile_persona,
     compile_all_platforms,
@@ -126,10 +127,41 @@ _CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", _CORS_DEFAULT).spl
 
 app = FastAPI(
     title="Persona Compiler API",
-    description="HPEP-100 certified AI persona marketplace. Purchase, compile, deploy.",
+    description="""
+## Persona Compiler API
+
+Production-ready AI persona marketplace. Purchase, compile, and interact with 495 historically-grounded AI personas.
+
+### Authentication
+All endpoints (except `/health`, `/personas`, `/auth/*`) require one of:
+- **X-API-Key** header: `X-API-Key: prs_...`
+- **Authorization** header: `Authorization: Bearer prs_...`
+- **JWT Bearer** (OAuth2 flow): `Authorization: Bearer eyJ...`
+
+### Rate Limits
+- Default: 1000 requests/hour per API key
+- `/v1/compile`: 100/hour
+- `/ws/chat`: 30 messages/minute per connection
+
+### Versioning
+API is versioned at `/v1`. Deprecated endpoints return `Deprecation: true` header.
+""",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    openapi_tags=[
+        {"name": "system",      "description": "Health checks and system info"},
+        {"name": "auth",        "description": "Registration, login, email verification"},
+        {"name": "catalog",     "description": "Browse 495 AI personas"},
+        {"name": "payments",    "description": "Stripe checkout and billing"},
+        {"name": "compile",     "description": "Compile personas to platform-specific configs"},
+        {"name": "rollback",    "description": "Automatic rollback and self-healing"},
+        {"name": "observability","description": "Metrics, traces, and structured logs"},
+        {"name": "feature-flags","description": "A/B testing and gradual rollouts"},
+        {"name": "performance", "description": "Regression detection and baselines"},
+        {"name": "cache",       "description": "Redis cache management"},
+        {"name": "analytics",   "description": "Usage analytics and reporting"},
+    ],
 )
 
 app.state.limiter = limiter
@@ -202,6 +234,9 @@ app.include_router(observability_router)
 
 # Advanced Authentication endpoints (OAuth2, JWT, RBAC, sessions) — see api/routers/advanced_auth.py
 app.include_router(advanced_auth_router)
+
+# Cache Management endpoints (Redis stats, flush, health) — see api/routers/cache.py
+app.include_router(cache_router)
 
 
 @app.middleware("http")
