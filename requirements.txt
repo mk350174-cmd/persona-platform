@@ -11,7 +11,7 @@ gguf            # INT4 / GGUF export (quantizer.py)
 # Persona packages (persona_math/needle/persona_mcp) are vendored locally in this
 # repo — no external git dependency needed.
 google-generativeai>=0.7
-gradio>=5.0.0
+# gradio>=5.0.0  # HuggingFace Spaces demo only — see spaces/persona-hub/app.py
 groq>=0.9
 httpx              # Ollama (Llama teacher)
 jinja2
