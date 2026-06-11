@@ -103,18 +103,23 @@ class TestBundlePricing:
             assert cfg["savings_pct"] <= 50, f"{bundle_id} savings should be realistic"
 
 
-@pytest.fixture(scope="session")
-def db():
-    """Create in-memory SQLite DB for testing."""
-    import os
-    os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+@pytest.fixture
+def db(tmp_path):
+    """Create file-based SQLite DB for testing (parallel-safe)."""
     from sqlalchemy import create_engine
     from api.db import Base
-    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
-    Base.metadata.create_all(bind=engine)
     from sqlalchemy.orm import sessionmaker
+
+    db_file = tmp_path / "test.db"
+    engine = create_engine(
+        f"sqlite:///{db_file}",
+        connect_args={"check_same_thread": False},
+    )
+    Base.metadata.create_all(bind=engine)
     SessionLocal_local = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-    yield SessionLocal_local()
+    session = SessionLocal_local()
+    yield session
+    session.close()
 
 
 class TestWalletOperations:

@@ -31,10 +31,10 @@ jobs:
           # IS NULL / IS TRUE); `is`-comparisons would break query generation.
           ruff check persona_math/ api/ --select E,F,W --ignore E501,E711,E712
 
-      - name: Run tests
+      - name: Run tests (parallel)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY || 'sk-test' }}
           STRIPE_SECRET_KEY: sk_test_dummy
           ELEVENLABS_API_KEY: el_test_dummy
         run: |
-          pytest tests/ -v --tb=short -x
+          pytest tests/ -n auto --dist loadscope -v --tb=short
