@@ -27,7 +27,9 @@ jobs:
       - name: Lint (ruff)
         run: |
           pip install ruff
-          ruff check persona_math/ api/ --select E,F,W --ignore E501
+          # E711/E712: SQLAlchemy filters require `== None` / `== True` (compile to
+          # IS NULL / IS TRUE); `is`-comparisons would break query generation.
+          ruff check persona_math/ api/ --select E,F,W --ignore E501,E711,E712
 
       - name: Run tests
         env:

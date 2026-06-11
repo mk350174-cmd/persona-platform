@@ -56,8 +56,7 @@ from api.db import (
     create_email_verification_token, consume_verification_token,
     has_pending_verification, hash_password,
     User, log_usage, grant_free_persona, generate_referral_code,
-    get_or_create_wallet, get_referral_code_by_code, record_purchase,
-    BUNDLE_PRICING,
+    get_or_create_wallet, get_referral_code_by_code, BUNDLE_PRICING,
 )
 from api.auth import get_current_user, require_persona_access
 from api.payments import (

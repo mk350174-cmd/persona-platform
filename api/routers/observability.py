@@ -11,9 +11,6 @@ from api.observability import (
     get_metrics_collector,
     get_request_metrics,
     get_structured_logger,
-    MetricsCollector,
-    RequestMetrics,
-    TraceContext,
     Span,
 )
 
@@ -308,24 +305,24 @@ def prometheus_metrics(
     lines = []
 
     # Standard HTTP metrics
-    lines.append(f"# HELP http_requests_total Total HTTP requests")
-    lines.append(f"# TYPE http_requests_total counter")
+    lines.append("# HELP http_requests_total Total HTTP requests")
+    lines.append("# TYPE http_requests_total counter")
     lines.append(f"http_requests_total {req_metrics.total_requests}")
 
-    lines.append(f"# HELP http_requests_success Successful HTTP requests")
-    lines.append(f"# TYPE http_requests_success counter")
+    lines.append("# HELP http_requests_success Successful HTTP requests")
+    lines.append("# TYPE http_requests_success counter")
     lines.append(f"http_requests_success {req_metrics.successful_requests}")
 
-    lines.append(f"# HELP http_requests_failed Failed HTTP requests")
-    lines.append(f"# TYPE http_requests_failed counter")
+    lines.append("# HELP http_requests_failed Failed HTTP requests")
+    lines.append("# TYPE http_requests_failed counter")
     lines.append(f"http_requests_failed {req_metrics.failed_requests}")
 
-    lines.append(f"# HELP http_request_duration_ms HTTP request duration in milliseconds")
-    lines.append(f"# TYPE http_request_duration_ms gauge")
+    lines.append("# HELP http_request_duration_ms HTTP request duration in milliseconds")
+    lines.append("# TYPE http_request_duration_ms gauge")
     lines.append(f"http_request_duration_ms {req_metrics.average_duration_ms}")
 
-    lines.append(f"# HELP http_requests_success_rate HTTP success rate")
-    lines.append(f"# TYPE http_requests_success_rate gauge")
+    lines.append("# HELP http_requests_success_rate HTTP success rate")
+    lines.append("# TYPE http_requests_success_rate gauge")
     lines.append(f"http_requests_success_rate {req_metrics.success_rate}")
 
     # Custom metrics from collector

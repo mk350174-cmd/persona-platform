@@ -2,10 +2,10 @@
 
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional
 
-from api.db import get_db, User, FeatureFlag
+from api.db import get_db, User
 from api.auth import get_current_user
 from api.feature_flags import (
     create_feature_flag,
@@ -15,7 +15,6 @@ from api.feature_flags import (
     list_feature_flags,
     get_flag_stats,
     FlagEvaluationContext,
-    should_enable_flag,
     get_flag_variant,
 )
 

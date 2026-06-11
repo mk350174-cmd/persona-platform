@@ -256,7 +256,6 @@ def update_feature_flag(
     expires_at: datetime | None = None,
 ) -> "FeatureFlag | None":
     """Update an existing feature flag."""
-    from api.db import FeatureFlag
 
     flag = get_feature_flag(db, flag_name)
     if not flag:
@@ -283,7 +282,6 @@ def update_feature_flag(
 
 def delete_feature_flag(db: Session, flag_name: str) -> bool:
     """Delete a feature flag."""
-    from api.db import FeatureFlag
 
     flag = get_feature_flag(db, flag_name)
     if flag:

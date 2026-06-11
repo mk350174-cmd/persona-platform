@@ -340,8 +340,8 @@ def format_rollback_alert(
         "confidence": f"{decision.confidence * 100:.0f}%",
         "action": decision.recommended_action,
         "manual_rollback_command": (
-            f"gh run cancel $(gh run list --workflow=deploy | head -1 | awk '{{print $7}}')\n"
-            f"git revert HEAD && git push origin main"
+            "gh run cancel $(gh run list --workflow=deploy | head -1 | awk '{print $7}')\n"
+            "git revert HEAD && git push origin main"
         ),
     }
 

@@ -21,7 +21,7 @@ from sqlalchemy.orm import Session
 
 from api.db import (
     User, record_purchase, has_purchased, upsert_subscription, SUBSCRIPTION_TIERS, is_stripe_event_processed, mark_stripe_event_processed,
-    get_promo_code, apply_promo_code, deduct_wallet_credit, get_or_create_wallet,
+    apply_promo_code, deduct_wallet_credit, get_or_create_wallet,
     issue_referral_credit, record_invoice,
 )
 
@@ -207,7 +207,6 @@ def handle_webhook(raw_body: bytes, stripe_signature: str, db: Session) -> dict:
             tier = meta.get("subscription_tier")
             stripe_sub_id = obj.get("subscription")
             stripe_customer_id = obj.get("customer")
-            billing_period = meta.get("billing_period", "month")
             if user_id and tier:
                 upsert_subscription(db, user_id, tier, stripe_sub_id, stripe_customer_id)
                 # Update stripe_customer_id on User (B13 multi-currency support)
@@ -308,7 +307,6 @@ def create_subscription_session(
     # B14: Apply promo code
     discount_percent = 0
     discount_cents = 0
-    discounts = []
     if promo:
         promo_code = apply_promo_code(db, promo)
         if promo_code:

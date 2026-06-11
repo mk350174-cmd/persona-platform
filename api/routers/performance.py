@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timezone
 from typing import Optional
 
-from api.db import get_db, User, PerformanceMetric
+from api.db import get_db, User
 from api.auth import get_current_user
 from api.performance_metrics import (
     MetricType,

@@ -7,7 +7,6 @@ Manages active WebSocket connections with:
   - Connection statistics
 """
 
-import asyncio
 import logging
 from collections import defaultdict
 from fastapi import WebSocket

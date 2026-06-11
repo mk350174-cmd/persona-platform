@@ -10,11 +10,9 @@ Admin-only endpoints additionally check user.role == "admin".
 
 from __future__ import annotations
 
-import io
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from fastapi.responses import Response, StreamingResponse
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from api.auth import get_current_user

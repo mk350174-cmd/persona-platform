@@ -15,12 +15,12 @@ Usage:
 from __future__ import annotations
 
 import calendar
-from collections import defaultdict
-from dataclasses import dataclass, field
+import csv
+import io as _io
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 
-from sqlalchemy import func, distinct, case
+from sqlalchemy import func, distinct
 from sqlalchemy.orm import Session
 
 from api.db import (
@@ -149,7 +149,6 @@ def get_dashboard_summary(db: Session) -> DashboardSummary:
     Compute all top-level KPIs in a small number of SQL queries.
     Safe on empty databases — all aggregates fall back to 0 / [].
     """
-    now_naive = _naive(_utc_now())
     window_7d  = _naive(_window_start(7))
     window_30d = _naive(_window_start(30))
     window_24h = _naive(_window_start(1))
@@ -454,7 +453,6 @@ def get_user_engagement(db: Session, user_id: str) -> UserEngagementStats:
     # We use a Python-side approach that works for both — count distinct dates
     # via a subquery casting timestamp to date string
     from sqlalchemy import cast, Date as SADate
-    from sqlalchemy import text as sa_text
 
     try:
         # Works on PostgreSQL
@@ -616,9 +614,6 @@ def get_daily_active_users(
 
     # Use SQLAlchemy func to group by date.
     # Works on both SQLite (via strftime) and PostgreSQL (via DATE()).
-    from sqlalchemy import text as sa_text
-
-    db_url = str(db.bind.url) if hasattr(db, "bind") and db.bind else ""
 
     try:
         # Try PostgreSQL-style DATE cast
@@ -759,9 +754,6 @@ def get_cohort_retention(
 
 
 # ── CSV export helpers ─────────────────────────────────────────────────────────
-
-import csv
-import io as _io
 
 
 def export_revenue_csv(db: Session, period: str = "monthly") -> str:

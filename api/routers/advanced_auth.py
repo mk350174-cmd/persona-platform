@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status, Request
-from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from api.db import (
@@ -16,7 +15,7 @@ from api.advanced_auth import (
     get_token_manager, get_session_manager,
     get_google_oauth, get_github_oauth,
     generate_oauth_state, verify_oauth_state,
-    JWTTokenManager, UserRole,
+    UserRole,
     get_current_user_jwt, require_permission, require_role,
     check_password_strength,
 )

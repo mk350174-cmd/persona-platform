@@ -12,7 +12,7 @@ import time
 import logging
 import json
 from contextlib import contextmanager
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 from enum import Enum

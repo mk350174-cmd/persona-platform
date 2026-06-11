@@ -17,9 +17,8 @@ Access rules:
 """
 
 from typing import Optional
-from datetime import datetime, timezone
 
-from fastapi import Depends, Header, HTTPException, status, Request
+from fastapi import Depends, Header, HTTPException, status
 from sqlalchemy.orm import Session
 
 from api.db import (
