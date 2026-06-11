@@ -1,0 +1,80 @@
+{
+  "baseline_version": "1.0.0",
+  "generated": "2026-06-11",
+  "endpoints": {
+    "GET /health": {
+      "p50_ms": 5,
+      "p95_ms": 10,
+      "p99_ms": 15,
+      "description": "Health check endpoint"
+    },
+    "GET /personas": {
+      "p50_ms": 25,
+      "p95_ms": 50,
+      "p99_ms": 100,
+      "description": "List all personas (may paginate)"
+    },
+    "GET /personas/{persona_id}/profile": {
+      "p50_ms": 15,
+      "p95_ms": 30,
+      "p99_ms": 60,
+      "description": "Get persona profile"
+    },
+    "POST /auth/register": {
+      "p50_ms": 50,
+      "p95_ms": 100,
+      "p99_ms": 200,
+      "description": "User registration (includes DB write)"
+    },
+    "POST /auth/login": {
+      "p50_ms": 30,
+      "p95_ms": 60,
+      "p99_ms": 120,
+      "description": "User login"
+    },
+    "GET /me": {
+      "p50_ms": 10,
+      "p95_ms": 20,
+      "p99_ms": 50,
+      "description": "Get current user profile"
+    },
+    "GET /me/purchases": {
+      "p50_ms": 20,
+      "p95_ms": 40,
+      "p99_ms": 80,
+      "description": "Get user purchase history"
+    },
+    "POST /checkout/{persona_id}": {
+      "p50_ms": 100,
+      "p95_ms": 200,
+      "p99_ms": 500,
+      "description": "Create checkout session (Stripe integration)"
+    },
+    "GET /me/wallet": {
+      "p50_ms": 10,
+      "p95_ms": 20,
+      "p99_ms": 50,
+      "description": "Get wallet balance"
+    },
+    "GET /analytics/revenue": {
+      "p50_ms": 100,
+      "p95_ms": 200,
+      "p99_ms": 500,
+      "description": "Analytics dashboard (complex query)"
+    },
+    "POST /compile/{persona_id}": {
+      "p50_ms": 500,
+      "p95_ms": 1000,
+      "p99_ms": 2000,
+      "description": "Compile persona (CPU-intensive)"
+    },
+    "GET /api/v1/personas": {
+      "p50_ms": 20,
+      "p95_ms": 40,
+      "p99_ms": 100,
+      "description": "API v1 persona list"
+    }
+  },
+  "regression_threshold_pct": 20,
+  "description": "Performance baseline for regression detection. These are estimated values based on typical endpoint behavior. Update after running load tests."
+}
