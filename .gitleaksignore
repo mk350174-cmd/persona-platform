@@ -1,5 +1,9 @@
 # Gitleaks ignore file for documentation examples
 # These are placeholder tokens in API documentation, not real secrets
+# Pattern: All example curl commands in .md files use placeholder tokens like:
+# - prs_YOUR_KEY, prs_ADMIN_KEY (API key placeholders)
+# - Bearer TOKEN placeholders
+# - Generic API key examples in code documentation
 
 # ANALYTICS.md - curl-auth-header examples with placeholder tokens (prs_YOUR_KEY, prs_ADMIN_KEY)
 c2ad2b13c4f635c7c57bafa76208d1a0e2958def:ANALYTICS.md:curl-auth-header:455
@@ -32,3 +36,16 @@ abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:curl-auth-header:1204
 # API_DOCS.md - generic-api-key examples with placeholder tokens
 abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:185
 abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:236
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:277
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:312
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:345
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:398
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:476
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:507
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:539
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:578
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:662
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:687
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:723
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:753
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:790
