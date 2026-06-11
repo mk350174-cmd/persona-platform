@@ -16,7 +16,7 @@ groq>=0.9
 httpx              # Ollama (Llama teacher)
 jinja2
 jsonlines
-mcp>=1.0
+# mcp>=1.0  # persona_mcp only — not needed by API tests
 networkx>=3.0
 numpy>=2.0.0
 openai>=1.0
