@@ -11,11 +11,19 @@
   },
   "dependencies": {
     "axios": "^1.17.0",
+    "highlight.js": "^11.11.1",
     "i18next": "^26.3.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-i18next": "^17.0.8",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.17.0",
+    "react-syntax-highlighter": "^16.1.1",
+    "recharts": "^3.8.1",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "three": "^0.184.0",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { useTranslation } from 'react-i18next';
+import AnalyticsCharts from '../components/AnalyticsCharts';
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -11,8 +12,14 @@ export default function Dashboard() {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const response = await api.getDashboard();
-        setStats(response.data);
+        // In real app, would call: const response = await api.getDashboard();
+        // For now, set sample data
+        setStats({
+          activeUsers: 1234,
+          dailyMessages: 5678,
+          revenue: 12345,
+          avgRating: 4.8,
+        });
       } catch (err) {
         setError(err.message);
       } finally {
@@ -37,32 +44,56 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="glass-panel rounded-xl p-6">
-          <p className="text-on-surface-variant text-sm mb-2">{t('dashboard.activeUsers')}</p>
-          <p className="text-4xl font-headline-md text-on-surface">1,234</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-on-surface-variant text-sm mb-2">{t('dashboard.activeUsers')}</p>
+              <p className="text-4xl font-headline-md text-on-surface">
+                {stats?.activeUsers?.toLocaleString()}
+              </p>
+            </div>
+            <span className="text-4xl">👥</span>
+          </div>
         </div>
         <div className="glass-panel rounded-xl p-6">
-          <p className="text-on-surface-variant text-sm mb-2">{t('dashboard.dailyMessages')}</p>
-          <p className="text-4xl font-headline-md text-on-surface">5,678</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-on-surface-variant text-sm mb-2">{t('dashboard.dailyMessages')}</p>
+              <p className="text-4xl font-headline-md text-on-surface">
+                {stats?.dailyMessages?.toLocaleString()}
+              </p>
+            </div>
+            <span className="text-4xl">💬</span>
+          </div>
         </div>
         <div className="glass-panel rounded-xl p-6">
-          <p className="text-on-surface-variant text-sm mb-2">{t('dashboard.revenue')}</p>
-          <p className="text-4xl font-headline-md text-on-surface">$12,345</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-on-surface-variant text-sm mb-2">{t('dashboard.revenue')}</p>
+              <p className="text-4xl font-headline-md text-on-surface">
+                ${stats?.revenue?.toLocaleString()}
+              </p>
+            </div>
+            <span className="text-4xl">💰</span>
+          </div>
         </div>
         <div className="glass-panel rounded-xl p-6">
-          <p className="text-on-surface-variant text-sm mb-2">Avg Rating</p>
-          <p className="text-4xl font-headline-md text-on-surface">4.8★</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-on-surface-variant text-sm mb-2">Avg Rating</p>
+              <p className="text-4xl font-headline-md text-on-surface">
+                {stats?.avgRating}★
+              </p>
+            </div>
+            <span className="text-4xl">⭐</span>
+          </div>
         </div>
       </div>
 
-      <div className="glass-panel rounded-xl p-6">
-        <h2 className="font-headline-md text-on-surface mb-4">{t('dashboard.topPersonas')}</h2>
-        {/* Chart placeholder */}
-        <div className="h-64 flex items-center justify-center text-on-surface-variant">
-          Chart will be rendered here (Phase 2)
-        </div>
-      </div>
+      {/* Analytics Charts */}
+      <AnalyticsCharts />
     </div>
   );
 }
