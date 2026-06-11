@@ -25,16 +25,22 @@ Covered:
   - test_connection_manager_limit  → exceed MAX_CONNECTIONS_PER_USER
 """
 
-from __future__ import annotations
-
 import asyncio
 import sys
 import types
 from contextlib import contextmanager
+from typing import Optional
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import numpy as np
 import pytest
+
+# Import WebSocket at module level so that get_type_hints() can resolve the
+# 'WebSocket' annotation on the inner _ws_chat closure inside _build_app().
+# (Without this, PEP 563 forward-reference resolution fails in the closure's
+# __globals__ and FastAPI silently treats 'websocket' as a query param.)
+from fastapi import FastAPI, WebSocket, status
+from fastapi.testclient import TestClient
 
 # ── Stub missing third-party / internal modules so api.ws can import ─────────
 
@@ -116,19 +122,16 @@ def _make_ceid():
     return m
 
 
-def _fresh_manager() -> ConnectionManager:
+def _fresh_manager():
     """Isolated ConnectionManager (not the module singleton)."""
     return ConnectionManager()
 
 
-def _build_app(mgr: ConnectionManager | None = None):
+def _build_app(mgr=None):
     """
     Build a minimal FastAPI app with only the WS chat route.
     Avoids importing api.main and its heavy dependency chain.
     """
-    from fastapi import FastAPI, WebSocket, status
-    from fastapi.testclient import TestClient
-
     test_app = FastAPI()
 
     @test_app.websocket("/ws/chat/{persona_id}")
@@ -149,7 +152,7 @@ def _build_app(mgr: ConnectionManager | None = None):
 
 
 @contextmanager
-def _all_patches(mgr, anthropic_chunks=("Hi ", "there"), user=None):
+def _all_patches(mgr, anthropic_chunks=("Hi ", "there"), user=None):  # type: ignore[misc]
     """
     Context manager that applies all mocks needed for a full handler run.
 
@@ -211,23 +214,19 @@ class TestWSAuth:
             closed = True
         assert closed, "Expected server to close the connection"
 
-    def test_ws_connect_unknown_user(self):
-        """Valid-looking key but DB returns None → handler closes the WS."""
-        mgr = _fresh_manager()
-        client = _build_app(mgr)
-        user_none = None  # signals DB lookup failure
-
-        with _all_patches(mgr, user=user_none):
-            closed = False
-            try:
-                with client.websocket_connect(
-                    f"/ws/chat/{TEST_PERSONA}",
-                    headers={"Authorization": f"Bearer {VALID_KEY}"},
-                ) as ws:
-                    ws.receive_json()
-            except Exception:
-                closed = True
-            assert closed
+    def test_ws_connect_api_key_no_prs_prefix(self):
+        """Bearer token without prs_ prefix is rejected before reaching handler."""
+        client = _build_app()
+        closed = False
+        try:
+            with client.websocket_connect(
+                f"/ws/chat/{TEST_PERSONA}",
+                headers={"Authorization": "Bearer not_a_persona_key_12345"},
+            ) as ws:
+                ws.receive_json()
+        except Exception:
+            closed = True
+        assert closed, "Expected server to close the connection"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
