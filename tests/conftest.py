@@ -74,11 +74,21 @@ def _reset_rate_limit_state():
     """
     from api.middleware.rate_limiter import _rate_limit_state
     from api.main import limiter
+
     _rate_limit_state.clear()
+
     # Clear slowapi MemoryStorage (dict-like: limiter._storage.storage)
-    if hasattr(limiter, '_storage') and hasattr(limiter._storage, 'storage'):
-        limiter._storage.storage.clear()
+    try:
+        if hasattr(limiter, '_storage') and hasattr(limiter._storage, 'storage'):
+            limiter._storage.storage.clear()
+    except (AttributeError, TypeError):
+        pass  # Ignore if storage doesn't exist or can't be cleared
+
     yield
+
     _rate_limit_state.clear()
-    if hasattr(limiter, '_storage') and hasattr(limiter._storage, 'storage'):
-        limiter._storage.storage.clear()
+    try:
+        if hasattr(limiter, '_storage') and hasattr(limiter._storage, 'storage'):
+            limiter._storage.storage.clear()
+    except (AttributeError, TypeError):
+        pass  # Ignore if storage doesn't exist or can't be cleared
