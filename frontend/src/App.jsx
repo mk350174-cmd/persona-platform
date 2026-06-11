@@ -8,6 +8,7 @@ import Catalog from './pages/Catalog';
 import PersonaDetail from './pages/PersonaDetail';
 import Dashboard from './pages/Dashboard';
 import CEIDMonitor from './pages/CEIDMonitor';
+import Chat from './pages/Chat';
 import Landing from './pages/Landing';
 import NotFound from './pages/NotFound';
 
@@ -36,6 +37,8 @@ function App() {
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/ceid-monitor" element={<PrivateRoute><CEIDMonitor /></PrivateRoute>} />
         </Route>
+
+        <Route path="/chat/:id" element={<PrivateRoute><Chat /></PrivateRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
