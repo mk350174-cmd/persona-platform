@@ -80,6 +80,23 @@ repos:
       - id: commitizen
         stages: [commit-msg]
 
+  # Custom hooks: Test fixture isolation
+  - repo: local
+    hooks:
+      - id: no-test-fixtures-outside-conftest
+        name: Pytest fixtures must be in conftest.py
+        entry: python scripts/check_fixtures.py
+        language: python
+        files: ^tests/.*\.py$
+        stages: [commit]
+
+      - id: no-placeholder-code-in-api
+        name: No placeholder/TODO in production API
+        entry: python scripts/check_placeholder_code.py
+        language: python
+        files: ^api/.*\.py$
+        stages: [commit]
+
 # Configuration
 default_language_version:
   python: python3.11
