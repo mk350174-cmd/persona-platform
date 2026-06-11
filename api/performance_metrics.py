@@ -12,10 +12,13 @@ Tracks baseline performance metrics and detects regressions:
 import statistics
 from datetime import datetime, timezone, timedelta
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from enum import Enum
 
 from sqlalchemy.orm import Session
+
+if TYPE_CHECKING:
+    from api.db import PerformanceMetric
 
 
 class MetricType(Enum):

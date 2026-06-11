@@ -332,6 +332,9 @@ app.mount("/assets", StaticFiles(directory=str(_ASSETS_DIR)), name="assets")
 # See ASSET_MIGRATION.md for migration guide.
 _PERSONA_ASSETS_BASE = os.getenv("PERSONA_ASSETS_BASE_URL", "").rstrip("/")
 
+# Public base URL for referral links and Stripe billing-portal redirects.
+BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
+
 
 def _persona_image_url(persona_id: str) -> str | None:
     """

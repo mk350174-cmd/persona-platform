@@ -11,9 +11,12 @@ Supports:
 import hashlib
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from sqlalchemy.orm import Session
+
+if TYPE_CHECKING:
+    from api.db import FeatureFlag
 
 
 class FlagEvaluationContext:
