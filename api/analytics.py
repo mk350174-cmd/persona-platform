@@ -758,6 +758,78 @@ def get_cohort_retention(
     }
 
 
+# ── CSV export helpers ─────────────────────────────────────────────────────────
+
+import csv
+import io as _io
+
+
+def export_revenue_csv(db: Session, period: str = "monthly") -> str:
+    """
+    Generate a CSV string for the revenue report.
+
+    Columns: period, total_revenue_usd, new_subscribers, churned_subscribers, mrr, arpu
+    Followed by a top-personas breakdown section.
+    """
+    report = get_revenue_report(db, period=period)
+    output = _io.StringIO()
+    writer = csv.writer(output)
+
+    # Summary header
+    writer.writerow([
+        "period", "total_revenue_usd", "new_subscribers",
+        "churned_subscribers", "mrr", "arpu",
+    ])
+    writer.writerow([
+        report.period,
+        report.total_revenue_usd,
+        report.new_subscribers,
+        report.churned_subscribers,
+        report.mrr,
+        report.arpu,
+    ])
+
+    # Top personas breakdown
+    writer.writerow([])
+    writer.writerow(["persona_id", "revenue_usd", "purchases"])
+    for p in report.top_personas:
+        writer.writerow([p["persona_id"], p["revenue_usd"], p["purchases"]])
+
+    return output.getvalue()
+
+
+def export_dau_csv(db: Session, days: int = 30) -> str:
+    """Generate a CSV string for the DAU time series."""
+    dau = get_daily_active_users(db, days=days)
+    output = _io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["date", "active_users"])
+    for row in dau:
+        writer.writerow([row["date"], row["count"]])
+    return output.getvalue()
+
+
+def export_top_personas_csv(db: Session, limit: int = 10, days: int = 30) -> str:
+    """Generate a CSV string for the top personas report."""
+    personas = get_top_personas(db, limit=limit, days=days)
+    output = _io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        "persona_id", "total_conversations", "total_messages",
+        "unique_users", "avg_session_length", "revenue_usd",
+    ])
+    for p in personas:
+        writer.writerow([
+            p.persona_id,
+            p.total_conversations,
+            p.total_messages,
+            p.unique_users,
+            p.avg_session_length,
+            p.revenue_usd,
+        ])
+    return output.getvalue()
+
+
 # ── Analytics helpers (also exposed in db.py-compatible style) ─────────────────
 
 

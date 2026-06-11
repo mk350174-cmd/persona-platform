@@ -974,3 +974,21 @@ BUNDLE_PRICING = {
         "description": "All 495 personas in the library"
     },
 }
+
+
+# ── Analytics helpers ──────────────────────────────────────────────────────────
+
+def count_users(db: Session) -> int:
+    from sqlalchemy import func
+    return db.query(func.count(User.id)).filter(User.deleted_at == None).scalar() or 0
+
+
+def count_purchases(db: Session) -> int:
+    from sqlalchemy import func
+    return db.query(func.count(Purchase.id)).filter(Purchase.deleted_at == None).scalar() or 0
+
+
+def total_revenue_cents(db: Session) -> int:
+    from sqlalchemy import func
+    result = db.query(func.sum(Purchase.amount_usd)).filter(Purchase.deleted_at == None).scalar()
+    return result or 0
