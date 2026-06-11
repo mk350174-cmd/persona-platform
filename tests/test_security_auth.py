@@ -20,12 +20,15 @@ os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 
 
 @pytest.fixture
-def test_db():
-    """Create in-memory SQLite DB for testing."""
-    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
+def test_db(tmp_path):
+    """Create file-based SQLite DB for testing."""
+    db_file = tmp_path / "test.db"
+    engine = create_engine(f"sqlite:///{db_file}", connect_args={"check_same_thread": False})
     Base.metadata.create_all(bind=engine)
     TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-    return TestingSessionLocal()
+    session = TestingSessionLocal()
+    yield session
+    session.close()
 
 
 @pytest.fixture
