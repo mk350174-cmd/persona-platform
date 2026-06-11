@@ -49,7 +49,7 @@ class FlagVariant(Enum):
 
 def _hash_user_id(user_id: str) -> int:
     """Deterministic hash of user ID for consistent variant allocation."""
-    hash_obj = hashlib.md5(user_id.encode())
+    hash_obj = hashlib.md5(user_id.encode(), usedforsecurity=False)  # nosec B324
     return int(hash_obj.hexdigest(), 16) % 100  # 0-99
 
 
@@ -182,7 +182,7 @@ def _log_flag_evaluation(
 
     try:
         evaluation = FlagEvaluation(
-            id=f"eval_{hashlib.md5(f'{flag_id}{user_id}{datetime.now().isoformat()}'.encode()).hexdigest()[:16]}",
+            id=f"eval_{hashlib.md5(f'{flag_id}{user_id}{datetime.now().isoformat()}'.encode(), usedforsecurity=False).hexdigest()[:16]}",  # nosec B324
             flag_id=flag_id,
             user_id=user_id,
             variant=variant,
