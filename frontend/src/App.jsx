@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import Layout from './components/Layout';
+import NotificationCenter from './components/NotificationCenter';
+import { notificationManager } from './services/notifications';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -23,8 +25,23 @@ function PrivateRoute({ children }) {
 }
 
 function App() {
+  const { user } = useAuth();
+
+  // Initialize notifications when user is authenticated
+  React.useEffect(() => {
+    if (user?.id && user?.api_key) {
+      notificationManager.init(user.api_key, user.id);
+    }
+
+    return () => {
+      // Cleanup on unmount
+      notificationManager.disconnect();
+    };
+  }, [user]);
+
   return (
     <BrowserRouter>
+      <NotificationCenter />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
