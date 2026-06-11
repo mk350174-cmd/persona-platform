@@ -20,13 +20,19 @@ from api.db import (
 from api.payments import handle_webhook
 
 
-@pytest.fixture(scope="session")
-def test_db():
-    """Create test database."""
-    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
+@pytest.fixture
+def test_db(tmp_path):
+    """Create test database (file-based SQLite for proper session isolation)."""
+    db_file = tmp_path / "test.db"
+    engine = create_engine(
+        f"sqlite:///{db_file}",
+        connect_args={"check_same_thread": False},
+    )
     Base.metadata.create_all(bind=engine)
     TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-    return TestingSessionLocal()
+    session = TestingSessionLocal()
+    yield session
+    session.close()
 
 
 class MockStripeSignature:
