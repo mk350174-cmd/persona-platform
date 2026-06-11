@@ -1,3 +1,7 @@
+# Gitleaks ignore file for documentation examples
+# These are placeholder tokens in API documentation, not real secrets
+
+# ANALYTICS.md - curl-auth-header examples with placeholder tokens (prs_YOUR_KEY, prs_ADMIN_KEY)
 c2ad2b13c4f635c7c57bafa76208d1a0e2958def:ANALYTICS.md:curl-auth-header:455
 c2ad2b13c4f635c7c57bafa76208d1a0e2958def:ANALYTICS.md:curl-auth-header:469
 c2ad2b13c4f635c7c57bafa76208d1a0e2958def:ANALYTICS.md:curl-auth-header:482
@@ -5,3 +9,26 @@ c2ad2b13c4f635c7c57bafa76208d1a0e2958def:ANALYTICS.md:curl-auth-header:508
 c2ad2b13c4f635c7c57bafa76208d1a0e2958def:ANALYTICS.md:curl-auth-header:512
 c2ad2b13c4f635c7c57bafa76208d1a0e2958def:ANALYTICS.md:curl-auth-header:537
 c2ad2b13c4f635c7c57bafa76208d1a0e2958def:ANALYTICS.md:curl-auth-header:564
+c2ad2b13c4f635c7c57bafa76208d1a0e2958def:ANALYTICS.md:curl-auth-header:593
+c2ad2b13c4f635c7c57bafa76208d1a0e2958def:ANALYTICS.md:curl-auth-header:628
+c2ad2b13c4f635c7c57bafa76208d1a0e2958def:ANALYTICS.md:curl-auth-header:633
+c2ad2b13c4f635c7c57bafa76208d1a0e2958def:ANALYTICS.md:curl-auth-header:638
+
+# ADVANCED_AUTH.md - generic-api-key examples with placeholder tokens
+f2a313e57d0d40c1db63850fcb4af7c23adff760:ADVANCED_AUTH.md:generic-api-key:253
+f2a313e57d0d40c1db63850fcb4af7c23adff760:ADVANCED_AUTH.md:generic-api-key:254
+f2a313e57d0d40c1db63850fcb4af7c23adff760:ADVANCED_AUTH.md:generic-api-key:280
+f2a313e57d0d40c1db63850fcb4af7c23adff760:ADVANCED_AUTH.md:generic-api-key:287
+
+# API_DOCS.md - curl-auth-header examples with placeholder tokens
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:curl-auth-header:1145
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:curl-auth-header:1159
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:curl-auth-header:1173
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:curl-auth-header:1182
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:curl-auth-header:1186
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:curl-auth-header:1194
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:curl-auth-header:1204
+
+# API_DOCS.md - generic-api-key examples with placeholder tokens
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:185
+abe210576a347087a1322f6fce90df206b4d97e0:API_DOCS.md:generic-api-key:236
