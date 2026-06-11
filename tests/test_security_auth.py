@@ -35,7 +35,8 @@ def client(test_db):
         yield test_db
 
     app.dependency_overrides[get_db] = override_get_db
-    return TestClient(app)
+    yield TestClient(app)
+    app.dependency_overrides.clear()
 
 
 # ── A2: API Key Hashing ──────────────────────────────────────────────────────

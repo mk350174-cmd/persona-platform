@@ -44,15 +44,18 @@ from api.catalog import PERSONA_CATALOG
 # ─────────────────────────────────────────────────────────────────────────────────
 
 @pytest.fixture
-def test_db():
-    """Create test database (in-memory SQLite, function-scoped for isolation)."""
+def test_db(tmp_path):
+    """Create test database (file-based SQLite for proper session isolation)."""
+    db_file = tmp_path / "test.db"
     engine = create_engine(
-        "sqlite:///:memory:",
+        f"sqlite:///{db_file}",
         connect_args={"check_same_thread": False}
     )
     Base.metadata.create_all(bind=engine)
     TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-    return TestingSessionLocal()
+    session = TestingSessionLocal()
+    yield session
+    session.close()
 
 
 @pytest.fixture
@@ -67,7 +70,8 @@ def client(test_db):
         yield test_db
 
     app.dependency_overrides[get_db] = override_get_db
-    return TestClient(app)
+    yield TestClient(app)
+    app.dependency_overrides.clear()
 
 
 @pytest.fixture
@@ -201,7 +205,6 @@ class TestAuthenticationFlow:
             json={
                 "email": "newuser@example.com",
                 "password": "securepass123",
-                "name": "New User",
             }
         )
         assert response.status_code == 200
