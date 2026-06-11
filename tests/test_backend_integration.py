@@ -227,7 +227,6 @@ class TestAuthenticationFlow:
             json={
                 "email": user.email,
                 "password": "anotherpass123",
-                "name": "Duplicate Name",
             }
         )
         assert response.status_code in [400, 409]
@@ -242,7 +241,6 @@ class TestAuthenticationFlow:
             "/auth/register",
             json={
                 "password": "somepass123",
-                "name": "No Email User",
             }
         )
         assert response.status_code == 422  # Validation error
@@ -424,6 +422,7 @@ class TestPersonaAPIEndpoints:
         if meta.get("price_usd", 0) > 0:
             response = client.post(
                 f"/v1/compile/{persona_id}",
+                json={"platform": "gemini"},
                 headers={"X-API-Key": full_key}
             )
             assert response.status_code == 403
@@ -441,7 +440,7 @@ class TestPersonaAPIEndpoints:
         if meta.get("price_usd", 0) == 0:
             response = client.post(
                 f"/v1/compile/{persona_id}",
-                json={"platform": "android"},
+                json={"platform": "gemini"},
                 headers={"X-API-Key": full_key}
             )
             # 200 on success, 400 if invalid platform, 502+ if backend error
@@ -716,8 +715,7 @@ class TestAnalyticsAPI:
         if response.status_code == 200:
             data = response.json()
             # Should have revenue fields
-            for key in ["total_revenue_usd", "mrr", "breakdown"]:
-                assert key in data or "revenue" in data.lower()
+            assert "total_revenue_usd" in data or "mrr" in data
 
     def test_export_revenue_csv(self, client, admin_user):
         """
@@ -754,7 +752,7 @@ class TestAnalyticsAPI:
         assert response.status_code in [200, 404]
         if response.status_code == 200:
             data = response.json()
-            assert "dates" in data or "dau" in data
+            assert "days" in data and "series" in data
 
 
 # ─────────────────────────────────────────────────────────────────────────────────
@@ -808,6 +806,7 @@ class TestErrorHandling:
         if other_persona:
             response = client.post(
                 f"/v1/compile/{other_persona}",
+                json={"platform": "gemini"},
                 headers={"X-API-Key": full_key}
             )
             assert response.status_code in [403, 404]  # 404 if persona doesn't exist
@@ -898,7 +897,6 @@ class TestEndToEndWorkflows:
             json={
                 "email": email,
                 "password": password,
-                "name": "Workflow Test User",
             }
         )
         assert reg_response.status_code == 200

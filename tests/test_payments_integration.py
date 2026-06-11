@@ -39,11 +39,12 @@ def authenticated_user(test_db):
 class TestCheckoutEndpoint:
     """Integration tests for /checkout endpoint."""
 
-    def test_checkout_invalid_persona(self, client):
+    def test_checkout_invalid_persona(self, client, authenticated_user):
         """Invalid persona returns 404."""
+        user, full_key = authenticated_user
         response = client.post(
             "/checkout/invalid_persona",
-            headers={"X-API-Key": "prs_test_key"},
+            headers={"X-API-Key": full_key},
         )
         assert response.status_code in [400, 404]
 

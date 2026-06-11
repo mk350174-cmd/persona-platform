@@ -43,12 +43,42 @@ def pytest_configure(config):
 
 
 @pytest.fixture
-def test_db():
-    """Create test database (function-scoped for isolation)."""
+def test_db(tmp_path):
+    """Create test database (file-based SQLite for proper session isolation).
+
+    Uses tmp_path because in-memory SQLite (`:memory:`) creates a fresh database
+    per connection — `create_all` runs on one connection, the session lands on
+    another, and the tables appear to vanish. File-based SQLite shares state
+    across connections, while still being per-test (tmp_path is function-scoped).
+    """
+    db_file = tmp_path / "test.db"
     engine = create_engine(
-        "sqlite:///:memory:",
-        connect_args={"check_same_thread": False}
+        f"sqlite:///{db_file}",
+        connect_args={"check_same_thread": False},
     )
     Base.metadata.create_all(bind=engine)
     TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-    return TestingSessionLocal()
+    session = TestingSessionLocal()
+    yield session
+    session.close()
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limit_state():
+    """Clear per-API-key rate-limit state between tests.
+
+    api/middleware/rate_limiter.py keeps `_rate_limit_state` as a module-level
+    dict; without this reset, /auth/register's 5/hour cap is exhausted partway
+    through the suite and unrelated tests start failing with 429.
+    Also clear slowapi limiter state (uses MemoryStorage keyed by IP).
+    """
+    from api.middleware.rate_limiter import _rate_limit_state
+    from api.main import limiter
+    _rate_limit_state.clear()
+    # Clear slowapi MemoryStorage (dict-like: limiter._storage.storage)
+    if hasattr(limiter, '_storage') and hasattr(limiter._storage, 'storage'):
+        limiter._storage.storage.clear()
+    yield
+    _rate_limit_state.clear()
+    if hasattr(limiter, '_storage') and hasattr(limiter._storage, 'storage'):
+        limiter._storage.storage.clear()

@@ -1010,8 +1010,7 @@ def refund_purchase(
     from api.db import Purchase
     from datetime import datetime, timezone
 
-    # Simple admin check (in production, use proper role-based access control)
-    if user.email not in ["admin@example.com"]:  # Placeholder
+    if user.role != "admin":
         raise HTTPException(
             status_code=403,
             detail="Admin access required.",
