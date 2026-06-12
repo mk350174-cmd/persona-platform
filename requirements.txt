@@ -38,6 +38,7 @@ sentry-sdk[fastapi]>=1.40.0
 posthog>=3.0.0
 supabase>=2.4.0
 slowapi>=0.1.9
+limits>=3.0.0
 sqlalchemy>=2.0.0
 stripe>=8.0.0
 tiktoken>=0.7.0
