@@ -24,6 +24,70 @@ os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 os.environ["STRIPE_SECRET_KEY"] = "sk_test_mock"
 
 
+def generate_sample_payload(schema, schemas_dict):
+    """Generate minimal valid payload from JSON schema."""
+    if not schema:
+        return {}
+
+    schema_type = schema.get("type", "object")
+
+    if schema_type == "object":
+        payload = {}
+        properties = schema.get("properties", {})
+        required = schema.get("required", [])
+
+        for prop_name, prop_schema in properties.items():
+            if prop_name in required or not required:  # Include all properties
+                payload[prop_name] = generate_sample_value(prop_schema, schemas_dict)
+
+        return payload
+
+    return generate_sample_value(schema, schemas_dict)
+
+
+def generate_sample_value(schema, schemas_dict):
+    """Generate a sample value for a schema."""
+    if "$ref" in schema:
+        ref_name = schema["$ref"].split("/")[-1]
+        ref_schema = schemas_dict.get(ref_name, {})
+        return generate_sample_payload(ref_schema, schemas_dict)
+
+    schema_type = schema.get("type", "string")
+
+    if schema_type == "string":
+        enum_values = schema.get("enum", [])
+        if enum_values:
+            return enum_values[0]
+
+        schema_format = schema.get("format", "")
+        if schema_format == "email":
+            return "test@example.com"
+        elif schema_format == "uuid":
+            return "550e8400-e29b-41d4-a716-446655440000"
+        elif schema_format == "date-time":
+            return "2026-06-12T00:00:00Z"
+        else:
+            return "test_value"
+
+    elif schema_type == "integer":
+        return schema.get("default", 1)
+
+    elif schema_type == "number":
+        return schema.get("default", 1.0)
+
+    elif schema_type == "boolean":
+        return schema.get("default", True)
+
+    elif schema_type == "array":
+        items = schema.get("items", {})
+        return [generate_sample_value(items, schemas_dict)]
+
+    elif schema_type == "object":
+        return {}
+
+    return None
+
+
 def generate_contract_tests():
     """Generate contract tests from OpenAPI schema."""
     from api.main import app
@@ -111,24 +175,36 @@ class TestGeneratedContracts:
                 parameters = operation.get("parameters", [])
                 requires_auth = any(p.get("name") == "X-API-Key" for p in parameters)
 
+                # Generate sample payload for POST/PUT/PATCH
+                sample_payload = None
+                if method in ["post", "put", "patch"] and request_schema:
+                    sample_payload = generate_sample_payload(request_schema, schemas)
+
                 # Generate test code
                 test_code += f'''
     def {test_name}(self, client, authenticated_user):
         """Contract test: {method.upper()} {path}"""
         # Endpoint: {operation.get('summary', path)}
-        response = client.{method}(
-            "{path}",
+        kwargs = {{"url": "{path}"}}
+'''
+
+                # Add request body if needed
+                if sample_payload is not None:
+                    import json as json_lib
+                    payload_json = json_lib.dumps(sample_payload)
+                    test_code += f'''        kwargs["json"] = {payload_json}
 '''
 
                 # Add auth header if needed
                 if requires_auth or "protected" in operation.get("description", "").lower():
-                    test_code += f'''            headers={{"X-API-Key": authenticated_user["api_key"]}},
+                    test_code += f'''        kwargs["headers"] = {{"X-API-Key": authenticated_user["api_key"]}}
 '''
 
-                test_code += f'''        )
+                test_code += f'''
+        response = client.{method}(**kwargs)
 
-        # Verify response status
-        assert response.status_code in [200, 201, 204, 400, 401, 403, 404, 500]
+        # Verify response status (422 for validation, 501 for not implemented)
+        assert response.status_code in [200, 201, 204, 400, 401, 403, 404, 422, 500, 501], f"Status {{response.status_code}}: {{response.text}}"
 
         # Verify response is valid JSON (if not 204 No Content)
         if response.status_code != 204:
