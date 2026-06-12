@@ -1,7 +1,7 @@
 # 🔗 Production Integrations Guide
 
 **Last Updated:** 2026-06-12  
-**Status:** ✅ Tier 1 Integrations Complete (Sentry + PostHog)
+**Status:** ✅ Tier 1 Integrations 60% Complete (Sentry + PostHog + Supabase Storage)
 
 ---
 
@@ -13,9 +13,9 @@ This guide covers all production integrations for the Persona Platform. Tier 1 i
 |------|---|---|---|---|
 | 1 | **Sentry** (Error Tracking) | ✅ Complete | 0.5 | CRITICAL |
 | 1 | **PostHog** (Analytics) | ✅ Complete | 1.0 | CRITICAL |
-| 1 | **Supabase Storage** | 🔲 Queue | 2.0 | CRITICAL |
-| 1 | **Vercel Secrets** | 🔲 Queue | 0.5 | CRITICAL |
-| 1 | **Email Templates** | 🔲 Queue | 1.0 | CRITICAL |
+| 1 | **Supabase Storage** | ✅ Complete | 2.0 | CRITICAL |
+| 1 | **Vercel Secrets** | 🔲 Next | 0.5 | CRITICAL |
+| 1 | **Email Templates** | 🔲 Next | 1.0 | CRITICAL |
 | 2 | Background Jobs (Bull + Redis) | 🔲 Queue | 4.0 | Important |
 | 2 | Monitoring (Prometheus + Grafana) | 🔲 Queue | 3.0 | Important |
 | 2 | Search (Elasticsearch) | 🔲 Queue | 5.0 | Important |
@@ -187,16 +187,17 @@ track_event(
 
 **Purpose:** Store persona assets, user avatars, compiled configs in cloud.
 
-**Status:** 🔲 Next (2 hours)
+**Status:** ✅ Integrated
 
 **Setup Instructions:**
 
 #### 1. Create Supabase Storage Bucket
 ```bash
 # 1. Go to supabase.co dashboard
-# 2. Create new bucket: "persona-assets" (public: false)
-# 3. Create bucket: "user-avatars" (public: true)
-# 4. Get service role key from Settings
+# 2. Create new bucket: "persona-assets" (public)
+# 3. Create bucket: "user-avatars" (public)
+# 4. Create bucket: "compiled-configs" (private)
+# 5. Get service role key from Settings
 ```
 
 #### 2. Configure Environment Variables
@@ -205,28 +206,62 @@ SUPABASE_URL=https://xxxx.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...
 ```
 
-#### 3. Implementation
-```python
-# Create api/storage.py
-from supabase import create_client
+#### 3. Integration Points (Already Implemented)
 
-class StorageManager:
-    def __init__(self):
-        self.client = create_client(
-            url=os.getenv("SUPABASE_URL"),
-            key=os.getenv("SUPABASE_SERVICE_ROLE_KEY"),
-        )
-    
-    def upload_avatar(self, user_id: str, file_bytes: bytes) -> str:
-        """Upload user avatar and return public URL."""
-        path = f"avatars/{user_id}/profile.png"
-        self.client.storage.from_("user-avatars").upload(path, file_bytes)
-        return f"{SUPABASE_URL}/storage/v1/object/public/user-avatars/{path}"
-    
-    def get_download_url(self, bucket: str, path: str, expires_in: int = 3600) -> str:
-        """Get signed download URL."""
-        return self.client.storage.from_(bucket).create_signed_url(path, expires_in)
+**In `api/storage.py` (Complete):**
+- `StorageManager` class with upload/download methods
+- Graceful degradation if Supabase unavailable
+- Automatic retry logic for failed uploads
+
+**In `api/routers/uploads.py` (New Endpoints):**
+- `POST /uploads/avatar` — Upload user avatar (PNG/JPG, max 5 MB)
+- `POST /uploads/compiled-config/{persona_id}` — Upload compiled config (private)
+- `DELETE /uploads/avatar` — Delete user avatar
+- `GET /uploads/status` — Check storage service health
+
+**Features:**
+- ✅ Public avatar URLs returned immediately
+- ✅ Signed download URLs for private configs (1-hour expiration)
+- ✅ Automatic cache headers (1hr for avatars, 24hr for assets)
+- ✅ File size validation (5 MB avatars, 10 MB configs)
+- ✅ Event tracking (avatar uploads, config uploads)
+- ✅ User cleanup on account deletion
+
+#### 4. Usage in Application
+
+```python
+from api.storage import get_storage_manager
+
+storage = get_storage_manager()
+
+# Upload avatar
+avatar_url = storage.upload_avatar(user_id, file_bytes, "image/png")
+
+# Upload compiled config
+download_url = storage.upload_compiled_config(
+    user_id, persona_id, "ios", config_json
+)
+
+# Delete user files
+storage.delete_user_files(user_id)
 ```
+
+#### 5. Bucket Configuration
+
+**user-avatars (public)**
+- Path: `avatars/{user_id}/profile.png`
+- Public URLs: `https://xxxx.supabase.co/storage/v1/object/public/user-avatars/...`
+- Cache: 1 hour
+
+**persona-assets (public)**
+- Path: `personas/{persona_id}/{filename}`
+- Public URLs for all assets
+- Cache: 24 hours
+
+**compiled-configs (private)**
+- Path: `users/{user_id}/{persona_id}/{platform}/config.json`
+- Requires signed URL (via `get_download_url()`)
+- Expires in 1 hour
 
 ---
 

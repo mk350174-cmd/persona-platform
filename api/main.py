@@ -85,6 +85,7 @@ from api.routers.observability import router as observability_router
 from api.routers.advanced_auth import router as advanced_auth_router
 from api.routers.cache import router as cache_router
 from api.routers.analytics import router as analytics_router
+from api.routers.uploads import router as uploads_router
 from persona_math.compiler import (
     compile_persona,
     compile_all_platforms,
@@ -281,6 +282,9 @@ app.include_router(advanced_auth_router)
 
 # Cache Management endpoints (Redis stats, flush, health) — see api/routers/cache.py
 app.include_router(cache_router)
+
+# File Upload endpoints (avatars, compiled configs) — see api/routers/uploads.py
+app.include_router(uploads_router)
 
 
 @app.middleware("http")
