@@ -1,7 +1,7 @@
 # 🔗 Production Integrations Guide
 
 **Last Updated:** 2026-06-12  
-**Status:** ✅ Tier 1 Integrations 60% Complete (Sentry + PostHog + Supabase Storage)
+**Status:** ✅ Tier 1 Integrations 80% Complete (Sentry + PostHog + Supabase Storage + Email Templates)
 
 ---
 
@@ -15,7 +15,7 @@ This guide covers all production integrations for the Persona Platform. Tier 1 i
 | 1 | **PostHog** (Analytics) | ✅ Complete | 1.0 | CRITICAL |
 | 1 | **Supabase Storage** | ✅ Complete | 2.0 | CRITICAL |
 | 1 | **Vercel Secrets** | 🔲 Next | 0.5 | CRITICAL |
-| 1 | **Email Templates** | 🔲 Next | 1.0 | CRITICAL |
+| 1 | **Email Templates** | ✅ Complete | 1.0 | CRITICAL |
 | 2 | Background Jobs (Bull + Redis) | 🔲 Queue | 4.0 | Important |
 | 2 | Monitoring (Prometheus + Grafana) | 🔲 Queue | 3.0 | Important |
 | 2 | Search (Elasticsearch) | 🔲 Queue | 5.0 | Important |
@@ -291,24 +291,59 @@ storage.delete_user_files(user_id)
 
 **Purpose:** Send professional signup verification, password reset, and receipt emails.
 
-**Status:** 🔲 Next (1 hour)
+**Status:** ✅ Integrated
 
-**Current Implementation:**
+**Implementation:**
+
+All email functions in `api/email_service.py`:
+
 ```python
-# api/email_service.py (partially implemented)
-from resend import Resend
+# Signup verification email
+send_verification_email(to_email, token)
+  - 24-hour token expiration
+  - Verify button + fallback link
+  - Dark mode template
 
-resend_client = Resend(api_key=os.getenv("RESEND_API_KEY"))
+# Password reset email
+send_password_reset_email(to_email, reset_token)
+  - 1-hour token expiration
+  - Reset button + security note
+  - Red accent color for security
 
-def send_verification_email(to_email: str, token: str):
-    """Send email verification link."""
-    # TODO: Create HTML template
+# Purchase receipt email
+send_purchase_receipt_email(to_email, persona_name, amount_usd, download_url)
+  - Purchase confirmation with amount
+  - Optional download link for compiled config
+  - Green accent for success
+  - Support contact info
 ```
 
-**Emails to Implement:**
-1. **Signup Verification** — "Verify your email" with link
-2. **Password Reset** — "Reset your password" with secure link
-3. **Purchase Receipt** — "Thank you for your purchase" with download link
+**Template Features:**
+- ✅ Dark mode design (brand: #13131a background)
+- ✅ Responsive (mobile-friendly)
+- ✅ Professional typography (Inter font)
+- ✅ Graceful degradation: Plain text fallback
+- ✅ Dev mode: Logs URLs when RESEND_API_KEY not set
+- ✅ Error handling: Non-blocking (don't fail registration on email error)
+
+**Email Colors:**
+- Verification: Purple (#7c3aed)
+- Password Reset: Red (#f87171)
+- Purchase Receipt: Green (#22c55e)
+
+**Configuration:**
+```bash
+# Required
+RESEND_API_KEY=re_...          # Get from https://resend.com
+FROM_EMAIL=noreply@yourdomain.com
+
+# Optional
+BASE_URL=https://persona-hub.com  # For email links
+```
+
+**Cost:** Free tier (3,000/month) → $20/month (50,000)
+
+**Alternatives:** SendGrid, Mailgun, AWS SES
 
 ---
 
