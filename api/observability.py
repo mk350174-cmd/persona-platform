@@ -1,330 +1,301 @@
 """
-Observability & Monitoring — Distributed tracing, metrics, structured logging
+Observability module: Analytics, error tracking, metrics, and structured logging.
 
-Integrations:
-- Jaeger/OpenTelemetry: Distributed tracing
-- Prometheus: Metrics aggregation
-- Structured logging: JSON logs with context
-- APM instrumentation: Application performance tracking
+Integrates:
+- Sentry for error tracking and performance monitoring
+- PostHog for product analytics and user behavior tracking
+- Prometheus metrics for monitoring
+- Structured logging with context
 """
 
-import time
+import os
+import sentry_sdk
 import logging
-import json
-from contextlib import contextmanager
-from dataclasses import dataclass
-from datetime import datetime, timezone
 from typing import Optional, Dict, Any
-from enum import Enum
+from datetime import datetime
+from dataclasses import dataclass, field
 
-# Configure structured logging
-class StructuredLogger:
-    """JSON-formatted structured logger with trace context."""
-
-    def __init__(self, name: str):
-        self.logger = logging.getLogger(name)
-        handler = logging.StreamHandler()
-        formatter = logging.Formatter('%(message)s')
-        handler.setFormatter(formatter)
-        self.logger.addHandler(handler)
-        self.logger.setLevel(logging.INFO)
-
-    def _format_log(self, level: str, message: str, **context) -> str:
-        """Format log entry as JSON with context."""
-        entry = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "level": level,
-            "message": message,
-            **context,
-        }
-        return json.dumps(entry)
-
-    def info(self, message: str, **context):
-        """Log info level with context."""
-        self.logger.info(self._format_log("INFO", message, **context))
-
-    def warning(self, message: str, **context):
-        """Log warning level with context."""
-        self.logger.warning(self._format_log("WARNING", message, **context))
-
-    def error(self, message: str, **context):
-        """Log error level with context."""
-        self.logger.error(self._format_log("ERROR", message, **context))
-
-    def debug(self, message: str, **context):
-        """Log debug level with context."""
-        self.logger.debug(self._format_log("DEBUG", message, **context))
+try:
+    from posthog import Posthog
+except ImportError:
+    Posthog = None
 
 
-# ── Trace Context ─────────────────────────────────────────────────────────────
+# ── Analytics & Error Tracking ────────────────────────────────────────────────
 
-@dataclass
-class TraceContext:
-    """Distributed trace context (similar to W3C Trace Context)."""
-    trace_id: str  # Unique trace identifier
-    span_id: str  # Current span identifier
-    parent_span_id: Optional[str] = None
-    baggage: Dict[str, str] = None  # Cross-cutting context
+posthog_client = None
 
-    def __post_init__(self):
-        if self.baggage is None:
-            self.baggage = {}
 
-    def to_headers(self) -> Dict[str, str]:
-        """Convert to HTTP headers for propagation."""
-        return {
-            "traceparent": f"00-{self.trace_id}-{self.span_id}-01",
-            "baggage": ",".join(f"{k}={v}" for k, v in self.baggage.items()),
-        }
+def set_posthog_client(client):
+    """Set the global PostHog client instance."""
+    global posthog_client
+    posthog_client = client
 
-    @classmethod
-    def from_headers(cls, headers: Dict[str, str]) -> "TraceContext":
-        """Parse from HTTP headers."""
-        import secrets
-        import uuid
 
-        traceparent = headers.get("traceparent", "")
-        if traceparent:
-            parts = traceparent.split("-")
-            if len(parts) >= 4:
-                return cls(
-                    trace_id=parts[1],
-                    span_id=parts[2],
-                    parent_span_id=parts[2],
+def set_sentry_user(user_id: str, email: str = None, username: str = None):
+    """Set current user context in Sentry for error tracking."""
+    sentry_sdk.set_user({
+        "id": user_id,
+        "email": email,
+        "username": username,
+    })
+
+
+def track_event(
+    event_name: str,
+    user_id: str,
+    properties: Optional[Dict[str, Any]] = None,
+    groups: Optional[Dict[str, str]] = None,
+):
+    """
+    Track a user event across both PostHog and Sentry.
+
+    Args:
+        event_name: Name of the event (e.g., "user_signup", "persona_compiled")
+        user_id: User identifier
+        properties: Event properties (e.g., {"persona_id": "socrates", "platform": "ios"})
+        groups: User groups for PostHog cohort analysis (e.g., {"company": "acme"})
+    """
+    properties = properties or {}
+    groups = groups or {}
+
+    # Track in PostHog
+    if posthog_client:
+        try:
+            posthog_client.capture(
+                distinct_id=user_id,
+                event=event_name,
+                properties=properties,
+            )
+            # Set group properties if provided
+            for group_key, group_id in groups.items():
+                posthog_client.group(
+                    group_key=group_key,
+                    group_id=group_id,
+                    properties=properties,
                 )
+        except Exception as e:
+            # Graceful degradation: don't break request on analytics error
+            logging.warning(f"PostHog tracking failed: {e}")
 
-        return cls(
-            trace_id=uuid.uuid4().hex,
-            span_id=secrets.token_hex(8),
-        )
-
-
-# ── Span Recording ────────────────────────────────────────────────────────────
-
-@dataclass
-class Span:
-    """Recorded span for distributed tracing."""
-    trace_id: str
-    span_id: str
-    operation: str
-    service: str = "persona-platform"
-    start_time: float = None
-    end_time: float = None
-    duration_ms: float = None
-    status: str = "OK"  # OK, ERROR, CANCELLED
-    tags: Dict[str, Any] = None
-    logs: list = None
-    error: Optional[str] = None
-
-    def __post_init__(self):
-        if self.tags is None:
-            self.tags = {}
-        if self.logs is None:
-            self.logs = []
-        if self.start_time is None:
-            self.start_time = time.time()
-
-    def finish(self, status: str = "OK", error: Optional[str] = None):
-        """Mark span as finished."""
-        self.end_time = time.time()
-        self.duration_ms = (self.end_time - self.start_time) * 1000
-        self.status = status
-        self.error = error
-
-    def add_tag(self, key: str, value: Any):
-        """Add tag to span."""
-        self.tags[key] = value
-
-    def add_log(self, message: str, **fields):
-        """Add log entry to span."""
-        self.logs.append({
-            "timestamp": time.time(),
-            "message": message,
-            **fields,
-        })
-
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert span to dictionary for serialization."""
-        return {
-            "traceID": self.trace_id,
-            "spanID": self.span_id,
-            "operationName": self.operation,
-            "startTime": int(self.start_time * 1_000_000),  # microseconds
-            "duration": int(self.duration_ms * 1_000) if self.duration_ms else 0,
-            "tags": self.tags,
-            "logs": self.logs,
-            "processID": self.service,
-            "status": self.status,
-        }
+    # Track in Sentry (as breadcrumb for error context)
+    sentry_sdk.capture_message(
+        f"Event: {event_name}",
+        level="info",
+        tags={**groups},
+        extra=properties,
+    )
 
 
-# ── Metrics Recording ─────────────────────────────────────────────────────────
+def track_checkout(user_id: str, persona_id: str, amount_usd: float):
+    """Track a checkout event."""
+    track_event(
+        "checkout_initiated",
+        user_id,
+        properties={
+            "persona_id": persona_id,
+            "amount_usd": amount_usd,
+        },
+    )
 
-class MetricType(Enum):
-    """Types of metrics for Prometheus."""
-    COUNTER = "counter"  # Monotonically increasing
-    GAUGE = "gauge"  # Can go up or down
-    HISTOGRAM = "histogram"  # Distribution over buckets
-    SUMMARY = "summary"  # Percentiles
 
+def track_purchase(user_id: str, persona_id: str, amount_usd: float):
+    """Track a successful purchase."""
+    track_event(
+        "persona_purchased",
+        user_id,
+        properties={
+            "persona_id": persona_id,
+            "amount_usd": amount_usd,
+        },
+    )
+
+
+def track_compilation(user_id: str, persona_id: str, platform: str):
+    """Track a persona compilation."""
+    track_event(
+        "persona_compiled",
+        user_id,
+        properties={
+            "persona_id": persona_id,
+            "platform": platform,
+        },
+    )
+
+
+def track_signup(user_id: str, email: str, auth_method: str = "email"):
+    """Track user signup."""
+    set_sentry_user(user_id, email)
+    track_event(
+        "user_signup",
+        user_id,
+        properties={
+            "email": email,
+            "auth_method": auth_method,
+        },
+    )
+
+
+def track_error(
+    error_message: str,
+    user_id: Optional[str] = None,
+    error_type: str = "unknown",
+    context: Optional[Dict[str, Any]] = None,
+):
+    """
+    Track an error event.
+
+    Args:
+        error_message: Description of the error
+        user_id: User ID (if applicable)
+        error_type: Category of error (e.g., "payment_error", "compilation_error")
+        context: Additional context about the error
+    """
+    if user_id:
+        set_sentry_user(user_id)
+
+    track_event(
+        "error_occurred",
+        user_id or "anonymous",
+        properties={
+            "error_message": error_message,
+            "error_type": error_type,
+            **(context or {}),
+        },
+    )
+
+
+def capture_exception(exception: Exception, tags: Optional[Dict[str, str]] = None, extra: Optional[Dict[str, Any]] = None):
+    """Manually capture an exception in Sentry."""
+    sentry_sdk.capture_exception(
+        exception,
+        tags=tags or {},
+        extra=extra or {},
+    )
+
+
+# ── Metrics Collection ────────────────────────────────────────────────────────
 
 @dataclass
 class Metric:
-    """Recorded metric for Prometheus."""
+    """A single metric data point."""
     name: str
-    metric_type: MetricType
     value: float
-    labels: Dict[str, str] = None
-    timestamp: datetime = None
+    metric_type: str  # "counter", "gauge", "histogram", "summary"
+    labels: Dict[str, str] = field(default_factory=dict)
+    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
-    def __post_init__(self):
-        if self.labels is None:
-            self.labels = {}
-        if self.timestamp is None:
-            self.timestamp = datetime.now(timezone.utc)
 
-    def to_prometheus_format(self) -> str:
-        """Format as Prometheus metrics format."""
-        labels_str = "".join(f'{k}="{v}"' for k, v in self.labels.items())
-        if labels_str:
-            return f'{self.name}{{{labels_str}}} {self.value}'
-        return f'{self.name} {self.value}'
+@dataclass
+class RequestMetrics:
+    """Aggregated request metrics."""
+    total_requests: int = 0
+    successful_requests: int = 0
+    failed_requests: int = 0
+    average_duration_ms: float = 0.0
+    success_rate: float = 1.0
+
+
+@dataclass
+class Span:
+    """A distributed trace span."""
+    trace_id: str
+    span_id: str
+    operation: str
+    tags: Dict[str, Any] = field(default_factory=dict)
+    start_time: float = field(default_factory=lambda: datetime.utcnow().timestamp())
+    end_time: float = 0.0
+    duration_ms: float = 0.0
+    status: str = "OK"  # "OK", "ERROR", "CANCELLED"
+    error: Optional[str] = None
 
 
 class MetricsCollector:
-    """Collects and aggregates metrics for Prometheus export."""
+    """Collects and manages application metrics."""
 
     def __init__(self):
-        self.metrics = {}  # metric_name -> list of metrics
-        self.lock = None  # For thread safety
+        self.metrics: Dict[str, Metric] = {}
 
-    def record_counter(self, name: str, value: float = 1, labels: Dict[str, str] = None):
-        """Record counter metric (monotonically increasing)."""
+    def record_counter(self, name: str, value: float, labels: Optional[Dict[str, str]] = None):
+        """Record a counter metric."""
         key = f"{name}:{labels or {}}"
-        if key not in self.metrics:
-            self.metrics[key] = Metric(name, MetricType.COUNTER, 0, labels)
-        self.metrics[key].value += value
+        self.metrics[key] = Metric(name, value, "counter", labels or {})
 
-    def record_gauge(self, name: str, value: float, labels: Dict[str, str] = None):
-        """Record gauge metric (can go up/down)."""
+    def record_gauge(self, name: str, value: float, labels: Optional[Dict[str, str]] = None):
+        """Record a gauge metric."""
         key = f"{name}:{labels or {}}"
-        self.metrics[key] = Metric(name, MetricType.GAUGE, value, labels)
+        self.metrics[key] = Metric(name, value, "gauge", labels or {})
 
-    def record_histogram(self, name: str, value: float, labels: Dict[str, str] = None):
-        """Record histogram metric (distribution)."""
+    def record_histogram(self, name: str, value: float, labels: Optional[Dict[str, str]] = None):
+        """Record a histogram metric."""
         key = f"{name}:{labels or {}}"
-        if key not in self.metrics:
-            self.metrics[key] = Metric(name, MetricType.HISTOGRAM, 0, labels)
-        # In production, use proper histogram buckets
-        self.metrics[key].value += 1
+        self.metrics[key] = Metric(name, value, "histogram", labels or {})
 
-    def get_metrics(self) -> list[str]:
-        """Export metrics in Prometheus format."""
-        lines = []
-        for metric in self.metrics.values():
-            lines.append(metric.to_prometheus_format())
-        return lines
+    def get_metrics(self) -> list:
+        """Get all metrics."""
+        return [m.__dict__ for m in self.metrics.values()]
 
 
-# Global metrics collector
+# Global metrics collector instance
 _metrics_collector = MetricsCollector()
-
-
-# ── Context Manager for Tracing ───────────────────────────────────────────────
-
-@contextmanager
-def trace_span(
-    operation: str,
-    trace_context: TraceContext,
-    tags: Dict[str, Any] = None,
-):
-    """Context manager for recording spans."""
-    import secrets
-
-    span_id = secrets.token_hex(8)
-    span = Span(
-        trace_id=trace_context.trace_id,
-        span_id=span_id,
-        operation=operation,
-        tags=tags or {},
-    )
-
-    try:
-        yield span
-        span.finish(status="OK")
-    except Exception as e:
-        span.finish(status="ERROR", error=str(e))
-        raise
-    finally:
-        # In production, send span to Jaeger
-        pass
-
-
-# ── APM Instrumentation ───────────────────────────────────────────────────────
-
-class RequestMetrics:
-    """APM metrics for HTTP requests."""
-
-    def __init__(self):
-        self.total_requests = 0
-        self.successful_requests = 0
-        self.failed_requests = 0
-        self.total_duration_ms = 0
-
-    def record_request(self, duration_ms: float, status_code: int):
-        """Record request metrics."""
-        self.total_requests += 1
-        self.total_duration_ms += duration_ms
-
-        if 200 <= status_code < 400:
-            self.successful_requests += 1
-        else:
-            self.failed_requests += 1
-
-        # Record to metrics collector
-        _metrics_collector.record_counter(
-            "http_requests_total",
-            labels={"status_code": str(status_code)},
-        )
-        _metrics_collector.record_histogram(
-            "http_request_duration_ms",
-            duration_ms,
-            labels={"endpoint": "unknown"},
-        )
-
-    @property
-    def average_duration_ms(self) -> float:
-        """Average request duration."""
-        return (
-            self.total_duration_ms / self.total_requests
-            if self.total_requests > 0
-            else 0
-        )
-
-    @property
-    def success_rate(self) -> float:
-        """Success rate (0-1)."""
-        return (
-            self.successful_requests / self.total_requests
-            if self.total_requests > 0
-            else 0
-        )
-
-
-# Global request metrics
 _request_metrics = RequestMetrics()
 
 
-def get_request_metrics() -> RequestMetrics:
-    """Get global request metrics."""
-    return _request_metrics
-
-
 def get_metrics_collector() -> MetricsCollector:
-    """Get global metrics collector."""
+    """Get the global metrics collector."""
     return _metrics_collector
 
 
+def get_request_metrics() -> RequestMetrics:
+    """Get aggregated request metrics."""
+    return _request_metrics
+
+
+def record_request_metric(status_code: int, duration_ms: float):
+    """Record metrics for a completed request."""
+    _request_metrics.total_requests += 1
+    if 200 <= status_code < 300:
+        _request_metrics.successful_requests += 1
+    else:
+        _request_metrics.failed_requests += 1
+
+    # Update average duration (simple moving average)
+    if _request_metrics.total_requests == 1:
+        _request_metrics.average_duration_ms = duration_ms
+    else:
+        _request_metrics.average_duration_ms = (
+            (_request_metrics.average_duration_ms * (_request_metrics.total_requests - 1) + duration_ms)
+            / _request_metrics.total_requests
+        )
+
+    _request_metrics.success_rate = (
+        _request_metrics.successful_requests / _request_metrics.total_requests
+        if _request_metrics.total_requests > 0
+        else 1.0
+    )
+
+
+# ── Structured Logging ────────────────────────────────────────────────────────
+
+class StructuredLogger:
+    """Structured logger with context support."""
+
+    def __init__(self, name: str):
+        self.logger = logging.getLogger(name)
+
+    def debug(self, message: str, **context):
+        self.logger.debug(f"{message} | {context}")
+
+    def info(self, message: str, **context):
+        self.logger.info(f"{message} | {context}")
+
+    def warning(self, message: str, **context):
+        self.logger.warning(f"{message} | {context}")
+
+    def error(self, message: str, **context):
+        self.logger.error(f"{message} | {context}")
+
+
 def get_structured_logger(name: str) -> StructuredLogger:
-    """Get structured logger for module."""
+    """Get a structured logger instance."""
     return StructuredLogger(name)
