@@ -19,15 +19,20 @@ from typing import Optional
 from pathlib import Path
 
 import numpy as np
-from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi import APIRouter, HTTPException, Depends, Header, Request
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from api import needle_service
 from api.auth import get_current_user, require_persona_access
 from persona_math.persona_library import get_library_persona, PERSONA_LIBRARY, search_personas
 
 router = APIRouter(tags=["personas"])
+
+# Rate limiter for image downloads (50 per hour per IP)
+_image_limiter = Limiter(key_func=get_remote_address)
 
 
 class ConversationBody(BaseModel):
@@ -95,13 +100,15 @@ def get_persona_history(persona_id: str):
 
 
 @router.get("/personas/{persona_id}/image")
+@_image_limiter.limit("50/hour")
 def get_persona_image(
     persona_id: str,
     current_user = Depends(get_current_user),
     x_api_key: Optional[str] = Header(None),
+    request: Request = None,
 ):
     """
-    Get persona portrait image (authenticated, rate-limited).
+    Get persona portrait image (authenticated, rate-limited to 50/hour per IP).
 
     Requires:
     - Valid API key (X-API-Key header)
@@ -111,6 +118,7 @@ def get_persona_image(
     - PNG image file
     - 404 if persona not found or image missing
     - 403 if not authenticated/authorized
+    - 429 if rate limit exceeded
     """
     _require(persona_id)
 
