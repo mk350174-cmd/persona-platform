@@ -558,7 +558,7 @@ def get_catalog(
 
     if include_scores:
         from persona_math.ceid import ceid_full_diagnostic
-        from persona_math.foundation import metallic_score
+        from persona_math.foundation import metallic_score_raw
         from persona_math.threshold import persona_coordinate
         for r in results:
             pid = r.get("id")
@@ -567,7 +567,7 @@ def get_catalog(
                 diag = ceid_full_diagnostic(P)
                 coord = persona_coordinate(P)
                 r["ceid_score"] = round(diag.get("ceid_composite", 0.0), 4)
-                r["metallic_score"] = round(metallic_score(P), 4)
+                r["metallic_score"] = round(metallic_score_raw(P), 4)
                 r["quadrant"] = coord.get("quadrant", "Q?")
                 r["power_ethics_ratio"] = round(coord.get("power_axis", 0) / max(coord.get("ethics_axis", 0.01), 0.01), 2)
             except Exception:
