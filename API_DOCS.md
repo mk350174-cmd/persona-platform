@@ -166,7 +166,7 @@ POST /auth/register
 ```json
 {
   "email": "user@example.com",
-  "password": "SecurePassword123!",
+  "password": "example_password_123",
   "name": "John Doe"
 }
 ```
@@ -182,7 +182,7 @@ POST /auth/register
   "id": "usr_abc123",
   "email": "user@example.com",
   "name": "John Doe",
-  "api_key": "prs_abc123def456...",
+  "api_key": "example_key_abc123def456",
   "email_verified": false,
   "created_at": "2024-06-10T12:00:00Z"
 }
@@ -265,7 +265,7 @@ POST /auth/login
 ```json
 {
   "email": "user@example.com",
-  "password": "SecurePassword123!"
+  "password": "example_password_123"
 }
 ```
 
@@ -274,7 +274,7 @@ POST /auth/login
 {
   "user_id": "usr_abc123",
   "email": "user@example.com",
-  "api_key": "prs_abc123def456...",
+  "api_key": "example_key_abc123def456",
   "expires_at": "2024-06-17T12:00:00Z"
 }
 ```
@@ -1131,13 +1131,13 @@ curl -X POST http://localhost:8000/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "alice@example.com",
-    "password": "SecurePass123!",
+    "password": "example_password_123",
     "name": "Alice"
   }'
 
 # Response:
 # {
-#   "api_key": "prs_abc123def456...",
+#   "api_key": "example_key_abc123def456",
 #   "email": "alice@example.com"
 # }
 
@@ -1219,3 +1219,1101 @@ curl -X POST "http://localhost:8000/checkout/einstein?locale=tr-TR" \
 - **Alternative Docs:** `http://localhost:8000/redoc` (ReDoc)
 - **GitHub Issues:** https://github.com/mk350174-cmd/persona-platform/issues
 - **Email:** support@persona-hub.com
+
+
+# Auto-Generated Endpoints
+
+The following endpoints are auto-generated from the OpenAPI schema.
+They require manual documentation to complete.
+
+## DELETE `/auth/users/{user_id}`
+
+**Summary:** Delete User
+
+Soft-delete a user (admin only).
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## DELETE `/cache/flush`
+
+**Summary:** Flush All Cache
+
+Flush the entire Redis cache.
+
+**Admin only.** Removes all keys from the current Redis database.
+Use with caution in production.
+
+**Tags:** cache
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## DELETE `/cache/personas`
+
+**Summary:** Flush Persona Cache
+
+Flush persona-related cache entries only.
+
+Removes all keys matching `persona:*` (catalog + vector cache).
+Requires authentication (any role).
+
+**Tags:** cache
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## DELETE `/flags/{flag_name}`
+
+**Summary:** Delete Flag
+
+Delete a feature flag (admin access may be required in production).
+
+**Tags:** feature-flags
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## DELETE `/me/api-keys/{key_id}`
+
+**Summary:** Revoke Api Key
+
+Revoke a specific API key by ID and issue a replacement.
+
+**Tags:** api-keys
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/analytics/dashboard`
+
+**Summary:** Platform dashboard summary
+
+Return a high-level platform snapshot.
+
+**Admin only.**
+
+Includes:
+- Total and active user counts (7-day, 30-day windows)
+- Total personas in the catalog
+- Total purchases and aggregate revenue
+- Monthly Recurring Revenue (MRR)
+- Top 10 personas by purchase count
+- New signups in the last 24 hours
+
+**Tags:** analytics
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/analytics/dau`
+
+**Summary:** Daily active users time series
+
+Return a daily active user (DAU) time series.
+
+**Admin only.**
+
+Each entry is `{"date": "YYYY-MM-DD", "count": <int>}`.
+Dates with no activity are included with count = 0.
+
+**Tags:** analytics
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/analytics/export/csv`
+
+**Summary:** Download analytics as CSV
+
+Export analytics data as a downloadable CSV file.
+
+**Admin only.**
+
+Supported export types:
+- **revenue**: Revenue report with top personas breakdown
+- **dau**: Daily active users time series
+- **top_personas**: Top personas by usage volume
+
+The response is streamed as `text/csv` with a `Content-Disposition` header
+for direct download from a browser or `curl -O`.
+
+**Tags:** analytics
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/analytics/personas/top`
+
+**Summary:** Top personas by usage
+
+Return the most-used personas in the specified time window.
+
+**Admin only.**
+
+Results are ranked by total API call volume. Falls back to purchase counts
+when no API usage data is available (e.g. on a fresh installation).
+
+**Tags:** analytics
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/analytics/personas/{persona_id}`
+
+**Summary:** Single persona usage stats
+
+Return detailed usage statistics for a specific persona.
+
+**Admin only.**
+
+Includes total API calls, unique users, estimated sessions, average
+session length, and all-time purchase revenue.
+
+**Tags:** analytics
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/analytics/retention`
+
+**Summary:** Cohort retention analysis
+
+Compute cohort retention for users who signed up in `month`.
+
+**Admin only.**
+
+Response includes:
+- **cohort_size**: number of users in the cohort
+- **retention**: dict of `month_N → user count` (N = months since signup)
+- **retention_rates**: dict of `month_N → retention fraction` (0.0–1.0)
+
+**Tags:** analytics
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/analytics/revenue`
+
+**Summary:** Revenue report
+
+Return a revenue report for the specified period.
+
+**Admin only.**
+
+Metrics:
+- **total_revenue_usd**: sum of all purchases in window
+- **new_subscribers**: new subscriptions created in window
+- **churned_subscribers**: subscriptions cancelled in window
+- **mrr**: Monthly Recurring Revenue from active subscriptions
+- **arpu**: Average Revenue Per User (MRR / active subscriber count)
+- **top_personas**: top 10 personas by revenue in window
+
+**Tags:** analytics
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/analytics/users/{user_id}`
+
+**Summary:** User engagement statistics
+
+Return engagement metrics for a user.
+
+Users may only view their **own** stats. Admins may query any user.
+
+Metrics returned:
+- total_sessions: distinct active days
+- total_messages: total API calls
+- favorite_persona: most-used persona
+- avg_daily_messages: messages per active day
+- retention_days: span from first to last usage event
+- tier: current subscription tier (or "free")
+
+**Tags:** analytics
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/api/v1/personas/`
+
+**Summary:** List Personas
+
+**Tags:** personas
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/api/v1/personas/{persona_id}/history`
+
+**Summary:** Get Persona History
+
+**Tags:** personas
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/api/v1/personas/{persona_id}/image`
+
+**Summary:** Get Persona Image
+
+Get persona portrait image (authenticated, rate-limited).
+
+Requires:
+- Valid API key (X-API-Key header)
+- User has purchased persona or has admin access
+
+Returns:
+- PNG image file
+- 404 if persona not found or image missing
+- 403 if not authenticated/authorized
+
+**Tags:** personas
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/api/v1/personas/{persona_id}/profile`
+
+**Summary:** Get Persona Profile
+
+**Tags:** personas
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/auth/me`
+
+**Summary:** Get Current User Profile
+
+Get current user's profile.
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/auth/oauth/github`
+
+**Summary:** Start Github Oauth
+
+Start GitHub OAuth2 flow.
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/auth/oauth/github/callback`
+
+**Summary:** Github Oauth Callback
+
+GitHub OAuth2 callback handler.
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/auth/oauth/google`
+
+**Summary:** Start Google Oauth
+
+Start Google OAuth2 flow.
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/auth/oauth/google/callback`
+
+**Summary:** Google Oauth Callback
+
+Google OAuth2 callback handler.
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/auth/permissions`
+
+**Summary:** Get User Permissions
+
+Get current user's permissions.
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/auth/roles`
+
+**Summary:** List Roles
+
+List all available roles.
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/auth/users/{user_id}`
+
+**Summary:** Get User Profile
+
+Get user profile (admin/moderator only).
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/cache/health`
+
+**Summary:** Cache Health
+
+Check Redis connectivity.
+
+Returns connection status and basic ping latency without requiring auth.
+
+**Tags:** cache
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/cache/stats`
+
+**Summary:** Cache Stats
+
+Redis INFO — memory usage, hit/miss rates, and key count.
+
+Requires authentication (any role).
+
+**Tags:** cache
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/flags/`
+
+**Summary:** List Flags
+
+List all feature flags (admin access may be required in production).
+
+**Tags:** feature-flags
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/flags/{flag_name}`
+
+**Summary:** Get Flag
+
+Get a single feature flag by name.
+
+**Tags:** feature-flags
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/flags/{flag_name}/stats`
+
+**Summary:** Get Flag Statistics
+
+Get statistics for a feature flag (enabled/disabled ratio, variant distribution).
+
+**Tags:** feature-flags
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/me/api-keys`
+
+**Summary:** List Api Keys
+
+List all API key entries (current and history) for the user.
+
+**Tags:** api-keys
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/observability/health/deep`
+
+**Summary:** Deep Health Check
+
+Deep health check including database connectivity.
+
+**Tags:** observability
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/observability/health/liveness`
+
+**Summary:** Liveness Check
+
+Liveness check — pod is running.
+
+**Tags:** observability
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/observability/health/readiness`
+
+**Summary:** Readiness Check
+
+Readiness check — pod is ready to receive traffic.
+
+**Tags:** observability
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/observability/metrics`
+
+**Summary:** Get Metrics
+
+Get current metrics in Prometheus format.
+
+**Tags:** observability
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/observability/metrics/summary`
+
+**Summary:** Get Metrics Summary
+
+Get high-level metrics summary.
+
+**Tags:** observability
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/observability/prometheus/metrics`
+
+**Summary:** Prometheus Metrics
+
+Export metrics in Prometheus text format (for scraping).
+
+**Tags:** observability
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/observability/traces/{trace_id}`
+
+**Summary:** Get Trace
+
+Get trace details by ID (in production, would fetch from Jaeger).
+
+**Tags:** observability
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/performance/baselines`
+
+**Summary:** List Baselines
+
+List all performance baselines.
+
+**Tags:** performance-monitoring
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/performance/dashboard/summary`
+
+**Summary:** Get Performance Dashboard
+
+Get performance dashboard summary.
+
+**Tags:** performance-monitoring
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/performance/metrics`
+
+**Summary:** List Metrics
+
+List recent performance metrics.
+
+**Tags:** performance-monitoring
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/performance/regressions/check`
+
+**Summary:** Check For Regressions
+
+Check for performance regressions.
+
+**Tags:** performance-monitoring
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/rollback/history`
+
+**Summary:** Get Rollback History Endpoint
+
+Get rollback history.
+
+**Tags:** rollback
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## GET `/rollback/policy`
+
+**Summary:** Get Rollback Policy
+
+Get current rollback policy.
+
+**Tags:** rollback
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## PATCH `/auth/me/password`
+
+**Summary:** Change Password
+
+Change user's password.
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## PATCH `/auth/users/{user_id}/role`
+
+**Summary:** Update User Role
+
+Update user's role (admin only).
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## PATCH `/flags/{flag_name}`
+
+**Summary:** Update Flag
+
+Update an existing feature flag (admin access may be required in production).
+
+**Tags:** feature-flags
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## PATCH `/rollback/policy`
+
+**Summary:** Update Rollback Policy
+
+Update rollback policy (admin only).
+
+**Tags:** rollback
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/api/v1/personas/{persona_id}/ceid`
+
+**Summary:** Post Ceid
+
+**Tags:** personas
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/api/v1/personas/{persona_id}/drift`
+
+**Summary:** Post Drift
+
+**Tags:** personas
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/api/v1/personas/{persona_id}/voice`
+
+**Summary:** Post Voice
+
+**Tags:** personas
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/auth/logout`
+
+**Summary:** Logout
+
+Invalidate current session (logout).
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/auth/logout/all`
+
+**Summary:** Logout All
+
+Invalidate all sessions for the user (security lock).
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/auth/oauth/token`
+
+**Summary:** Refresh Access Token
+
+Refresh access token using refresh token.
+
+**Tags:** auth
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/checkout/{persona_id}/mock`
+
+**Summary:** Checkout Mock
+
+Development only: grant persona access without Stripe.
+Disabled when STRIPE_SECRET_KEY is a live key.
+
+**Tags:** payments
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/flags/`
+
+**Summary:** Create Flag
+
+Create a new feature flag (admin access may be required in production).
+
+**Tags:** feature-flags
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/flags/{flag_name}/evaluate`
+
+**Summary:** Evaluate Flag
+
+Evaluate a feature flag for the current user (client-side flag evaluation).
+
+**Tags:** feature-flags
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/me/api-keys/rotate`
+
+**Summary:** Rotate Api Key
+
+Rotate API key: Generate new key, deprecate old key.
+New key is shown once — store it safely.
+Old key prefix remains valid for 7 days to allow client migration.
+
+**Tags:** api-keys
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/observability/logs/collect`
+
+**Summary:** Collect Logs
+
+Collect structured logs from clients.
+
+**Tags:** observability
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/observability/metrics/record`
+
+**Summary:** Record Metric
+
+Record a metric.
+
+**Tags:** observability
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/observability/traces/record`
+
+**Summary:** Record Trace
+
+Record a distributed trace span.
+
+**Tags:** observability
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/performance/baselines/create`
+
+**Summary:** Create Performance Baseline
+
+Create a new performance baseline from recent metrics.
+
+**Tags:** performance-monitoring
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/performance/metrics/record`
+
+**Summary:** Record Performance Metric
+
+Record a performance metric (for integration with monitoring tools).
+
+**Tags:** performance-monitoring
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/performance/regressions/detect`
+
+**Summary:** Detect Endpoint Regression
+
+Detect regression for specific metric/endpoint.
+
+**Tags:** performance-monitoring
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/rollback/evaluate`
+
+**Summary:** Evaluate Rollback
+
+Evaluate if rollback should be triggered.
+
+**Tags:** rollback
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/rollback/execute`
+
+**Summary:** Execute Rollback
+
+Execute a rollback (or request approval).
+
+**Tags:** rollback
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/rollback/history`
+
+**Summary:** Record Rollback Completion
+
+Update rollback status (completion, failure, etc.).
+
+**Tags:** rollback
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)
+
+## POST `/rollback/{rollback_id}/approve`
+
+**Summary:** Approve Rollback
+
+Approve pending rollback (for manual approval flow).
+
+**Tags:** rollback
+
+**Status:** Auto-generated endpoint (needs manual documentation)
+
+- **Request:** (TODO: Document request parameters)
+- **Response:** (TODO: Document response fields)
+- **Examples:** (TODO: Add request/response examples)
+- **Errors:** (TODO: Document possible error responses)

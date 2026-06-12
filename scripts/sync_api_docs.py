@@ -14,7 +14,8 @@ Usage:
     python scripts/sync_api_docs.py --report report  # Generate HTML report
 """
 
-import json
+import os
+import re
 import sys
 from pathlib import Path
 from typing import Dict, Set, Tuple
@@ -23,9 +24,8 @@ from typing import Dict, Set, Tuple
 repo_root = Path(__file__).parent.parent
 sys.path.insert(0, str(repo_root))
 
-import os
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
-os.environ["STRIPE_SECRET_KEY"] = "sk_test_mock"
+os.environ["STRIPE_SECRET_KEY"] = "sk_test_mock"  # pragma: allowlist secret
 
 
 def extract_openapi_endpoints():
@@ -65,13 +65,19 @@ def parse_api_docs():
     with open(api_docs_path, "r") as f:
         content = f.read()
 
-    # Extract endpoint patterns from markdown
-    # Pattern: ```\nGET /path\n```
-    import re
+    # Pattern 1: Code blocks with endpoints (```GET /path```)
+    pattern_code = r"```\s*(GET|POST|PUT|DELETE|PATCH)\s+(/[\w\-/_{}]*)\s*```"
+    matches = re.finditer(pattern_code, content, re.MULTILINE)
 
-    # Pattern for code blocks with endpoints
-    pattern = r"```\s*(GET|POST|PUT|DELETE|PATCH)\s+(/[\w\-/_{}]*)\s*```"
-    matches = re.finditer(pattern, content, re.MULTILINE)
+    for match in matches:
+        method = match.group(1)
+        path = match.group(2)
+        endpoint_key = f"{method} {path}"
+        documented[endpoint_key] = True
+
+    # Pattern 2: Markdown headers with endpoints (## GET `/path`)
+    pattern_header = r"^##\s+(GET|POST|PUT|DELETE|PATCH)\s+[`']?(/[\w\-/_{}]*)[`']?"
+    matches = re.finditer(pattern_header, content, re.MULTILINE)
 
     for match in matches:
         method = match.group(1)
@@ -82,13 +88,15 @@ def parse_api_docs():
     return documented
 
 
-def detect_drift(openapi_endpoints: Dict, documented_endpoints: Dict) -> Tuple[Set, Set, Set]:
+def detect_drift(
+    openapi_endpoints: Dict, documented_endpoints: Dict
+) -> Tuple[Set, Set, Set]:
     """Detect drift between OpenAPI schema and documentation."""
     openapi_keys = set(openapi_endpoints.keys())
     documented_keys = set(documented_endpoints.keys())
 
     missing = openapi_keys - documented_keys  # In OpenAPI, not in docs
-    extra = documented_keys - openapi_keys    # In docs, not in OpenAPI
+    extra = documented_keys - openapi_keys  # In docs, not in OpenAPI
     synced = openapi_keys & documented_keys  # In both
 
     return missing, extra, synced
@@ -151,7 +159,7 @@ def check_drift(openapi_endpoints: Dict, documented_endpoints: Dict) -> bool:
 
 def update_docs(openapi_endpoints: Dict, documented_endpoints: Dict) -> bool:
     """Auto-update API_DOCS.md with new endpoints."""
-    missing, extra, synced = detect_drift(openapi_endpoints, documented_endpoints)
+    missing, _, _ = detect_drift(openapi_endpoints, documented_endpoints)
 
     if not missing:
         print("✅ All endpoints documented. No updates needed.")
@@ -161,13 +169,11 @@ def update_docs(openapi_endpoints: Dict, documented_endpoints: Dict) -> bool:
 
     api_docs_path = repo_root / "API_DOCS.md"
 
-    # Read existing file
-    with open(api_docs_path, "r") as f:
-        content = f.read()
-
     # Append new endpoints
     new_endpoints_section = "\n\n# Auto-Generated Endpoints\n\n"
-    new_endpoints_section += "The following endpoints are auto-generated from the OpenAPI schema.\n"
+    new_endpoints_section += (
+        "The following endpoints are auto-generated from the " "OpenAPI schema.\n"
+    )
     new_endpoints_section += "They require manual documentation to complete.\n"
 
     for endpoint_key in sorted(missing):
@@ -184,30 +190,38 @@ def update_docs(openapi_endpoints: Dict, documented_endpoints: Dict) -> bool:
     return True
 
 
-def generate_report(openapi_endpoints: Dict, documented_endpoints: Dict, output_file: str = None):
+def generate_report(
+    openapi_endpoints: Dict, documented_endpoints: Dict, output_file: str = None
+):
     """Generate HTML report of documentation coverage."""
     missing, extra, synced = detect_drift(openapi_endpoints, documented_endpoints)
 
-    coverage_percent = (len(synced) / len(openapi_endpoints) * 100) if openapi_endpoints else 0
+    coverage_percent = (
+        (len(synced) / len(openapi_endpoints) * 100) if openapi_endpoints else 0
+    )
 
+    style_font = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
     html = f"""<!DOCTYPE html>
 <html>
 <head>
     <title>API Documentation Coverage Report</title>
     <meta charset="utf-8">
     <style>
-        body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 20px; }}
+        body {{ font-family: {style_font}; margin: 20px; }}
         h1 {{ color: #333; }}
-        .summary {{ background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0; }}
+        .summary {{ background: #f5f5f5; padding: 15px;
+                    border-radius: 5px; margin: 20px 0; }}
         .good {{ color: #28a745; }}
         .warning {{ color: #ffc107; }}
         .bad {{ color: #dc3545; }}
         .endpoint-list {{ margin: 20px 0; }}
-        .endpoint {{ background: #f9f9f9; padding: 10px; margin: 5px 0; border-left: 3px solid #ccc; }}
+        .endpoint {{ background: #f9f9f9; padding: 10px; margin: 5px 0;
+                    border-left: 3px solid #ccc; }}
         .endpoint.documented {{ border-left-color: #28a745; }}
         .endpoint.missing {{ border-left-color: #dc3545; }}
         table {{ width: 100%; border-collapse: collapse; }}
-        th, td {{ padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }}
+        th, td {{ padding: 8px; text-align: left;
+                 border-bottom: 1px solid #ddd; }}
         th {{ background: #f5f5f5; }}
         .metric {{ display: inline-block; margin-right: 20px; }}
         .metric-number {{ font-size: 24px; font-weight: bold; }}
@@ -285,9 +299,15 @@ def main():
     """Main entry point."""
     import argparse
 
-    parser = argparse.ArgumentParser(description="Sync API documentation with OpenAPI schema")
-    parser.add_argument("--check", action="store_true", help="Check for drift (no changes)")
-    parser.add_argument("--update", action="store_true", help="Auto-update with new endpoints")
+    parser = argparse.ArgumentParser(
+        description="Sync API documentation with OpenAPI schema"
+    )
+    parser.add_argument(
+        "--check", action="store_true", help="Check for drift (no changes)"
+    )
+    parser.add_argument(
+        "--update", action="store_true", help="Auto-update with new endpoints"
+    )
     parser.add_argument("--report", type=str, help="Generate HTML report to file")
 
     args = parser.parse_args()
