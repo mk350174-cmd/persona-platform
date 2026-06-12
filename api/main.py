@@ -50,6 +50,13 @@ import logging
 import time
 import os
 import stripe
+import sentry_sdk
+from sentry_sdk.integrations.fastapi import FastApiIntegration
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+try:
+    from posthog import Posthog
+except ImportError:
+    Posthog = None
 
 from api.db import (
     init_db, get_db, create_user, get_user_by_email,
@@ -106,6 +113,10 @@ from api.models import (
 )
 from api.email_service import send_verification_email
 from api.auth import authenticate_password
+from api.observability import (
+    track_event, track_signup, track_checkout, track_purchase,
+    track_compilation, set_posthog_client, set_sentry_user,
+)
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 
@@ -114,6 +125,36 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s %(message)s",
 )
 logger = logging.getLogger("persona_hub")
+
+# ── Sentry Error Tracking ─────────────────────────────────────────────────────
+
+sentry_dsn = os.getenv("SENTRY_DSN", "")
+if sentry_dsn:
+    sentry_sdk.init(
+        dsn=sentry_dsn,
+        integrations=[
+            FastApiIntegration(),
+            SqlalchemyIntegration(),
+        ],
+        traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")),
+        profiles_sample_rate=float(os.getenv("SENTRY_PROFILES_SAMPLE_RATE", "0.1")),
+        environment=os.getenv("ENVIRONMENT", "development"),
+        release=os.getenv("APP_VERSION", "1.0.0"),
+        debug=os.getenv("ENVIRONMENT", "development") == "development",
+    )
+
+# ── PostHog Analytics ─────────────────────────────────────────────────────────
+
+posthog_client = None
+posthog_key = os.getenv("POSTHOG_API_KEY", "")
+if posthog_key and Posthog:
+    posthog_client = Posthog(
+        api_key=posthog_key,
+        host=os.getenv("POSTHOG_HOST", "https://eu.posthog.com"),
+        debug=os.getenv("ENVIRONMENT", "development") == "development",
+    )
+    # Export to observability module
+    set_posthog_client(posthog_client)
 
 # ── Rate limiter ───────────────────────────────────────────────────────────────
 
@@ -588,6 +629,9 @@ def register(request: Request, req: RegisterRequest, db: Session = Depends(get_d
         )
     user, full_key = create_user(db, req.email)
 
+    # Track signup event
+    track_signup(user.id, req.email, auth_method="email_password" if req.password else "email")
+
     # Set password if provided
     if req.password:
         user.password_hash = hash_password(req.password)
@@ -761,6 +805,10 @@ def checkout(
         if not ref_code:
             raise HTTPException(status_code=400, detail="Invalid referral code.")
         referrer_id = ref_code.referrer_id
+
+    # Track checkout initiation
+    price_usd = meta.get("price_usd", 9.99)
+    track_checkout(user.id, persona_id, price_usd)
 
     return create_checkout_session(user, persona_id, meta, db, tier=tier, promo=promo, referrer_id=referrer_id, locale=locale)
 
@@ -1099,6 +1147,8 @@ def compile(
         raise HTTPException(status_code=404, detail=f"Persona '{persona_id}' not found.")
     result = compile_persona(P, persona_id=persona_id, platform=req.platform, tier=req.tier)
     _check_and_count(db, user, f"/v1/compile/{persona_id}", persona_id)
+    # Track compilation event
+    track_compilation(user.id, persona_id, req.platform)
     return result
 
 
