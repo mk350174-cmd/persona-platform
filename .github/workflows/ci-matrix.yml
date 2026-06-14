@@ -77,7 +77,10 @@ jobs:
           files: ./coverage.xml
           flags: unittests
           name: codecov-py${{ matrix.python-version }}
-          fail_ci_if_error: true
+          # Non-blocking: don't fail the build if the Codecov upload errors
+          # (e.g. missing token on a private repo, or transient rate limits).
+          # The hard coverage gate is already enforced by --cov-fail-under=80 above.
+          fail_ci_if_error: false
 
       - name: Generate test report
         if: always()
