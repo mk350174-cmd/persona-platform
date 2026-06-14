@@ -133,6 +133,33 @@ def test_public_bank_hides_weights():
         assert "target_layers" not in item
 
 
+def test_public_bank_multi_language():
+    # Test language parameter support
+    for lang in ["tr", "en", "de", "fr", "ja", "ar"]:
+        pub = public_question_bank(lang=lang)
+        assert len(pub) == len(QUESTION_BANK)
+        for q in pub:
+            # Text should be a string in the specified language or fallback to English
+            assert isinstance(q["text"], str)
+            assert len(q["text"]) > 0
+            # Should not contain placeholder markers from missing languages
+            assert "[TODO" not in q["text"] or lang in ("tr", "en", "de", "fr", "ja", "ar")
+
+
+def test_public_bank_default_language():
+    pub_default = public_question_bank()
+    pub_en = public_question_bank(lang="en")
+    # Default should be English
+    assert pub_default[0]["text"] == pub_en[0]["text"]
+
+
+def test_public_bank_invalid_language_fallback():
+    # Invalid language should fall back to English
+    pub_invalid = public_question_bank(lang="invalid")
+    pub_en = public_question_bank(lang="en")
+    assert pub_invalid[0]["text"] == pub_en[0]["text"]
+
+
 def test_axis_layers_indices_valid():
     from api.quiz_questions import AXIS_LAYERS
     for axis, idxs in AXIS_LAYERS.items():

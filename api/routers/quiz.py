@@ -1,6 +1,6 @@
 """HPEP-100 Quiz Router — 50-question persona extraction protocol."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 
@@ -53,9 +53,16 @@ class ResultsResponse(BaseModel):
 # ── Endpoints ──────────────────────────────────────────────────────────────────
 
 @router.get("/questions", response_model=list[QuestionResponse])
-async def get_questions() -> list[QuestionResponse]:
-    """Get all 50 HPEP-100 questions (public view, no scoring rubric/layers)."""
-    return public_question_bank()
+async def get_questions(
+    lang: str = Query("en", pattern="^(tr|en|de|fr|ja|ar)$")
+) -> list[QuestionResponse]:
+    """
+    Get all 50 HPEP-100 questions (public view, no scoring rubric/layers).
+
+    Args:
+        lang: Language code (tr/en/de/fr/ja/ar). Defaults to "en".
+    """
+    return public_question_bank(lang=lang)
 
 
 @router.post("/submit", response_model=SubmitAnswersResponse)

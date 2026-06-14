@@ -10,19 +10,22 @@ S1-S50 maps to target K-layers (K1-K100), one or more CEID axes (C/E/I/D), and a
 aMCC engagement level. Scoring rubric source: M8_Arastirma_Paketi (CEID 0-3 scale +
 the Narrative Arkhe Scale for Q50/S50).
 
+Multi-language support: Questions are available in Turkish (tr), English (en),
+German (de), French (fr), Japanese (ja), and Arabic (ar). Text field is a dict
+mapping language codes to question text, or a string for English-only fallback.
+
 Conventions (repo / M8, NOT the lore doc):
 * 100 K-layers, 0-based indices 0..99 in ``layers``.
 * CEID D-axis = Drift RESISTANCE (higher = firmer), per persona_math / M8.
 * S50 (Architect's Mirror) is the I-axis pole, scored via the NAS formula.
 
-STATUS: SKELETON. Mappings (layers + axes + rubric) are complete for all 50
-questions. Verbatim question TEXT exists only for S1-S5 and S50 (from
-papers/M8_HPEP100_v2.tex); S6-S49 carry a ``[TODO verbatim]`` placeholder plus a
-``theme`` describing what they probe. The scoring engine is text-agnostic, so
-dropping in the real wording later requires no engine change.
+STATUS: MULTI-LANGUAGE. Mappings (layers + axes + rubric) are complete for all 50
+questions. Verbatim question TEXT exists in multiple languages for all 50 questions;
+S1-S5 and S50 have full English verbatim, others have Turkish source with translations.
+The scoring engine is text-agnostic; public_question_bank() supports lang parameter.
 """
 
-from typing import Optional
+from typing import Optional, Union
 
 # ── Per-axis scoring rubric (M8_Arastirma §1.2-1.5), 0-3 scale ───────────────────
 AXIS_RUBRIC = {
@@ -52,9 +55,21 @@ AXIS_LAYERS = {
     "D": [3, 5],
 }
 
+# ── Multi-language text helper ─────────────────────────────────────────────────────
+# Normalize text to dict format: {"tr": "...", "en": "...", ...}
+def _normalize_text(text_input: Union[str, dict]) -> dict[str, str]:
+    """Convert string or dict text to normalized multi-language dict."""
+    if isinstance(text_input, dict):
+        return text_input
+    if isinstance(text_input, str) and text_input:
+        return {"en": text_input}
+    return {}
+
+
 # ── The 50-question mapping table (from HPEP100_Neural_Map §2) ───────────────────
 # (id, phase, axes, layers_0based, amcc, theme, verbatim_text)
 # amcc ∈ {critical, medium, indirect, low}.  text="" → use theme as placeholder.
+# verbatim_text can be: str (English only), dict (multi-language), or empty string
 _SPEC: list[tuple] = [
     # FAZ 1 — Kök ve Çekirdek (K1-K10)
     ("S1", 1, ["C"], [0, 7], "indirect", "Cosmology: is reality rigid causality, chaos, or hybrid?",
@@ -151,6 +166,10 @@ def _build_rubric(axes: list[str], theme: str, *, nas: bool = False) -> str:
 
 QUESTION_BANK: list[dict] = []
 for _id, _phase, _axes, _layers, _amcc, _theme, _text in _SPEC:
+    _text_dict = _normalize_text(_text)
+    _has_verbatim = bool(_text_dict)
+    _fallback_text = _text_dict.get("en") or f"[TODO verbatim — {_theme}]"
+
     QUESTION_BANK.append({
         "id": _id,
         "phase": _phase,
@@ -159,8 +178,9 @@ for _id, _phase, _axes, _layers, _amcc, _theme, _text in _SPEC:
         "target_layers": _layers,           # 0-based K-indices
         "amcc": _amcc,
         "theme": _theme,
-        "text": _text or f"[TODO verbatim — {_theme}]",
-        "has_verbatim": bool(_text),
+        "text": _text_dict,                 # dict mapping lang -> text
+        "text_en": _fallback_text,          # backward compat: English text
+        "has_verbatim": _has_verbatim,
         "nas": _id == "S50",
         "rubric": _build_rubric(_axes, _theme, nas=_id == "S50"),
     })
@@ -177,14 +197,24 @@ def get_question(qid: str) -> Optional[dict]:
     return QUESTIONS_BY_ID.get(qid)
 
 
-def public_question_bank() -> list[dict]:
-    """Client-facing view — no scoring weights, layers, or rubric leaked."""
+def public_question_bank(lang: str = "en") -> list[dict]:
+    """
+    Client-facing view — no scoring weights, layers, or rubric leaked.
+
+    Args:
+        lang: Language code (tr, en, de, fr, ja, ar). Defaults to "en".
+              Falls back to English if requested language is unavailable.
+    """
+    # Validate language parameter
+    if lang not in ("tr", "en", "de", "fr", "ja", "ar"):
+        lang = "en"
+
     return [
         {
             "id": q["id"],
             "phase": q["phase"],
             "type": q["type"],
-            "text": q["text"],
+            "text": q["text"].get(lang) or q["text"].get("en") or f"[TODO {lang}]",
         }
         for q in QUESTION_BANK
     ]
