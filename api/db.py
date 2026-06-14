@@ -489,12 +489,9 @@ class QuizSubmission(Base):
 class UserPersona(Base):
     """Cached latest persona extraction for a user (derived from latest quiz submission)."""
     __tablename__ = "user_personas"
-    __table_args__ = (
-        Index("ix_user_personas_user_id", "user_id"),
-    )
 
     id              = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
-    user_id         = Column(String(36), ForeignKey("users.id"), nullable=False, unique=True, index=True)
+    user_id         = Column(String(36), ForeignKey("users.id"), nullable=False, unique=True)
     k_layer         = Column(JSON, nullable=False)  # 100-element array of K-layer scores (0-1)
     ceid_scores     = Column(JSON, nullable=False)  # {C: 0-3, E: 0-3, I: 0-3, D: 0-3}
     tier            = Column(String(32), nullable=True)  # Persona tier

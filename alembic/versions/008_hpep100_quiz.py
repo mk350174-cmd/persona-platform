@@ -37,7 +37,7 @@ def upgrade() -> None:
     op.create_table(
         'user_personas',
         sa.Column('id', sa.String(36), nullable=False),
-        sa.Column('user_id', sa.String(36), nullable=False),
+        sa.Column('user_id', sa.String(36), nullable=False, unique=True),
         sa.Column('k_layer', sa.JSON(), nullable=False),
         sa.Column('ceid_scores', sa.JSON(), nullable=False),
         sa.Column('tier', sa.String(32), nullable=True),
@@ -46,14 +46,12 @@ def upgrade() -> None:
         sa.Column('updated_at', sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(['submission_id'], ['quiz_submissions.id'], ),
         sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-        sa.PrimaryKeyConstraint('id'),
-        sa.UniqueConstraint('user_id')
+        sa.PrimaryKeyConstraint('id')
     )
-    op.create_index('ix_user_personas_user_id', 'user_personas', ['user_id'], unique=True)
+    op.create_index('ix_user_personas_user_id', 'user_personas', ['user_id'])
 
 
 def downgrade() -> None:
-    op.drop_index('ix_user_personas_user_id', table_name='user_personas')
     op.drop_table('user_personas')
 
     op.drop_index('ix_quiz_submissions_user_id', table_name='quiz_submissions')
