@@ -120,11 +120,16 @@ def _aggregate_layers(answers: dict) -> tuple[dict[int, list[float]], dict[str, 
 
         elif q["type"] == "open":
             score = _score_open_ended(q, str(ans))
-            axis = q.get("ceid_axis")
-            _push_axis(axis, score)
+            axes = q.get("ceid_axis", [])  # List of axes, e.g. ["C"] or ["E", "D"]
+            if isinstance(axes, str):
+                axes = [axes]  # Fallback: single axis string
+            for axis in axes:
+                _push_axis(axis, score)
             # Project the open-ended score onto the question's target layers, falling
-            # back to the axis's representative layers when none are specified.
-            target = q.get("target_layers") or AXIS_LAYERS.get(axis, [])
+            # back to the first axis's representative layers when none are specified.
+            target = q.get("target_layers", [])
+            if not target and axes:
+                target = AXIS_LAYERS.get(axes[0], [])
             for idx in target:
                 _push_layer(int(idx), score)
 

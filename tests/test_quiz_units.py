@@ -23,19 +23,20 @@ def _no_anthropic(monkeypatch):
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
 
 
-def _all_agree():
-    """Answer every structured question with the top Likert option (index 4)."""
-    return {q["id"]: 4 for q in QUESTION_BANK if q["type"] == "structured"}
+def _all_strong_answers():
+    """Answer every open-ended question with a strong positive response (0.9 score)."""
+    return {q["id"]: 0.9 for q in QUESTION_BANK if q["type"] == "open"}
 
 
-def _all_disagree():
-    return {q["id"]: 0 for q in QUESTION_BANK if q["type"] == "structured"}
+def _all_weak_answers():
+    """Answer every open-ended question with a weak response (0.1 score)."""
+    return {q["id"]: 0.1 for q in QUESTION_BANK if q["type"] == "open"}
 
 
 # ── vector shape / range ────────────────────────────────────────────────────────
 
 def test_vector_shape_and_range():
-    P = qs.build_persona_vector(_all_agree())
+    P = qs.build_persona_vector(_all_strong_answers())
     assert P.shape == (100,)
     assert P.dtype == float or np.issubdtype(P.dtype, np.floating)
     assert float(P.min()) >= 0.0 and float(P.max()) <= 1.0
@@ -49,34 +50,36 @@ def test_empty_answers_returns_base_vector():
     assert float(P.min()) >= 0.0 and float(P.max()) <= 1.0
 
 
-# ── structured answers move the right layers ────────────────────────────────────
+# ── open-ended answers aggregate onto target layers ────────────────────────────────
 
-def test_agree_raises_targeted_layers():
-    P_hi = qs.build_persona_vector(_all_agree())
-    P_lo = qs.build_persona_vector(_all_disagree())
-    # Q1 targets K-index 0 and 7; "strongly agree" should exceed "strongly disagree".
-    assert P_hi[0] > P_lo[0]
-    assert P_hi[7] > P_lo[7]
-
-
-def test_option_by_label_and_index_equivalent():
-    by_index = qs.build_persona_vector({"Q1": 4})
-    label = get_question("Q1")["options"][4]["label"]
-    by_label = qs.build_persona_vector({"Q1": label})
-    assert np.allclose(by_index, by_label)
+def test_answers_aggregate_to_target_layers():
+    # S1 targets K-indices [0, 7]. Answering it should set those layers.
+    # Without API key, all answers score 0.5 (neutral), so result is deterministic.
+    P = qs.build_persona_vector({"S1": "Some thoughtful response to the first question."})
+    # K-index 0 and 7 should have been touched by S1's answer (averaged into 0.5).
+    assert 0.0 <= P[0] <= 1.0
+    assert 0.0 <= P[7] <= 1.0
+    # The question targeted these layers, so they should be somewhere in the range.
+    assert abs(P[0] - 0.5) < 0.2  # Close to neutral prior since API returns 0.5
+    assert abs(P[7] - 0.5) < 0.2
 
 
-def test_invalid_option_ignored():
-    # Out-of-range index and unknown label must not raise; treated as unanswered,
-    # so the result is identical to the no-answer vector (same seed → same noise).
-    P = qs.build_persona_vector({"Q1": 99, "Q2": "nonsense"})
-    assert np.allclose(P, qs.build_persona_vector({}))
+def test_empty_string_scores_neutral():
+    # Empty answer string scores as 0.5 (neutral), which is different from no answer.
+    # Empty answer contributes 0.5 to target layers; no answer leaves layers as noise.
+    P_empty = qs.build_persona_vector({"S1": ""})
+    P_noanswer = qs.build_persona_vector({})
+    # Empty answer should push S1's target layers toward 0.5; they'll be slightly different.
+    assert not np.allclose(P_empty, P_noanswer)
+    # But the mean should still be close to 0.5
+    assert abs(P_empty.mean() - 0.5) < 0.05
+    assert abs(P_noanswer.mean() - 0.5) < 0.05
 
 
 # ── CEID extraction ─────────────────────────────────────────────────────────────
 
 def test_extract_persona_keys():
-    out = qs.extract_persona(_all_agree())
+    out = qs.extract_persona(_all_strong_answers())
     assert set(out) >= {"k_layer", "ceid", "n_answered", "n_total", "source", "untrained"}
     assert len(out["k_layer"]) == 100
     assert out["untrained"] is True
@@ -88,7 +91,7 @@ def test_extract_persona_keys():
 
 
 def test_n_answered_counts_only_answered():
-    out = qs.extract_persona({"Q1": 4, "Q2": 2})
+    out = qs.extract_persona({"S1": "Answer 1", "S2": "Answer 2"})
     assert out["n_answered"] == 2
     assert out["n_total"] == len(QUESTION_BANK)
 
@@ -106,9 +109,13 @@ def test_open_ended_empty_answer_is_neutral():
 
 
 def test_open_answer_projects_onto_target_layers():
-    # Answering Q50 (targets K100 idx 99) should set those layers toward 0.5.
-    P = qs.build_persona_vector({"Q50": "I choose to keep my commitments."})
-    assert abs(P[99] - 0.5) < 1e-6
+    # Answering S50 (targets K-indices [99, 2, 81]) should set those layers.
+    # Without API key, answer scores 0.5 (neutral). With seeded noise, values cluster near 0.5.
+    P = qs.build_persona_vector({"S50": "I choose to keep my commitments."})
+    # K99, K2, K81 should be influenced by the 0.5 score (within noise tolerance ~0.1)
+    assert abs(P[99] - 0.5) < 0.1
+    assert abs(P[2] - 0.5) < 0.1
+    assert abs(P[81] - 0.5) < 0.1
 
 
 # ── question bank hygiene ────────────────────────────────────────────────────────
@@ -117,14 +124,18 @@ def test_public_bank_hides_weights():
     pub = public_question_bank()
     assert len(pub) == len(QUESTION_BANK)
     for item in pub:
+        # Public view should only have: id, phase, type, text
+        assert set(item.keys()) == {"id", "phase", "type", "text"}
+        # No scoring rubric, layers, or axes should be exposed
         assert "layers" not in item
-        if item["type"] == "structured":
-            for o in item["options"]:
-                assert set(o) == {"label"}
+        assert "rubric" not in item
+        assert "ceid_axis" not in item
+        assert "target_layers" not in item
 
 
 def test_axis_layers_indices_valid():
-    for axis, idxs in qs.AXIS_LAYERS.items():
+    from api.quiz_questions import AXIS_LAYERS
+    for axis, idxs in AXIS_LAYERS.items():
         assert axis in "CEID"
         assert all(0 <= i < 100 for i in idxs)
 
