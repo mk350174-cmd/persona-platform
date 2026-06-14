@@ -1,5 +1,7 @@
 """HPEP-100 Quiz Router — 50-question persona extraction protocol."""
 
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
@@ -33,7 +35,7 @@ class SubmitAnswersRequest(BaseModel):
 class PersonaResponse(BaseModel):
     """User's extracted persona."""
     k_layer: list[float] = Field(..., description="100-element K-layer vector (0-1 range)")
-    ceid_scores: dict[str, float]
+    ceid_scores: dict[str, Any]
     tier: str | None = None
     created_at: str
 
@@ -77,13 +79,15 @@ async def submit_quiz(
     """
     # Extract persona from answers
     answers_dict = {qid: score for qid, score in request.answers.items()}
-    k_layer, ceid_scores = extract_persona(answers_dict)
+    result = extract_persona(answers_dict)
+    k_layer = result["k_layer"]
+    ceid_scores = result["ceid"]
 
     # Create submission record
     submission = QuizSubmission(
         user_id=user.id,
         answers=answers_dict,
-        k_layer=k_layer.tolist() if hasattr(k_layer, 'tolist') else k_layer,
+        k_layer=k_layer,
         ceid_scores=ceid_scores,
     )
     db.add(submission)
@@ -94,13 +98,13 @@ async def submit_quiz(
     if not persona:
         persona = UserPersona(
             user_id=user.id,
-            k_layer=k_layer.tolist() if hasattr(k_layer, 'tolist') else k_layer,
+            k_layer=k_layer,
             ceid_scores=ceid_scores,
             submission_id=submission.id,
         )
         db.add(persona)
     else:
-        persona.k_layer = k_layer.tolist() if hasattr(k_layer, 'tolist') else k_layer
+        persona.k_layer = k_layer
         persona.ceid_scores = ceid_scores
         persona.submission_id = submission.id
 
