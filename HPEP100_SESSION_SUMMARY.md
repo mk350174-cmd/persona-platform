@@ -101,34 +101,23 @@ Completed full HPEP-100 quiz implementation infrastructure:
 
 ### Quiz Endpoints (✅ Complete)
 
+**See HPEP100_TURKISH_INTEGRATION_GUIDE.md and QUIZ_README.md for detailed API documentation and curl examples.**
+
 #### GET /api/v1/quiz/questions
-```bash
-# Get questions in any of 6 languages
-curl "http://localhost:8000/api/v1/quiz/questions?lang=tr"
-Response: [{id, phase, type, text}, ...]  # 50 questions
-```
+- Fetch 50 questions in any of 6 languages (TR, EN, DE, FR, JA, AR)
 - ✅ Language validation (regex: tr|en|de|fr|ja|ar)
 - ✅ Falls back to English if language missing
 - ✅ No scoring rubric/layers exposed
 
 #### POST /api/v1/quiz/submit
-```bash
-curl -X POST "http://localhost:8000/api/v1/quiz/submit" \
-  -H "X-API-Key: <your_api_key>" \
-  -d '{"answers": {"S1": 0.5, "S2": 0.7, ...}}'
-Response: {persona: {k_layer, ceid_scores}, checkout_url}
-```
+- Submit answers and extract persona
 - ✅ Extracts persona from answers
 - ✅ Creates QuizSubmission + UserPersona records
 - ✅ Returns Stripe checkout URL
 - ✅ Auth required (X-API-Key header)
 
 #### GET /api/v1/quiz/results
-```bash
-curl "http://localhost:8000/api/v1/quiz/results" \
-  -H "X-API-Key: <your_api_key>"
-Response: {persona, submission_count}
-```
+- Retrieve latest extracted persona and submission history
 - ✅ Returns latest persona + submission history
 - ✅ 404 if no persona extracted yet
 - ✅ Auth required
