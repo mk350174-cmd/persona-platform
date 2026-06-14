@@ -73,9 +73,9 @@ af933432d298895748e069350f7b4b98fe4e2ab7:tests/test_security_units.py:generic-ap
 af933432d298895748e069350f7b4b98fe4e2ab7:tests/test_security_auth.py:generic-api-key:42
 
 # HPEP100_TURKISH_INTEGRATION_GUIDE.md - X-API-Key placeholder example
-e7594ebe:HPEP100_TURKISH_INTEGRATION_GUIDE.md:curl-auth-header:213
+e7594ebe4f9c4f8d5c98666d7ea5966a782496da:HPEP100_TURKISH_INTEGRATION_GUIDE.md:curl-auth-header:213
 
 # QUIZ_README.md - X-API-Key placeholder example in curl documentation
-e7594ebe:frontend/src/pages/QUIZ_README.md:curl-auth-header:105
+e7594ebe4f9c4f8d5c98666d7ea5966a782496da:frontend/src/pages/QUIZ_README.md:curl-auth-header:105
 
 # HPEP100_SESSION_SUMMARY.md - No curl examples (removed in eb2d57df)
