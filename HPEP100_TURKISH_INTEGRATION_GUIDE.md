@@ -210,7 +210,7 @@ Response: [
 ### Submit Quiz (Multi-Language Agnostic)
 ```bash
 POST /api/v1/quiz/submit
-Headers: X-API-Key: <api_key>
+Headers: X-API-Key: <your_api_key>
 Body: {
   "answers": {
     "S1": 0.5,
