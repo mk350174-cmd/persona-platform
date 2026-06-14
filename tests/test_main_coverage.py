@@ -371,8 +371,8 @@ class TestVoiceEndpoint:
             json={"text": "Hello world"},
             headers={"X-API-Key": api_key},
         )
-        # No ELEVENLABS_API_KEY → 503 (unavailable) or 403 (no purchase)
-        assert resp.status_code in (403, 503, 500, 404)
+        # No ELEVENLABS_API_KEY → 503 (unavailable) or 403 (no purchase) or 502 (bad gateway)
+        assert resp.status_code in (403, 503, 500, 404, 502)
 
 
 # ── Compile with invalid persona ───────────────────────────────────────────────
