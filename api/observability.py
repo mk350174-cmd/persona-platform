@@ -8,7 +8,6 @@ Integrates:
 - Structured logging with context
 """
 
-import os
 import sentry_sdk
 import logging
 from typing import Optional, Dict, Any

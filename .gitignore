@@ -15,6 +15,11 @@ env/
 *.db
 *.sqlite
 *.sqlite3
+
+# coverage artifacts
+.coverage
+coverage.xml
+htmlcov/
 stitch_iconic_figures_part_*.zip
 stitch_*.zip
 Persona png

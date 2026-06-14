@@ -115,8 +115,7 @@ from api.models import (
 from api.email_service import send_verification_email
 from api.auth import authenticate_password
 from api.observability import (
-    track_event, track_signup, track_checkout, track_purchase,
-    track_compilation, set_posthog_client, set_sentry_user,
+    track_signup, track_checkout, track_compilation, set_posthog_client,
 )
 
 # ── Logging ───────────────────────────────────────────────────────────────────

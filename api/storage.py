@@ -9,7 +9,6 @@ Handles:
 
 import os
 from typing import Optional
-from pathlib import Path
 
 try:
     from supabase import create_client, Client

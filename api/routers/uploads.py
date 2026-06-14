@@ -4,9 +4,8 @@ File upload endpoints — user avatars, compiled configs.
 Uses Supabase Storage for cloud file hosting.
 """
 
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, status
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import Optional
 
 from api.db import get_db, User
 from api.auth import get_current_user
@@ -151,7 +150,7 @@ def upload_compiled_config(
     )
 
     logger.info(
-        f"Compiled config uploaded",
+        "Compiled config uploaded",
         user_id=user.id,
         persona_id=persona_id,
         platform=platform,
