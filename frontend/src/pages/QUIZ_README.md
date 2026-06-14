@@ -104,7 +104,7 @@ Submit answers and extract persona
 ```bash
 curl -X POST "http://localhost:8000/api/v1/quiz/submit" \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: user_api_key" \
+  -H "X-API-Key: <your_api_key>" \
   -d '{
     "answers": {
       "S1": 0.5,
