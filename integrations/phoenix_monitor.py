@@ -31,7 +31,9 @@ class CEIDMonitor:
             offline: If True, run in offline mode (no external service calls)
         """
         self.project_name = project_name
-        self.baseline_vector = baseline_vector or {}
+        # Use explicit None-check: `or {}` triggers a numpy truth-value error when a
+        # baseline_vector ndarray (the WebSocket chat path passes P.copy()) is supplied.
+        self.baseline_vector = baseline_vector if baseline_vector is not None else {}
         self.offline = offline
 
         if not offline:
