@@ -64,6 +64,21 @@ def test_bulk_add_translations():
     assert get_translation("S7", "fr") == "Question 7 Français"
 
 
+def test_get_translation_missing():
+    """Test get_translation for non-existent question."""
+    assert get_translation("S99", "en") == ""
+    assert get_translation("S6", "en") == ""  # S6 has no English translation yet
+
+
+def test_add_translation_new_question():
+    """Test adding translation for a new question ID."""
+    add_translation("S99", "en", "New question in English")
+    assert get_translation("S99", "en") == "New question in English"
+    all_trans = get_all_translations("S99")
+    assert all_trans["en"] == "New question in English"
+    assert all_trans["tr"] == ""
+
+
 def test_translation_language_codes():
     """Verify only valid language codes are used."""
     valid_langs = {"en", "tr", "de", "fr", "ja", "ar"}
