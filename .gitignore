@@ -45,3 +45,7 @@ needle/bundles/bundle_progress.json
 # validation: per-paper run state is generated; keep REPORT.md (+ tiers.json once upgrades exist)
 validation/progress.json
 validation/measured/
+
+# persona portraits: local dev copies (canonical storage = Persona-assentleri repo)
+demo/assets/personas/*.png
+!demo/assets/personas/.gitkeep

@@ -24,9 +24,11 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from slowapi import Limiter
 from slowapi.util import get_remote_address
+from sqlalchemy.orm import Session
 
 from api import needle_service
 from api.auth import get_current_user, require_persona_access
+from api.db import get_db
 from persona_math.persona_library import get_library_persona, PERSONA_LIBRARY, search_personas
 
 router = APIRouter(tags=["personas"])
@@ -104,6 +106,7 @@ def get_persona_history(persona_id: str):
 def get_persona_image(
     persona_id: str,
     current_user = Depends(get_current_user),
+    db: Session = Depends(get_db),
     x_api_key: Optional[str] = Header(None),
     request: Request = None,
 ):
@@ -122,10 +125,9 @@ def get_persona_image(
     """
     _require(persona_id)
 
-    # Require persona access (checks purchase/subscription)
-    access = require_persona_access(current_user, persona_id)
-    if not access:
-        raise HTTPException(status_code=403, detail="Not authorized to access this persona")
+    # Require persona access (raises 403 if not purchased / 404 if unknown).
+    # Signature is (persona_id, user, db); it raises rather than returning a flag.
+    require_persona_access(persona_id, current_user, db)
 
     # Construct image path
     demo_dir = Path(__file__).parent.parent.parent / "demo"
