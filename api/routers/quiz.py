@@ -1,13 +1,12 @@
 """HPEP-100 Quiz Router — 50-question persona extraction protocol."""
 
-import json
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 
 from api.db import get_db, User, QuizSubmission, UserPersona
 from api.auth import get_current_user
-from api.quiz_questions import QUESTION_BANK, public_question_bank
+from api.quiz_questions import public_question_bank
 from api.quiz_service import extract_persona
 
 router = APIRouter(prefix="/api/v1/quiz", tags=["quiz"])
@@ -31,18 +30,10 @@ class SubmitAnswersRequest(BaseModel):
     )
 
 
-class CEIDScores(BaseModel):
-    """CEID axis scores (0-3 each)."""
-    C: float
-    E: float
-    I: float
-    D: float
-
-
 class PersonaResponse(BaseModel):
     """User's extracted persona."""
     k_layer: list[float] = Field(..., description="100-element K-layer vector (0-1 range)")
-    ceid_scores: CEIDScores
+    ceid_scores: dict[str, float]
     tier: str | None = None
     created_at: str
 
@@ -111,7 +102,7 @@ async def submit_quiz(
     # Build persona response
     persona_resp = PersonaResponse(
         k_layer=persona.k_layer,
-        ceid_scores=CEIDScores(**persona.ceid_scores),
+        ceid_scores=persona.ceid_scores,
         tier=persona.tier,
         created_at=submission.created_at.isoformat(),
     )
@@ -140,7 +131,7 @@ async def get_results(
 
     persona_resp = PersonaResponse(
         k_layer=persona.k_layer,
-        ceid_scores=CEIDScores(**persona.ceid_scores),
+        ceid_scores=persona.ceid_scores,
         tier=persona.tier,
         created_at=persona.updated_at.isoformat(),
     )
