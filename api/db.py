@@ -561,7 +561,7 @@ class PersonaMatch(Base):
 
     id                    = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
     user_id               = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
-    submission_id         = Column(String(36), ForeignKey("quiz_submissions.id"), nullable=False, index=True)
+    submission_id         = Column(String(36), ForeignKey("quiz_submissions.id"), nullable=False)
     top_persona_id        = Column(String(64), ForeignKey("hybrid_personas.persona_id"), nullable=False)
     is_historical         = Column(Boolean, default=False)  # True if matched against historical personas
     match_score           = Column(Integer, nullable=False)  # 0-100 percentile

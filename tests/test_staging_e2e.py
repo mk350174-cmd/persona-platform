@@ -39,9 +39,10 @@ class TestE2EQuizToMatching:
         user = User(
             id="test-user-e2e-1",
             email="test-e2e-1@example.com",
-            username="test_e2e_1",
-            hashed_password="hashed",
-            is_active=True,
+            api_key="test-key-1",
+            api_key_hash="hash1",
+            password_hash="hashed",
+            active=True,
         )
         test_db.add(user)
         test_db.flush()
@@ -71,22 +72,23 @@ class TestE2EQuizToMatching:
         user_k_layer = np.random.uniform(0.2, 0.8, 98).astype(np.float32)
 
         # Step 2: Match user to personas
-        top_5 = match_user_to_personas(user_k_layer, test_db)
+        top_persona_id, top_5_ids, top_5_scores, profile = match_user_to_personas(user_k_layer, test_db)
 
         # Assertions: Check matching results
-        assert len(top_5) == 5, f"Expected 5 results, got {len(top_5)}"
-        assert all("persona_id" in p for p in top_5), "All results should have persona_id"
-        assert all("score" in p for p in top_5), "All results should have score"
+        assert len(top_5_ids) == 5, f"Expected 5 results, got {len(top_5_ids)}"
+        assert all(isinstance(pid, str) for pid in top_5_ids), "All persona IDs should be strings"
+        assert all(isinstance(score, int) for score in top_5_scores), "All scores should be integers"
+        assert top_persona_id is not None, "Top persona should not be None"
 
         # Step 3: Record match in database (simulate API behavior)
-        top_persona_id = top_5[0]["persona_id"]
         match_record = PersonaMatch(
             id="match-e2e-1",
             user_id="test-user-e2e-1",
             top_persona_id=top_persona_id,
-            top_5_ids=[p["persona_id"] for p in top_5],
-            top_5_scores=[p["score"] for p in top_5],
-            percentile_score=85.5,
+            top_5_persona_ids=top_5_ids,
+            top_5_scores=top_5_scores,
+            submission_id="test-submission-1",
+            match_score=top_5_scores[0],
         )
         test_db.add(match_record)
         test_db.commit()
@@ -96,7 +98,7 @@ class TestE2EQuizToMatching:
         assert stored_match is not None
         assert stored_match.user_id == "test-user-e2e-1"
         assert stored_match.top_persona_id == top_persona_id
-        assert len(stored_match.top_5_ids) == 5
+        assert len(stored_match.top_5_persona_ids) == 5
 
     def test_multiple_quiz_submissions_track_matches(self, test_db):
         """Test user submitting multiple quizzes creates multiple matches."""
@@ -104,9 +106,10 @@ class TestE2EQuizToMatching:
         user = User(
             id="test-user-multi",
             email="test-multi@example.com",
-            username="test_multi",
-            hashed_password="hashed",
-            is_active=True,
+            api_key="test-key-multi",
+            api_key_hash="hash-multi",
+            password_hash="hashed",
+            active=True,
         )
         test_db.add(user)
         test_db.flush()
@@ -134,15 +137,16 @@ class TestE2EQuizToMatching:
         # Submit 3 different quizzes with different K-layers
         for quiz_num in range(1, 4):
             user_k_layer = np.random.uniform(0.2, 0.8, 98).astype(np.float32)
-            top_5 = match_user_to_personas(user_k_layer, test_db)
+            top_persona_id, top_5_ids, top_5_scores, profile = match_user_to_personas(user_k_layer, test_db)
 
             match_record = PersonaMatch(
                 id=f"match-multi-{quiz_num}",
                 user_id="test-user-multi",
-                top_persona_id=top_5[0]["persona_id"],
-                top_5_ids=[p["persona_id"] for p in top_5],
-                top_5_scores=[p["score"] for p in top_5],
-                percentile_score=float(80 + quiz_num * 5),
+                top_persona_id=top_persona_id,
+                top_5_persona_ids=top_5_ids,
+                top_5_scores=top_5_scores,
+                submission_id=f"test-submission-{quiz_num}",
+                match_score=top_5_scores[0] if top_5_scores else 0,
             )
             test_db.add(match_record)
             test_db.flush()
@@ -373,10 +377,13 @@ class TestAPIErrorHandling:
         user_k_layer = np.random.uniform(0.2, 0.8, 98).astype(np.float32)
 
         # Try matching with empty database (no personas)
-        top_5 = match_user_to_personas(user_k_layer, test_db)
+        top_persona_id, top_5_ids, top_5_scores, profile = match_user_to_personas(user_k_layer, test_db)
 
-        # Should return empty or error gracefully
-        assert isinstance(top_5, (list, type(None)))
+        # Should return empty results when no personas available
+        assert top_persona_id is None
+        assert len(top_5_ids) == 0
+        assert len(top_5_scores) == 0
+        assert profile.get("error") == "no_personas_available"
 
     def test_unavailable_personas_excluded(self, test_db):
         """Test that unavailable personas are excluded from matching."""
@@ -399,13 +406,13 @@ class TestAPIErrorHandling:
         test_db.commit()
 
         user_k_layer = np.random.uniform(0.2, 0.8, 98).astype(np.float32)
-        top_5 = match_user_to_personas(user_k_layer, test_db)
+        top_persona_id, top_5_ids, top_5_scores, profile = match_user_to_personas(user_k_layer, test_db)
 
         # All results should be from available personas
-        if top_5:
-            for result in top_5:
+        if top_5_ids:
+            for persona_id in top_5_ids:
                 persona = test_db.query(HybridPersona).filter_by(
-                    persona_id=result["persona_id"]
+                    persona_id=persona_id
                 ).first()
                 assert persona.is_available is True
 
