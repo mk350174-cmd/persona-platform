@@ -98,6 +98,8 @@ class User(Base):
     referral_credits_received = relationship("ReferralCredit", foreign_keys="ReferralCredit.referee_id", back_populates="referee", lazy="select")
     oauth_credentials     = relationship("OAuth2Credential", back_populates="user", lazy="select")
     invalidated_sessions  = relationship("InvalidatedSession", back_populates="user", lazy="select")
+    quiz_submissions      = relationship("QuizSubmission", back_populates="user", lazy="select")
+    persona               = relationship("UserPersona", back_populates="user", uselist=False, lazy="select")
 
     @staticmethod
     def generate_api_key() -> str:
@@ -462,6 +464,43 @@ class InvalidatedSession(Base):
     reason      = Column(String(64), nullable=False)  # logout, password_change, security_lock
 
     user = relationship("User", back_populates="invalidated_sessions")
+
+
+# ── HPEP-100 Quiz (Persona Extraction Protocol) ───────────────────────────────
+
+class QuizSubmission(Base):
+    """Track HPEP-100 quiz submissions (answers + extracted persona)."""
+    __tablename__ = "quiz_submissions"
+    __table_args__ = (
+        Index("ix_quiz_submissions_user_created", "user_id", "created_at"),
+    )
+
+    id              = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    user_id         = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
+    answers         = Column(JSON, nullable=False)  # {qid: score_0_to_3} for all 50 questions
+    k_layer         = Column(JSON, nullable=False)  # 100-element array of K-layer scores (0-1)
+    ceid_scores     = Column(JSON, nullable=False)  # {C: 0-3, E: 0-3, I: 0-3, D: 0-3}
+    tier            = Column(String(32), nullable=True)  # Persona tier (derived from K-layer)
+    created_at      = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
+
+    user = relationship("User", back_populates="quiz_submissions")
+
+
+class UserPersona(Base):
+    """Cached latest persona extraction for a user (derived from latest quiz submission)."""
+    __tablename__ = "user_personas"
+
+    id              = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    user_id         = Column(String(36), ForeignKey("users.id"), nullable=False, unique=True)
+    k_layer         = Column(JSON, nullable=False)  # 100-element array of K-layer scores (0-1)
+    ceid_scores     = Column(JSON, nullable=False)  # {C: 0-3, E: 0-3, I: 0-3, D: 0-3}
+    tier            = Column(String(32), nullable=True)  # Persona tier
+    submission_id   = Column(String(36), ForeignKey("quiz_submissions.id"), nullable=True)  # Latest submission
+    created_at      = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    updated_at      = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    user = relationship("User", back_populates="persona")
+    submission = relationship("QuizSubmission")
 
 
 # ── Init ───────────────────────────────────────────────────────────────────────

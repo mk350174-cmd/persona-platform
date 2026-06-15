@@ -86,6 +86,7 @@ from api.routers.advanced_auth import router as advanced_auth_router
 from api.routers.cache import router as cache_router
 from api.routers.analytics import router as analytics_router
 from api.routers.uploads import router as uploads_router
+from api.routers.quiz import router as quiz_router
 from persona_math.compiler import (
     compile_persona,
     compile_all_platforms,
@@ -115,8 +116,7 @@ from api.models import (
 from api.email_service import send_verification_email
 from api.auth import authenticate_password
 from api.observability import (
-    track_event, track_signup, track_checkout, track_purchase,
-    track_compilation, set_posthog_client, set_sentry_user,
+    track_signup, track_checkout, track_compilation, set_posthog_client,
 )
 
 # ── Logging ───────────────────────────────────────────────────────────────────
@@ -197,6 +197,7 @@ API is versioned at `/v1`. Deprecated endpoints return `Deprecation: true` heade
         {"name": "catalog",     "description": "Browse 495 AI personas"},
         {"name": "payments",    "description": "Stripe checkout and billing"},
         {"name": "compile",     "description": "Compile personas to platform-specific configs"},
+        {"name": "quiz",        "description": "HPEP-100 50-question persona extraction"},
         {"name": "rollback",    "description": "Automatic rollback and self-healing"},
         {"name": "observability","description": "Metrics, traces, and structured logs"},
         {"name": "feature-flags","description": "A/B testing and gradual rollouts"},
@@ -285,6 +286,9 @@ app.include_router(cache_router)
 
 # File Upload endpoints (avatars, compiled configs) — see api/routers/uploads.py
 app.include_router(uploads_router)
+
+# HPEP-100 Quiz endpoints (50-question persona extraction) — see api/routers/quiz.py
+app.include_router(quiz_router)
 
 
 @app.middleware("http")

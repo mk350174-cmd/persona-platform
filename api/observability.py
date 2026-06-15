@@ -8,7 +8,6 @@ Integrates:
 - Structured logging with context
 """
 
-import os
 import sentry_sdk
 import logging
 from typing import Optional, Dict, Any
@@ -79,12 +78,18 @@ def track_event(
             logging.warning(f"PostHog tracking failed: {e}")
 
     # Track in Sentry (as breadcrumb for error context)
-    sentry_sdk.capture_message(
-        f"Event: {event_name}",
-        level="info",
-        tags={**groups},
-        extra=properties,
-    )
+    try:
+        with sentry_sdk.push_scope() as scope:
+            for key, value in properties.items():
+                scope.set_extra(key, value)
+            sentry_sdk.capture_message(
+                f"Event: {event_name}",
+                level="info",
+                tags={**groups},
+            )
+    except TypeError as e:
+        # Sentry SDK version incompatibility — graceful degradation
+        logging.warning(f"Sentry tracking failed: {e}")
 
 
 def track_checkout(user_id: str, persona_id: str, amount_usd: float):
