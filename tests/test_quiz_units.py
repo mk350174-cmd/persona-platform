@@ -146,6 +146,28 @@ def test_public_bank_multi_language():
             assert "[TODO" not in q["text"] or lang in ("tr", "en", "de", "fr", "ja", "ar")
 
 
+def test_turkish_translations_complete():
+    """All 50 questions must have distinct Turkish text (no English fallback, no TODO)."""
+    pub_tr = public_question_bank(lang="tr")
+    pub_en = public_question_bank(lang="en")
+    assert len(pub_tr) == 50
+    for q_tr, q_en in zip(pub_tr, pub_en):
+        # TR text must be non-empty and not a TODO placeholder
+        assert isinstance(q_tr["text"], str)
+        assert len(q_tr["text"]) > 0
+        assert "[TODO" not in q_tr["text"], f"{q_tr['id']} has TODO placeholder in TR"
+        # TR text must differ from EN (i.e., a real translation, not a fallback)
+        assert q_tr["text"] != q_en["text"], f"{q_tr['id']} TR text is identical to EN — missing translation"
+
+
+def test_all_languages_return_non_empty_text():
+    """Every language must return non-empty text for every question (TR/EN verbatim, others placeholder)."""
+    for lang in ("tr", "en", "de", "fr", "ja", "ar"):
+        pub = public_question_bank(lang=lang)
+        for q in pub:
+            assert len(q["text"]) > 0, f"{q['id']} has empty text for lang={lang}"
+
+
 def test_public_bank_default_language():
     pub_default = public_question_bank()
     pub_en = public_question_bank(lang="en")
