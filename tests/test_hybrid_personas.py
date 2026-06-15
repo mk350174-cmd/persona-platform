@@ -26,7 +26,7 @@ class TestHybridVectorGeneration:
     """Tests for K-layer vector construction."""
 
     def test_vector_shape(self):
-        """Verify vector is 98-dimensional."""
+        """Verify vector is 100-dimensional (canonical per GLOSSARY.md)."""
         persona = HybridPersona(
             id="test_shape",
             persona_id="komb_shape_test",
@@ -41,7 +41,7 @@ class TestHybridVectorGeneration:
             is_available=True,
         )
         vector = build_hybrid_vector(persona)
-        assert vector.shape == (98,), f"Expected shape (98,), got {vector.shape}"
+        assert vector.shape == (100,), f"Expected shape (100,), got {vector.shape}"
         assert vector.dtype == np.float32
 
     def test_active_layers_weighted_correctly(self):
@@ -62,9 +62,8 @@ class TestHybridVectorGeneration:
         vector = build_hybrid_vector(persona)
 
         for layer in persona.active_k_layers:
-            idx = layer - 2
-            if 0 <= idx < 98:
-                assert vector[idx] == 0.85, f"Layer {layer} should be 0.85"
+            if 0 <= layer < 100:
+                assert vector[layer] == 0.85, f"K-layer {layer} should be 0.85"
 
     def test_suppressed_layers_weighted_correctly(self):
         """Test that suppressed K-layers are weighted at 0.15."""
@@ -84,12 +83,11 @@ class TestHybridVectorGeneration:
         vector = build_hybrid_vector(persona)
 
         for layer in persona.suppressed_k_layers:
-            idx = layer - 2
-            if 0 <= idx < 98:
-                assert vector[idx] == 0.15, f"Layer {layer} should be 0.15"
+            if 0 <= layer < 100:
+                assert vector[layer] == 0.15, f"K-layer {layer} should be 0.15"
 
     def test_neutral_layers_default_to_0_5(self):
-        """Test that unmapped layers default to 0.5."""
+        """Test that unmapped layers default to 0.5 (canonical 100-dim K-layers)."""
         persona = HybridPersona(
             id="test_neutral",
             persona_id="komb_neutral_test",
@@ -105,20 +103,16 @@ class TestHybridVectorGeneration:
         )
         vector = build_hybrid_vector(persona)
 
-        mapped_indices = set()
-        for layer in persona.active_k_layers:
-            mapped_indices.add(layer - 2)
-        for layer in persona.suppressed_k_layers:
-            mapped_indices.add(layer - 2)
+        mapped_indices = set(persona.active_k_layers) | set(persona.suppressed_k_layers)
 
-        for i in range(98):
+        for i in range(100):
             if i not in mapped_indices:
-                assert vector[i] == 0.5, f"Unmapped layer {i+2} should be 0.5"
+                assert vector[i] == 0.5, f"Unmapped K-layer {i} should be 0.5"
 
     def test_neutral_vector(self):
-        """Test neutral vector is all 0.5."""
+        """Test neutral vector is all 0.5 (canonical 100-dim)."""
         vector = build_neutral_vector()
-        assert vector.shape == (98,)
+        assert vector.shape == (100,), f"Expected shape (100,), got {vector.shape}"
         assert np.allclose(vector, 0.5)
 
     def test_empty_k_layers(self):

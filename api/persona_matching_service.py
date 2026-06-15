@@ -8,7 +8,7 @@ Phase 7 Enhancements:
 - Database indices for fast persona lookup
 
 Design:
-- build_hybrid_vector(hybrid_persona) → 98-dim K-layer vector (active=0.85, suppressed=0.15, neutral=0.5)
+- build_hybrid_vector(hybrid_persona) → 100-dim K-layer vector (active=0.85, suppressed=0.15, neutral=0.5, canonical per GLOSSARY.md)
 - match_user_to_personas(user_k_layer, db, top_k=5) → (top_match, top_5, matching_profile)
 - Cosine similarity scoring normalized to 0-100 percentile
 - Historical persona matching via fallback to neutral vector
@@ -97,7 +97,7 @@ _k_layer_cache = KLayerVectorCache(maxsize=1024)
 # ── Vector Building ────────────────────────────────────────────────────────────
 
 def build_hybrid_vector(hybrid_persona: HybridPersona) -> np.ndarray:
-    """Build a 98-dim K-layer vector from a hybrid persona definition.
+    """Build a 100-dim K-layer vector from a hybrid persona definition (canonical dimension).
 
     Weighting scheme:
     - Active layers (dominant): 0.85
@@ -108,57 +108,58 @@ def build_hybrid_vector(hybrid_persona: HybridPersona) -> np.ndarray:
         hybrid_persona: HybridPersona ORM object with active_k_layers, suppressed_k_layers
 
     Returns:
-        98-element numpy array (K-layers 2-99, skipping 0-1 legacy)
+        100-element numpy array (K0-K99, canonical per GLOSSARY.md)
     """
-    vector = np.full(98, 0.5, dtype=np.float32)  # neutral baseline
+    vector = np.full(100, 0.5, dtype=np.float32)  # neutral baseline
 
     active = hybrid_persona.active_k_layers or []
     suppressed = hybrid_persona.suppressed_k_layers or []
 
     for idx in active:
-        if 2 <= idx <= 99:
-            vector[idx - 2] = 0.85
+        if 0 <= idx < 100:
+            vector[idx] = 0.85
 
     for idx in suppressed:
-        if 2 <= idx <= 99:
-            vector[idx - 2] = 0.15
+        if 0 <= idx < 100:
+            vector[idx] = 0.15
 
     return vector
 
 
 def build_neutral_vector() -> np.ndarray:
-    """Build a 98-dim neutral vector (all 0.5) for historical fallback."""
-    return np.full(98, 0.5, dtype=np.float32)
+    """Build a 100-dim neutral vector (all 0.5) for historical fallback (canonical dimension)."""
+    return np.full(100, 0.5, dtype=np.float32)
 
 
 # ── Similarity Scoring ─────────────────────────────────────────────────────────
 
 def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
-    """Compute cosine similarity between two vectors, normalized to [0, 1].
+    """Compute cosine similarity between two vectors, normalized to [0, 1] (canonical 100-dim).
 
     Args:
-        a: user K-layer vector (100 elements, indices 0-99)
-        b: hybrid persona vector (98 elements, indices 0-97 representing K-layers 2-99)
+        a: user K-layer vector (100 elements, K0-K99)
+        b: hybrid persona vector (100 elements, K0-K99)
 
     Returns:
         float in [0, 1] where 1 = perfect alignment, 0 = orthogonal
     """
-    # Extract the matching subset from user vector (K-layers 2-99)
-    if len(a) >= 100:
-        a_subset = a[2:100]  # K-layers 2-99
+    # Ensure both are 100-dim (canonical)
+    a_vec = np.array(a, dtype=np.float32)
+    if len(a_vec) < 100:
+        a_vec = np.pad(a_vec, (0, 100 - len(a_vec)), mode='constant', constant_values=0.5)
     else:
-        # Fallback: pad or truncate
-        a_subset = np.full(98, 0.5, dtype=np.float32)
-        if len(a) > 2:
-            a_subset[:len(a) - 2] = a[2:min(100, len(a))]
+        a_vec = a_vec[:100]
 
-    # Ensure b is 98-dim
-    b_subset = b[:98] if len(b) >= 98 else np.full(98, 0.5, dtype=np.float32)
+    b_vec = np.array(b, dtype=np.float32)
+    if len(b_vec) < 100:
+        b_vec = np.pad(b_vec, (0, 100 - len(b_vec)), mode='constant', constant_values=0.5)
+    else:
+        b_vec = b_vec[:100]
 
     # Cosine similarity: (a·b) / (||a|| * ||b||)
-    dot_product = np.dot(a_subset, b_subset)
-    norm_a = np.linalg.norm(a_subset)
-    norm_b = np.linalg.norm(b_subset)
+    dot_product = np.dot(a_vec, b_vec)
+    norm_a = np.linalg.norm(a_vec)
+    norm_b = np.linalg.norm(b_vec)
 
     if norm_a < 1e-6 or norm_b < 1e-6:
         return 0.5  # Degenerate case: return neutral score
