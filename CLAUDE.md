@@ -1,8 +1,10 @@
 # CLAUDE.md — Persona Repo | Token Optimize & Çoklu Model
 
+> **Terminoloji:** Kanonik terimler için Persona repo'sundaki `GLOSSARY.md` tek doğruluk kaynağıdır.
+
 ## Bu Repo Hakkında
-Persona mühendisliği ekosistemi: 495 K-layer persona, PersonaNeedle 26M SAN modeli,
-61 akademik makale (M1-M61), persona_mcp (8 tool), Android runtime, akademik validasyon.
+Persona mühendisliği ekosistemi: 495 K-layer persona (100-dim), PersonaNeedle 74.2M SAN modeli,
+77 akademik makale (M1-M77, M1-M24 çekirdek), persona_mcp (8 tool), Android runtime, akademik validasyon.
 
 Repo yapısı:
 - persona_math/    → K-layer vektörleri
