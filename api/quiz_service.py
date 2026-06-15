@@ -22,6 +22,7 @@ import os
 from typing import Optional
 
 import numpy as np
+from sqlalchemy.orm import Session
 
 from persona_math.persona_factory import make_persona_vector
 from persona_math.ceid import ceid_score
@@ -158,15 +159,41 @@ def _normalise_ceid(raw: dict) -> dict:
     return out
 
 
-def extract_persona(answers: dict, *, base: float = 0.5, seed: int = 42) -> dict:
-    """Full extraction: answers -> {k_layer, ceid, n_answered, n_total}.
+def extract_persona(
+    answers: dict,
+    *,
+    base: float = 0.5,
+    seed: int = 42,
+    db: Optional[Session] = None,
+    user_id: Optional[str] = None,
+    submission_id: Optional[str] = None,
+) -> dict:
+    """Full extraction: answers -> {k_layer, ceid, n_answered, n_total, persona_match}.
 
     This is the public entry point used by the quiz router.
+
+    Args:
+        answers: {qid -> answer_value}
+        base: base K-layer value (default 0.5)
+        seed: determinism seed for persona_math (default 42)
+        db: optional SQLAlchemy session for hybrid persona matching
+        user_id: optional user ID for matching audit trail
+        submission_id: optional submission ID for matching audit trail
+
+    Returns:
+        dict with keys:
+        - k_layer: 100-element array
+        - ceid: {C, E, I, D, composite, classification}
+        - n_answered, n_total: submission stats
+        - source: "hpep_quiz"
+        - untrained: True (honest tier)
+        - persona_match: optional {top_persona_id, top_5_ids, top_5_scores, matching_profile}
+            (only if db and user_id are provided)
     """
     P = build_persona_vector(answers, base=base, seed=seed)
     ceid = _normalise_ceid(ceid_score(P))
 
-    return {
+    result = {
         "k_layer": [round(float(x), 4) for x in P.tolist()],
         "ceid": ceid,
         "n_answered": sum(1 for q in QUESTION_BANK if q["id"] in answers),
@@ -174,3 +201,29 @@ def extract_persona(answers: dict, *, base: float = 0.5, seed: int = 42) -> dict
         "source": "hpep_quiz",
         "untrained": True,   # honest tier: reference scoring, not a trained model
     }
+
+    # Optional hybrid persona matching
+    if db and user_id:
+        try:
+            from api.persona_matching_service import match_user_to_personas
+
+            top_persona_id, top_5_ids, top_5_scores, profile = match_user_to_personas(
+                result["k_layer"],
+                db,
+                top_k=5,
+            )
+
+            result["persona_match"] = {
+                "top_persona_id": top_persona_id,
+                "top_5_ids": top_5_ids,
+                "top_5_scores": top_5_scores,
+                "matching_profile": profile,
+            }
+        except Exception as e:
+            # Graceful degradation: matching failure doesn't block extraction
+            result["persona_match"] = {
+                "error": str(e),
+                "message": "Persona matching failed but extraction succeeded",
+            }
+
+    return result

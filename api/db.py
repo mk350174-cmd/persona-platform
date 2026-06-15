@@ -475,13 +475,17 @@ class QuizSubmission(Base):
         Index("ix_quiz_submissions_user_created", "user_id", "created_at"),
     )
 
-    id              = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
-    user_id         = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
-    answers         = Column(JSON, nullable=False)  # {qid: score_0_to_3} for all 50 questions
-    k_layer         = Column(JSON, nullable=False)  # 100-element array of K-layer scores (0-1)
-    ceid_scores     = Column(JSON, nullable=False)  # {C: 0-3, E: 0-3, I: 0-3, D: 0-3}
-    tier            = Column(String(32), nullable=True)  # Persona tier (derived from K-layer)
-    created_at      = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
+    id                          = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    user_id                     = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
+    answers                     = Column(JSON, nullable=False)  # {qid: score_0_to_3} for all 50 questions
+    k_layer                     = Column(JSON, nullable=False)  # 100-element array of K-layer scores (0-1)
+    ceid_scores                 = Column(JSON, nullable=False)  # {C: 0-3, E: 0-3, I: 0-3, D: 0-3}
+    tier                        = Column(String(32), nullable=True)  # Persona tier (derived from K-layer)
+    matched_hybrid_persona_id   = Column(String(64), ForeignKey("hybrid_personas.persona_id"), nullable=True)
+    hybrid_match_score          = Column(Integer, nullable=True)  # 0-100 percentile
+    top_5_hybrid_matches        = Column(JSON, nullable=True)  # [persona_id, persona_id, ...]
+    top_5_hybrid_scores         = Column(JSON, nullable=True)  # [score, score, ...] in 0-100
+    created_at                  = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), index=True)
 
     user = relationship("User", back_populates="quiz_submissions")
 
@@ -500,6 +504,72 @@ class UserPersona(Base):
     updated_at      = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
     user = relationship("User", back_populates="persona")
+    submission = relationship("QuizSubmission")
+
+
+# ── Hybrid Persona Integration ─────────────────────────────────────────────────
+
+class HybridPersona(Base):
+    """Hybrid persona library — 48 expert-engineered persona combinations.
+
+    Each persona is defined by:
+    - Active K-layers (weighted 0.85): dominant psychological/cognitive dimensions
+    - Suppressed K-layers (weighted 0.15): muted dimensions
+    - Use case: domain where this persona excels
+    - Characteristics: psychological profile description
+    - Example outputs: sample use-case outputs
+    - Price: optional pricing tier (in cents, nullable for freemium)
+    - is_available: feature flag for gradual rollout
+    """
+    __tablename__ = "hybrid_personas"
+    __table_args__ = (
+        Index("ix_hybrid_personas_number", "combination_number", unique=True),
+        Index("ix_hybrid_personas_available", "is_available"),
+        Index("ix_hybrid_personas_created", "created_at"),
+    )
+
+    id                  = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    persona_id          = Column(String(64), nullable=False, unique=True, index=True)  # komb_NNN_slug
+    combination_number  = Column(Integer, nullable=False, unique=True, index=True)     # 1-48
+    name_tr             = Column(String(255), nullable=False)  # Turkish name
+    name_en             = Column(String(255), nullable=False)  # English name
+    active_k_layers     = Column(JSON, nullable=False)         # [2, 12, 28, 71, ...]
+    suppressed_k_layers = Column(JSON, nullable=False)         # [17, 81, ...]
+    use_case            = Column(String(1000), nullable=False) # Domain description
+    characteristic      = Column(String(2000), nullable=False) # Psychological profile
+    example_outputs     = Column(String(2000), nullable=True)  # Sample outputs
+    price_usd           = Column(Integer, nullable=True)       # cents (nullable = freemium)
+    is_available        = Column(Boolean, default=True, index=True)
+    created_at          = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+    updated_at          = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+class PersonaMatch(Base):
+    """Audit table for persona matching — tracks user → hybrid persona matches.
+
+    Enables:
+    - Historical match tracking
+    - Top-5 persona recommendations per submission
+    - Match quality metrics for ML training
+    """
+    __tablename__ = "persona_matches"
+    __table_args__ = (
+        Index("ix_persona_matches_user_created", "user_id", "created_at"),
+        Index("ix_persona_matches_submission_id", "submission_id"),
+        Index("ix_persona_matches_top_persona", "top_persona_id"),
+    )
+
+    id                    = Column(String(36), primary_key=True, default=lambda: secrets.token_hex(16))
+    user_id               = Column(String(36), ForeignKey("users.id"), nullable=False, index=True)
+    submission_id         = Column(String(36), ForeignKey("quiz_submissions.id"), nullable=False, index=True)
+    top_persona_id        = Column(String(64), ForeignKey("hybrid_personas.persona_id"), nullable=False)
+    is_historical         = Column(Boolean, default=False)  # True if matched against historical personas
+    match_score           = Column(Integer, nullable=False)  # 0-100 percentile
+    top_5_persona_ids     = Column(JSON, nullable=False)  # [persona_id, persona_id, ...]
+    top_5_scores          = Column(JSON, nullable=False)  # [score, score, ...] in 0-100
+    created_at            = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+
+    user = relationship("User")
     submission = relationship("QuizSubmission")
 
 
