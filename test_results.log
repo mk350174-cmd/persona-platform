@@ -1,0 +1,44 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.0, pluggy-1.6.0 -- /usr/local/bin/python
+cachedir: .pytest_cache
+rootdir: /home/user/persona-platform
+configfile: pytest.ini
+plugins: xdist-3.8.0, asyncio-1.4.0, anyio-4.13.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+created: 4/4 workers
+4 workers [15 items]
+
+scheduling tests via LoadScopeScheduling
+
+tests/test_staging_e2e.py::TestAPIErrorHandling::test_invalid_k_layer_dimensions 
+tests/test_staging_e2e.py::TestSearchAndPagination::test_search_by_characteristic 
+tests/test_staging_e2e.py::TestMultiLanguagePersonaDisplay::test_persona_turkish_name_available 
+tests/test_staging_e2e.py::TestProfileView::test_persona_profile_completeness 
+[gw0] [  6%] PASSED tests/test_staging_e2e.py::TestProfileView::test_persona_profile_completeness 
+tests/test_staging_e2e.py::TestProfileView::test_persona_profile_pricing 
+[gw2] [ 13%] PASSED tests/test_staging_e2e.py::TestMultiLanguagePersonaDisplay::test_persona_turkish_name_available 
+tests/test_staging_e2e.py::TestMultiLanguagePersonaDisplay::test_persona_english_name_fallback 
+[gw1] [ 20%] PASSED tests/test_staging_e2e.py::TestAPIErrorHandling::test_invalid_k_layer_dimensions 
+[gw3] [ 26%] PASSED tests/test_staging_e2e.py::TestSearchAndPagination::test_search_by_characteristic 
+tests/test_staging_e2e.py::TestAPIErrorHandling::test_matching_nonexistent_persona 
+tests/test_staging_e2e.py::TestSearchAndPagination::test_search_by_use_case 
+[gw0] [ 33%] PASSED tests/test_staging_e2e.py::TestProfileView::test_persona_profile_pricing 
+tests/test_staging_e2e.py::TestProfileView::test_persona_k_layer_metadata 
+[gw2] [ 40%] PASSED tests/test_staging_e2e.py::TestMultiLanguagePersonaDisplay::test_persona_english_name_fallback 
+tests/test_staging_e2e.py::TestMultiLanguagePersonaDisplay::test_characteristic_use_case_localization 
+[gw1] [ 46%] PASSED tests/test_staging_e2e.py::TestAPIErrorHandling::test_matching_nonexistent_persona 
+tests/test_staging_e2e.py::TestAPIErrorHandling::test_unavailable_personas_excluded 
+[gw3] [ 53%] PASSED tests/test_staging_e2e.py::TestSearchAndPagination::test_search_by_use_case 
+tests/test_staging_e2e.py::TestSearchAndPagination::test_pagination_limit_offset 
+[gw0] [ 60%] PASSED tests/test_staging_e2e.py::TestProfileView::test_persona_k_layer_metadata 
+tests/test_staging_e2e.py::TestE2EQuizToMatching::test_complete_quiz_flow_creates_persona_match 
+[gw2] [ 66%] PASSED tests/test_staging_e2e.py::TestMultiLanguagePersonaDisplay::test_characteristic_use_case_localization 
+[gw1] [ 73%] PASSED tests/test_staging_e2e.py::TestAPIErrorHandling::test_unavailable_personas_excluded 
+tests/test_staging_e2e.py::TestAPIErrorHandling::test_duplicate_persona_ids_prevented 
+[gw3] [ 80%] PASSED tests/test_staging_e2e.py::TestSearchAndPagination::test_pagination_limit_offset 
+[gw1] [ 86%] PASSED tests/test_staging_e2e.py::TestAPIErrorHandling::test_duplicate_persona_ids_prevented 
+[gw0] [ 93%] PASSED tests/test_staging_e2e.py::TestE2EQuizToMatching::test_complete_quiz_flow_creates_persona_match 
+tests/test_staging_e2e.py::TestE2EQuizToMatching::test_multiple_quiz_submissions_track_matches 
+[gw0] [100%] PASSED tests/test_staging_e2e.py::TestE2EQuizToMatching::test_multiple_quiz_submissions_track_matches 
+
+======================= 15 passed, 10 warnings in 6.53s ========================

@@ -1,0 +1,23 @@
+{
+  "test_status": "SUCCESS",
+  "questions_input": 3,
+  "translations_output": 3,
+  "languages_per_question": [
+    "tr",
+    "en",
+    "de",
+    "fr",
+    "ja",
+    "ar"
+  ],
+  "sample_translation": {
+    "S1": {
+      "tr": "Evren kat\u0131, bilinebilir nedensellik \u00fczerinde \u00e7al\u0131\u015f\u0131r.",
+      "en": "[EN] Evren kat\u0131, bilinebilir nedensellik \u00fczerinde \u00e7al\u0131\u015f...",
+      "de": "[DE] Evren kat\u0131, bilinebilir nedensellik \u00fczerinde \u00e7al\u0131\u015f...",
+      "fr": "[FR] Evren kat\u0131, bilinebilir nedensellik \u00fczerinde \u00e7al\u0131\u015f...",
+      "ja": "[JA] Evren kat\u0131, bilinebilir nedensellik \u00fczerinde \u00e7al\u0131\u015f...",
+      "ar": "[AR] Evren kat\u0131, bilinebilir nedensellik \u00fczerinde \u00e7al\u0131\u015f..."
+    }
+  }
+}

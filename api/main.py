@@ -87,6 +87,7 @@ from api.routers.cache import router as cache_router
 from api.routers.analytics import router as analytics_router
 from api.routers.uploads import router as uploads_router
 from api.routers.quiz import router as quiz_router
+from api.routers.personas import router as personas_router
 from persona_math.compiler import (
     compile_persona,
     compile_all_platforms,
@@ -289,6 +290,9 @@ app.include_router(uploads_router)
 
 # HPEP-100 Quiz endpoints (50-question persona extraction) — see api/routers/quiz.py
 app.include_router(quiz_router)
+
+# Hybrid Persona endpoints (matching, browsing, search) — see api/routers/personas.py
+app.include_router(personas_router)
 
 
 @app.middleware("http")

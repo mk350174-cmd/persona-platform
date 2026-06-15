@@ -56,6 +56,8 @@ def test_db(tmp_path):
         f"sqlite:///{db_file}",
         connect_args={"check_same_thread": False},
     )
+    # Drop all existing tables first, then create from scratch
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     TestingSessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
     session = TestingSessionLocal()

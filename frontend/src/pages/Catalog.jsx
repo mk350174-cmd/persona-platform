@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import { useTranslation } from 'react-i18next';
 import CatalogFilters from '../components/CatalogFilters';
@@ -7,6 +7,7 @@ import PersonaExplorer3D from '../components/PersonaExplorer3D';
 import SampleConversation from '../components/SampleConversation';
 
 export default function Catalog() {
+  const navigate = useNavigate();
   const [personas, setPersonas] = useState([]);
   const [filteredPersonas, setFilteredPersonas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -175,6 +176,65 @@ export default function Catalog() {
               </div>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Hybrid Personas Section */}
+      <div className="mt-20 pt-20 border-t border-on-surface/10">
+        <div className="mb-8">
+          <h2 className="font-headline-md text-headline-md text-on-surface mb-2">
+            Advanced Hybrid Personas
+          </h2>
+          <p className="text-on-surface-variant mb-6">
+            Explore our collection of 48 advanced hybrid persona combinations optimized for specialized use cases
+          </p>
+          <button
+            onClick={() => navigate('/personas/hybrid')}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary-container text-white font-semibold hover:opacity-90 transition-opacity"
+          >
+            <span>Browse All Hybrid Personas</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        {/* Hybrid Personas Preview Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((idx) => (
+            <div
+              key={idx}
+              className="glass-panel rounded-xl p-6 hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer group"
+              onClick={() => navigate('/personas/hybrid')}
+            >
+              <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">
+                🎭
+              </div>
+              <h3 className="font-headline-md text-on-surface mb-2 group-hover:text-primary transition-colors">
+                Hybrid Combo #{idx}
+              </h3>
+              <p className="text-on-surface-variant text-sm mb-4 line-clamp-2">
+                Advanced blend optimized for complex interactions and specialized scenarios
+              </p>
+
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="text-xs px-3 py-1 rounded-full bg-surface-container text-on-surface-variant">
+                  Hybrid
+                </span>
+                <span className="text-xs px-3 py-1 rounded-full bg-surface-container text-on-surface-variant">
+                  Advanced
+                </span>
+              </div>
+
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('/personas/hybrid');
+                }}
+                className="w-full py-2 px-3 rounded-lg bg-primary-container text-white hover:opacity-90 transition-opacity text-sm"
+              >
+                Learn More
+              </button>
+            </div>
+          ))}
         </div>
       </div>
     </div>
