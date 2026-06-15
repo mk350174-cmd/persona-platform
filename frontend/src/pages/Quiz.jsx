@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PersonaMatchResults from '../components/PersonaMatchResults';
 import '../styles/Quiz.css';
 
 /**
@@ -304,6 +305,14 @@ const Quiz = () => {
   // ─── Results Stage ─────────────────────────────────────────────────────
 
   if (stage === 'results' && persona) {
+    const handleExplorePersona = (personaId) => {
+      navigate(`/personas/hybrid/${personaId}`);
+    };
+
+    const handleExploreAllPersonas = () => {
+      navigate('/personas/hybrid');
+    };
+
     return (
       <div className="quiz-container results-stage">
         <div className="results-header">
@@ -311,57 +320,86 @@ const Quiz = () => {
           <p className="subtitle">Based on your HPEP-100 responses</p>
         </div>
 
-        {/* K-Layer Visualization */}
-        <div className="results-section">
-          <h2>K-Layer Profile</h2>
-          <div className="klayer-grid">
-            {persona.k_layer.slice(0, 20).map((value, idx) => (
-              <div key={idx} className="klayer-bar">
-                <div className="bar-value" style={{ height: `${value * 100}%` }}></div>
-                <span className="bar-label">K{idx + 1}</span>
-              </div>
-            ))}
-            <div className="klayer-more">
-              +{persona.k_layer.length - 20} more K-layers
+        {/* PersonaMatchResults Component */}
+        <PersonaMatchResults
+          personaMatch={persona.persona_match || {}}
+          kLayer={persona.k_layer || []}
+          onExplore={handleExplorePersona}
+        />
+
+        {/* Additional Results Section */}
+        <div className="results-section additional-results">
+          <h2>Your Full Results</h2>
+
+          {/* CEID Scores */}
+          <div className="ceid-scores-section">
+            <h3>CEID Scores</h3>
+            <div className="ceid-scores">
+              {Object.entries(persona.ceid_scores || {}).map(([key, value]) => {
+                if (typeof value !== 'number') return null;
+                return (
+                  <div key={key} className="ceid-score">
+                    <label>{key.charAt(0).toUpperCase() + key.slice(1)}</label>
+                    <div className="score-bar">
+                      <div
+                        className="score-fill"
+                        style={{ width: `${value * 100}%` }}
+                      ></div>
+                    </div>
+                    <span className="score-value">{(value * 100).toFixed(1)}%</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* K-Layer Visualization */}
+          <div className="klayer-viz-section">
+            <h3>K-Layer Distribution</h3>
+            <div className="klayer-grid">
+              {persona.k_layer.slice(0, 25).map((value, idx) => (
+                <div key={idx} className="klayer-bar">
+                  <div className="bar-value" style={{ height: `${value * 100}%` }}></div>
+                  <span className="bar-label">K{idx + 1}</span>
+                </div>
+              ))}
+              {persona.k_layer.length > 25 && (
+                <div className="klayer-more">
+                  +{persona.k_layer.length - 25} more K-layers
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* CEID Scores */}
-        <div className="results-section">
-          <h2>CEID Scores</h2>
-          <div className="ceid-scores">
-            {Object.entries(persona.ceid_scores || {}).map(([key, value]) => {
-              if (typeof value !== 'number') return null;
-              return (
-                <div key={key} className="ceid-score">
-                  <label>{key}</label>
-                  <div className="score-bar">
-                    <div
-                      className="score-fill"
-                      style={{ width: `${value * 100}%` }}
-                    ></div>
-                  </div>
-                  <span className="score-value">{(value * 100).toFixed(1)}%</span>
-                </div>
-              );
-            })}
+        {/* Call to Action Section */}
+        <div className="results-cta">
+          <div className="cta-content">
+            <h3>Explore All Hybrid Personas</h3>
+            <p>Discover 48 unique hybrid persona combinations tailored to different needs and preferences.</p>
+            <button
+              className="cta-primary-button"
+              onClick={handleExploreAllPersonas}
+            >
+              Browse All 48 Personas →
+            </button>
           </div>
-        </div>
 
-        {/* Checkout CTA */}
-        <div className="results-section checkout-section">
-          <h3>Unlock Exclusive Personas</h3>
-          <p>Get access to detailed persona recommendations tailored to your profile.</p>
-          <button
-            className="checkout-button"
-            onClick={handleStartCheckout}
-          >
-            Complete Purchase ($5) → View Results
-          </button>
-          <p className="purchase-note">
-            Secure payment powered by Stripe. Instant access upon completion.
-          </p>
+          {checkoutUrl && (
+            <div className="checkout-section">
+              <h3>Unlock Premium Features</h3>
+              <p>Get instant access to advanced persona customization and detailed analytics.</p>
+              <button
+                className="checkout-button"
+                onClick={handleStartCheckout}
+              >
+                Complete Purchase ($5) → Unlock Premium
+              </button>
+              <p className="purchase-note">
+                Secure payment powered by Stripe. Instant access upon completion.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Share Results */}

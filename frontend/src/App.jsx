@@ -13,6 +13,8 @@ import CEIDMonitor from './pages/CEIDMonitor';
 import Chat from './pages/Chat';
 import Landing from './pages/Landing';
 import NotFound from './pages/NotFound';
+import HybridPersonaCatalog from './pages/HybridPersonaCatalog';
+import HybridPersonaDetail from './pages/HybridPersonaDetail';
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -51,6 +53,8 @@ function App() {
           <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/personas/:id" element={<PersonaDetail />} />
+          <Route path="/personas/hybrid" element={<HybridPersonaCatalog />} />
+          <Route path="/personas/hybrid/:id" element={<HybridPersonaDetail />} />
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/ceid-monitor" element={<PrivateRoute><CEIDMonitor /></PrivateRoute>} />
         </Route>
