@@ -1,0 +1,88 @@
+{
+  "$comment": [
+    "Claude Code MCP sunucu kaydı (persona-platform). Şema: mcpServers.",
+    "persona_mcp'nin GÜVENLİK ayarları burada DEĞİL — persona_mcp/security.json içinde (AF-095).",
+    "CLAUDE.md kuralı: aynı anda max 4 aktif MCP tut. Varsayılan aktif set:",
+    "github + memory + context7 + persona-mcp.",
+    "Diğerleri (filesystem, exa, obsidian, codebase-memory) ihtiyaç anında açılır —",
+    "kullanılmayan sunucuyu kapatmak context tasarrufu sağlar.",
+    "API anahtarları ASLA bu dosyaya yazılmaz; ${VAR} ile ortamdan okunur."
+  ],
+  "mcpServers": {
+    "persona-mcp": {
+      "command": "python",
+      "args": [
+        "persona_mcp/server.py"
+      ],
+      "env": {
+        "LOGSEQ_TOKEN": "${LOGSEQ_TOKEN}",
+        "LOGSEQ_PORT": "${LOGSEQ_PORT:-12315}",
+        "PERSONA_CACHE_KEY": "${PERSONA_CACHE_KEY}"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "env": {
+        "MEMORY_FILE_PATH": "${MEMORY_FILE_PATH:-.cache/mcp-memory.json}"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "env": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "."
+      ]
+    },
+    "exa": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "exa-mcp-server"
+      ],
+      "env": {
+        "EXA_API_KEY": "${EXA_API_KEY}"
+      }
+    },
+    "obsidian": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-obsidian",
+        "${OBSIDIAN_VAULT_PATH}"
+      ]
+    },
+    "codebase-memory": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/DeusData/codebase-memory-mcp",
+        "codebase-memory-mcp"
+      ]
+    }
+  }
+}

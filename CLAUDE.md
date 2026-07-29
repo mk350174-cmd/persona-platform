@@ -82,6 +82,33 @@ Komut: `/codex <görev>`
 
 ---
 
+## YAYIN BÜTÜNLÜĞÜ KURALLARI (İSTİSNASIZ)
+
+> Kaynak: 77 makalelik denetim. Kanonik kayıt: Persona repo'sundaki
+> `AUDIT_FINDINGS.md` + `docs/denetim/`.
+> Bu üç kural M72 (insan verisi fabrikasyonu riski) ve M7 (dayanaksız Bell
+> Inequality iddiası) gibi bulguların tekrarını önlemek için konuldu.
+
+1. **Tier etiketi zorunlu.** Her yeni veya düzenlenen makalede
+   `Ölçülmüş / Hesaplanan / Simülasyon / Tahmini` etiketlerinden biri
+   bulunmak zorundadır — istisnasız. Etiketsiz sayısal iddia yayınlanamaz.
+
+2. **Klinik/insan-özneli iddialar M28 şablonuna uyar.** İnsan öznesi içeren
+   her bölüm M28'in üçlü yapısını taşımak zorundadır:
+   *appropriate for* / *not appropriate for* / *currently unvalidated*.
+   Gerçek tanı kategorisi, tedavi yöntemi ya da eşik değeri öneren hiçbir
+   tablo bu şablon olmadan yayınlanamaz.
+
+3. **Placeholder içeriği "tam manuscript" gibi sunulamaz.** Toplu/otomatik
+   üretilmiş yer tutucu metinlerin kaynağı açıkça belirtilmek zorundadır.
+   Yer tutucudan gelen N sayıları, r değerleri ve yüzdeler etiketsiz olarak
+   "tam" versiyona taşınamaz.
+
+**Platform tarafı ek kural:** `agents/*.md` altındaki tarihi kişi personaları
+AI-simülasyon disclaimer'ı olmadan yayınlanamaz (bkz. `AF-P-001`).
+
+---
+
 ## ÇALIŞMA PRENSİPLERİ
 
 - **Dürüst tier**: "Measured/Ölçülmüş" sadece gerçek ölçüm sonrası
