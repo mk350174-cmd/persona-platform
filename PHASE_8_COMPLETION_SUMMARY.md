@@ -4,8 +4,15 @@
 **Document Version:** 1.0  
 **Date:** June 11, 2026  
 **Prepared by:** Engineering Leadership Team  
-**Status:** ✅ PHASE 8 COMPLETE - READY FOR PRODUCTION LAUNCH  
-**Launch Date:** June 18, 2026 (Wednesday, 1:00 PM UTC)
+**Status:** ✅ PHASE 8 COMPLETE - READY FOR PRODUCTION LAUNCH
+
+> **⚠️ TARİH ÇELİŞKİSİ NOTU (2026-07-29, audit AF-P-003):** aşağıdaki
+> tarih diğer iki belgeyle (`LAUNCH_TIMELINE.md`, `PHASE_8_LAUNCH_PLAN.md`)
+> tutarlı (June 18), ama `LAUNCH_EXECUTION_MASTER_PLAN.md` June 15
+> diyordu. Bugün 2026-07-29 — **her iki tarih de geçmiş**. Aşağıdaki
+> tüm "June 18" referansları **TBD (revize edilecek)** olarak okunmalı.
+
+**Launch Date:** TBD (revize edilecek — bkz. yukarıdaki not; eski değer: June 18, 2026, Wednesday, 1:00 PM UTC)
 
 ---
 

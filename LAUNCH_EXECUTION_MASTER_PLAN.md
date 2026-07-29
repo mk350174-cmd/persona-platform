@@ -1,7 +1,15 @@
 # Launch Execution Master Plan — Persona Platform
 
-**Status:** 🟢 READY FOR IMMEDIATE LAUNCH  
-**Target Launch Date:** 2026-06-15 (Next Monday)  
+> **⚠️ TARİH ÇELİŞKİSİ NOTU (2026-07-29, audit AF-P-003):** Bu belge
+> 2026-06-15 tarihini hedefliyor; `LAUNCH_TIMELINE.md`,
+> `PHASE_8_COMPLETION_SUMMARY.md` ve `PHASE_8_LAUNCH_PLAN.md` ise
+> 2026-06-18 diyor (çoğunluk). Bugün 2026-07-29 — **her iki tarih de
+> geçmiş**. Aşağıdaki "Target Launch Date" **TBD (revize edilecek)**
+> olarak okunmalı; gerçek lansman tarihi belirlendiğinde bu not
+> kaldırılıp tarih güncellenmelidir.
+
+**Status:** 🟢 READY FOR IMMEDIATE LAUNCH
+**Target Launch Date:** TBD (revize edilecek — bkz. yukarıdaki not; eski değer: 2026-06-15)
 **Launch Window:** 14:00 UTC (T-0)  
 **Timeline:** Complete in 1 week (validation + launch)
 

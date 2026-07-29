@@ -1,18 +1,25 @@
 # Launch Day Runbook
 ## Persona Hub Production Launch Execution Guide
 
-**Document Version:** 1.0  
-**Last Updated:** June 11, 2026  
-**Launch Date:** June 18, 2026 (Wednesday)  
-**Launch Time:** 1:00 PM UTC (9:00 AM EDT / 6:00 AM PDT)
+> **⚠️ NOT HAZIR DEĞİL (audit finding AF-P-006/AF-P-003, 2026-07-29):**
+> Launch Date/Time aşağıda geçmiş ve çelişkili tarihe dayanıyor (bkz.
+> `LAUNCH_TIMELINE.md`) — **TBD** olarak okunmalı. War Room bilgileri
+> (konum, telefon, Zoom linki) hâlâ doldurulmamış — gerçek bir lansman
+> günü için bu belge **kullanılamaz durumda**. Lansman yeniden
+> planlandığında bu alanlar gerçek bilgiyle doldurulmalı.
+
+**Document Version:** 1.0
+**Last Updated:** June 11, 2026
+**Launch Date:** TBD (revize edilecek; eski değer June 18, 2026, Wednesday — geçmiş tarih)
+**Launch Time:** TBD (eski değer 1:00 PM UTC / 9:00 AM EDT / 6:00 AM PDT)
 
 ---
 
 ## Quick Reference
 
-**War Room Location:** [Building/Floor/Room number]  
-**War Room Phone:** [Phone number]  
-**War Room Zoom Link:** [Zoom URL]  
+**War Room Location:** [DOLDURULACAK — Building/Floor/Room number]
+**War Room Phone:** [DOLDURULACAK — Phone number]
+**War Room Zoom Link:** [DOLDURULACAK — Zoom URL]
 **Primary Slack Channel:** #launch  
 **Incident Channel:** #incidents  
 **Status Page:** https://status.persona-hub.com

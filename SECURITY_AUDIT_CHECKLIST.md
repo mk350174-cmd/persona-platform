@@ -1,5 +1,10 @@
 # Security Audit Checklist — Pre-Launch (H102+)
 
+> **PROCESS NOT YET EXECUTED (audit finding AF-P-005, 2026-07-29):**
+> 11 fields below are blank (Audit Date, Auditor, etc.) — no security
+> audit has actually been performed. Do not treat this document as
+> evidence that a security review occurred.
+
 **Purpose:** Comprehensive security audit for frontend, backend, and infrastructure before production launch.
 
 **Audit Date:** _______________  

@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import threading
 import time
 from pathlib import Path
 from typing import Callable
@@ -15,15 +16,21 @@ _CACHE_DIR = Path(__file__).resolve().parent.parent / ".teacher_cache"
 
 
 class RateLimiter:
+    """Spaces requests ``min_interval = 60/rpm`` apart. Thread-safe: concurrent workers
+    (e.g. the builder's ThreadPoolExecutor) serialize through the lock, so N threads still
+    respect the per-teacher rate limit."""
+
     def __init__(self, rpm: int):
         self.min_interval = 60.0 / max(1, rpm)
         self._last = 0.0
+        self._lock = threading.Lock()
 
     def wait(self):
-        dt = time.monotonic() - self._last
-        if dt < self.min_interval:
-            time.sleep(self.min_interval - dt)
-        self._last = time.monotonic()
+        with self._lock:
+            dt = time.monotonic() - self._last
+            if dt < self.min_interval:
+                time.sleep(self.min_interval - dt)
+            self._last = time.monotonic()
 
 
 class JsonCache:

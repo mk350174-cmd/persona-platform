@@ -1,7 +1,15 @@
 # Launch Timeline
 ## Persona Hub Production Launch - Detailed Schedule
 
-**Launch Date:** June 18, 2026 (Wednesday)  
+> **⚠️ TARİH ÇELİŞKİSİ NOTU (2026-07-29, audit AF-P-003):** Bu belge
+> (ve `PHASE_8_COMPLETION_SUMMARY.md`, `PHASE_8_LAUNCH_PLAN.md`)
+> 2026-06-18 diyor; `LAUNCH_EXECUTION_MASTER_PLAN.md` ise 2026-06-15
+> diyordu. Bugün 2026-07-29 — **her iki tarih de geçmiş**. Aşağıdaki
+> tüm "June 18" referansları **TBD (revize edilecek)** olarak
+> okunmalı; bu belge yeniden planlanana kadar geçerli bir zaman
+> çizelgesi değildir.
+
+**Launch Date:** TBD (revize edilecek — bkz. yukarıdaki not; eski değer: June 18, 2026, Wednesday)
 **Launch Window:** 1:00 PM UTC (9:00 AM EDT / 6:00 AM PDT)  
 **Document Version:** 1.0  
 **Last Updated:** June 11, 2026

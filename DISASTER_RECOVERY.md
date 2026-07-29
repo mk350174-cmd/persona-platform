@@ -6,7 +6,11 @@
 - **RTO (Recovery Time Objective):** 2 hours
 - **RPO (Recovery Point Objective):** 15 minutes
 - **Backup Retention:** 30 days
-- **Testing:** Monthly dry-run, quarterly full failover test
+- **Testing:** Planned: monthly dry-run, quarterly full failover test
+  (audit finding AF-P-010, 2026-07-29: this describes an intended
+  cadence, not a testing history that has actually occurred — see
+  `TIER_VALIDATION_LOG.md` for the series' honest-labeling pattern to
+  follow when this cadence has real runs to report)
 
 ---
 
@@ -929,7 +933,7 @@ BACKUP_RETENTION_DAYS    # How long to keep backups
 ### Key SLAs
 - **RTO:** 2 hours (restore from backup + verify)
 - **RPO:** 15 minutes (daily backup at 02:00 UTC = max 24 hours loss)
-- **Test Frequency:** Monthly dry-run, quarterly full test
+- **Test Frequency:** Planned: monthly dry-run, quarterly full test (see AF-P-010 note above — not yet run)
 - **Backup Retention:** 30 days
 - **Alerting:** Weekly health check, immediate on failure
 

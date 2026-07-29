@@ -1,6 +1,11 @@
 # Stakeholder Sign-Off Form — Production Launch Authorization
 
-**Project:** Persona Platform SaaS  
+> **PROCESS NOT YET EXECUTED (audit finding AF-P-005, 2026-07-29):**
+> this form is entirely blank. No stakeholder has signed off on
+> production launch; do not treat this document as evidence of
+> authorization.
+
+**Project:** Persona Platform SaaS
 **Launch Date:** _______________  
 **Version:** 1.0  
 

@@ -3,8 +3,16 @@
 
 **Document Version:** 1.0  
 **Last Updated:** June 11, 2026  
-**Status:** Ready for Execution  
-**Launch Target Date:** June 18, 2026 (T-0)
+**Status:** Ready for Execution
+
+> **⚠️ TARİH ÇELİŞKİSİ NOTU (2026-07-29, audit AF-P-003):** aşağıdaki
+> tarih diğer belgelerle (`LAUNCH_TIMELINE.md`,
+> `PHASE_8_COMPLETION_SUMMARY.md`) tutarlı (June 18), ama
+> `LAUNCH_EXECUTION_MASTER_PLAN.md` June 15 diyordu. Bugün 2026-07-29 —
+> **her iki tarih de geçmiş**. Aşağıdaki "June 18" referansı **TBD
+> (revize edilecek)** olarak okunmalı.
+
+**Launch Target Date:** TBD (revize edilecek — bkz. yukarıdaki not; eski değer: June 18, 2026, T-0)
 
 ---
 

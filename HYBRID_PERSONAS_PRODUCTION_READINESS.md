@@ -1,8 +1,15 @@
 # Hybrid Personas Production Readiness Checklist — Phase 7
 
-**Date:** June 15, 2026  
-**Phase:** 7 (Deployment & Optimization)  
-**Status:** Ready for Production Deployment  
+> **PROCESS NOT YET EXECUTED (audit finding AF-P-005, 2026-07-29):**
+> this checklist has 0/31 items actually checked off below. The
+> "Status: Ready for Production Deployment" line is the document's own
+> summary claim and is **not supported** by the unexecuted checklist
+> beneath it — do not treat this document as evidence of production
+> readiness until the items below are genuinely reviewed and checked.
+
+**Date:** June 15, 2026 (TBD — see LAUNCH_TIMELINE.md date conflict note, AF-P-003)
+**Phase:** 7 (Deployment & Optimization)
+**Status:** Checklist not yet executed (0/31) — "Ready" claim below is unverified
 
 ---
 

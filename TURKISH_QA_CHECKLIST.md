@@ -1,6 +1,10 @@
 # Turkish HPEP-100 Integration — QA Checklist
 
-**Integration Date:** ________________  
+> **PROCESS NOT YET EXECUTED (audit finding AF-P-005, 2026-07-29):**
+> this checklist is entirely blank. No QA review has occurred; do not
+> treat this document as evidence of QA sign-off.
+
+**Integration Date:** ________________
 **Integrator:** ________________  
 **Reviewer:** ________________  
 

@@ -1,6 +1,11 @@
 # Staging Sign-Off Checklist — Deployment Approval
 
-**Timeline:** July 8-11, 2026  
+> **PROCESS NOT YET EXECUTED (audit finding AF-P-005, 2026-07-29):**
+> this checklist has 0/113 items actually checked off below. No
+> staging sign-off has occurred; do not treat this document as
+> evidence of approval.
+
+**Timeline:** July 8-11, 2026 (TBD — date has passed, needs revision)
 **Environment:** Staging (PostgreSQL + FastAPI)  
 **Approval Required:** Before Production Deployment  
 
