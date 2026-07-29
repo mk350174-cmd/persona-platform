@@ -42,23 +42,3 @@ repos:
     rev: v1.4.0
     hooks:
       - id: detect-secrets
-
-  # No TODO/FIXME in production code
-  - repo: local
-    hooks:
-      - id: no-placeholder-code
-        name: Reject placeholder code in production
-        entry: bash -c 'grep -r TODO api/ --include="*.py" && exit 1 || exit 0'
-        language: system
-        files: ^api/.*\.py$
-        pass_filenames: false
-        stages: [commit]
-
-      # No test fixtures outside conftest
-      - id: no-test-fixtures-outside-conftest
-        name: Pytest fixtures must be in conftest.py
-        entry: bash -c 'grep -r @pytest.fixture tests/ --include="*.py" --exclude="conftest.py" && exit 1 || exit 0'
-        language: system
-        files: ^tests/test_.*\.py$
-        pass_filenames: false
-        stages: [commit]

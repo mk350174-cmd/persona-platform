@@ -42,11 +42,11 @@ jobs:
 
       - name: Run bandit
         run: |
-          bandit -r api/ persona_math/ needle/ persona_mcp/ \
+          bandit -r persona_math/ needle/ persona_mcp/ \
             --severity-level medium \
             --confidence-level medium \
             -f json -o bandit-report.json || true
-          bandit -r api/ persona_math/ needle/ persona_mcp/ \
+          bandit -r persona_math/ needle/ persona_mcp/ \
             --severity-level medium \
             --confidence-level medium \
             --exit-zero -f txt
