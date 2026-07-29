@@ -210,6 +210,15 @@ Multi-persona systems (250+ personas) reach Nash equilibrium in decision-making,
 ### Blockers
 - [ ] Simulation code accessibility
 - [ ] Nash equilibrium definition (mixed vs. pure strategies?)
+- [ ] **Missing: circularity check (audit finding AF-P-007, 2026-07-29).**
+  `persona_math/params.py`'s `COURT_DEONTOLOGICAL_RATIO = 0.604` is
+  reverse-derived from the target 151/99 split (0.604 = 151/(151+99)),
+  not independently established — see the Persona repo's `params.py`
+  docstring and M4's corrected abstract. This plan does not currently
+  include deriving the 0.604 ratio independently of the 151/99 target
+  it is meant to explain. Without that, "Nash predictions validated
+  against simulation" risks validating a simulation against the
+  parameter that was tuned to produce it.
 
 ---
 
@@ -408,6 +417,14 @@ Poetic outputs reveal persona aesthetic preferences and emotional tenor in ways 
 ### Blockers
 - [ ] Poetry generation quality (is output meaningful?)
 - [ ] Judge recruitment and training
+- [ ] **Missing: negative control (audit finding AF-P-007, 2026-07-29).**
+  The design above only tests blind judge-matching; it does not include
+  applying the same PPEP reading/scoring procedure to unrelated,
+  non-persona-derived text (e.g. random poems or prose) to check
+  whether judges "find" persona characteristics that aren't really
+  there (Barnum/Forer-effect risk). This negative control should be
+  added — and run — before the blind-matching result above is
+  interpreted as evidence that PPEP extracts real persona signal.
 
 ---
 
@@ -432,7 +449,12 @@ Poetic outputs reveal persona aesthetic preferences and emotional tenor in ways 
 ## Prioritization Matrix
 
 ### High Impact × Low Effort (Do First)
-1. **M8** (HPEP-100): Real user data, validation straightforward
+1. **M8** (HPEP-100): Real user data, validation straightforward.
+   **Status note (audit finding AF-P-007, 2026-07-29): still not
+   executed**, despite being ranked top priority here — this
+   contradicts M32's own note that "real IRT calibration on humans is
+   future work." If this plan's priority ranking is still current,
+   M8 execution should actually be scheduled, not just ranked first.
 2. **M3** (CEID): Inter-rater validation quick win
 3. **M1** (Collapse): Directly testable on persona bundle
 

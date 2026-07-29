@@ -5,12 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "persona-platform"
 version = "0.1.0"
-description = "Production REST API and MCP platform for Persona knowledge graphs"
+description = "Persona knowledge graph + MCP platform (web/app layer rebuilt separately)"
 requires-python = ">=3.11"
 dependencies = []
 
 [tool.setuptools]
-packages = ["api", "needle", "persona_math", "persona_mcp", "tests"]
+packages = ["needle", "persona_math", "persona_mcp"]
 
 [tool.setuptools.package-data]
 "*" = ["*.py", "*.json", "*.yaml", "*.yml"]

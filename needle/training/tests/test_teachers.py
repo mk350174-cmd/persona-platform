@@ -86,7 +86,15 @@ def test_pipeline_no_keys_falls_back_to_persona_math():
     assert pipe.teachers[0].weight == pytest.approx(1.0)
 
 
-def test_groq_rate_limit_is_2s():
-    # rpm 10 → 30 : 60/30 = 2s between requests (was 6s)
-    assert GroqTeacher("k").rate.min_interval == pytest.approx(2.0)
-    assert GroqTeacher.rpm == 30
+def test_groq_rate_limit_is_1s():
+    # rpm 30 → 60 : 60/60 = 1s between requests
+    assert GroqTeacher("k").rate.min_interval == pytest.approx(1.0)
+    assert GroqTeacher.rpm == 60
+    assert GroqTeacher.model == "llama-3.1-8b-instant"   # 8B-instant (was 70b-versatile)
+
+
+def test_rate_limiter_is_thread_safe():
+    # the builder runs conversations in parallel → the limiter must serialize across threads
+    import threading
+    from needle.training.teachers._remote import RateLimiter
+    assert isinstance(RateLimiter(60)._lock, type(threading.Lock()))

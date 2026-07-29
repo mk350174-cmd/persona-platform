@@ -116,3 +116,18 @@ def test_graceful_degradation_all_apis_down(tmp_path):
     assert pipe.teacher_names() == ["persona_math"]
     stats = pipe.run(output_dir=str(tmp_path), n_conversations_per_persona=2, limit=1)
     assert stats["build"]["ceid_samples"] == 2                # still produces data, no error
+
+
+def test_parallel_build_deterministic(tmp_path):
+    # build_full_dataset runs each persona's conversations across max_workers threads but
+    # writes them in conversation order → output is identical regardless of worker count.
+    t = MockTeacher("m", 1.0, {"C": 0.8, "E": 0.8, "I": 0.8, "D": 0.8})
+    personas = ["socrates", "aristotle"]
+    p1 = DatasetBuilder([t]).build_full_dataset(personas, n_conversations=4,
+                                                output_path=str(tmp_path / "w1"), max_workers=1)
+    p3 = DatasetBuilder([t]).build_full_dataset(personas, n_conversations=4,
+                                                output_path=str(tmp_path / "w3"), max_workers=3)
+    assert p1["ceid_samples"] == p3["ceid_samples"] == 8          # 2 personas × 4
+    f1 = (tmp_path / "w1" / "ceid_dataset.jsonl").read_text()
+    f3 = (tmp_path / "w3" / "ceid_dataset.jsonl").read_text()
+    assert f1 == f3                                              # workers=1 vs 3 → byte-identical

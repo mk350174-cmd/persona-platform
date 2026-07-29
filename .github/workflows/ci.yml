@@ -27,14 +27,10 @@ jobs:
       - name: Lint (ruff)
         run: |
           pip install ruff
-          # E711/E712: SQLAlchemy filters require `== None` / `== True` (compile to
-          # IS NULL / IS TRUE); `is`-comparisons would break query generation.
-          ruff check persona_math/ api/ --select E,F,W --ignore E501,E711,E712
+          ruff check persona_math/ needle/ persona_mcp/ --select E,F,W --ignore E501,E711,E712
 
       - name: Run tests (parallel)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY || 'sk-test' }}
-          STRIPE_SECRET_KEY: sk_test_dummy
-          ELEVENLABS_API_KEY: el_test_dummy
         run: |
-          pytest tests/ -n auto --dist loadscope -v --tb=short
+          pytest needle/training/tests persona_mcp/tests -n auto --dist loadscope -v --tb=short

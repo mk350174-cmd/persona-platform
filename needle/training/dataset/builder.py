@@ -11,6 +11,7 @@ resumable checkpoint.
 from __future__ import annotations
 
 import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Optional
 
@@ -99,10 +100,20 @@ class DatasetBuilder:
             "source": f"voice[{gold.name}:{gold.weight}]",
         }
 
-    # ── full dataset ─────────────────────────────────────────────────────────────
+    def _build_one(self, pid: str, conv, pair, P: list) -> tuple:
+        """Build the (ceid, drift, voice) samples for one conversation. Pure per-conversation
+        work (teacher API calls) → safe to run in a worker thread; the per-teacher RateLimiter
+        is thread-safe so concurrent workers still respect the rate limit."""
+        ceid = self.build_ceid_sample(pid, conv, persona_vector=P)
+        b, a = pair
+        drift = self.build_drift_sample(pid, b, a)
+        voice = self.build_voice_sample(pid, conv["text"] if isinstance(conv, dict) else conv, P)
+        return ceid, drift, voice
+
+    # ── full dataset (per-persona conversations built in parallel) ───────────────
     def build_full_dataset(self, personas: list[str], n_conversations: int = 20,
                            output_path: str = "needle/training/data/",
-                           resume: bool = True) -> dict:
+                           resume: bool = True, max_workers: int = 3) -> dict:
         from persona_math.persona_library import get_library_persona
         out = Path(output_path)
         out.mkdir(parents=True, exist_ok=True)
@@ -119,20 +130,27 @@ class DatasetBuilder:
                     P = np.asarray(get_library_persona(pid), float)
                 except Exception:
                     P = np.zeros(100)
+                Pl = P.tolist()
                 convs = self.gen.generate(pid)[:n_conversations]
                 pairs = self.gen.generate_pairs(pid)[:n_conversations]
-                for j, conv in enumerate(convs):
-                    key = f"{pid}#{j}"
-                    if key in done:
-                        continue
-                    s = self.build_ceid_sample(pid, conv, persona_vector=P.tolist())
-                    ceid_f.write(json.dumps(s, ensure_ascii=False) + "\n")
-                    confs.append(s["confidence"]); n_ceid += 1
-                    b, a = pairs[j]
-                    drift_f.write(json.dumps(self.build_drift_sample(pid, b, a), ensure_ascii=False) + "\n")
-                    voice_f.write(json.dumps(self.build_voice_sample(pid, conv["text"], P.tolist()),
-                                             ensure_ascii=False) + "\n")
-                    done.add(key)
+                todo = [(j, conv) for j, conv in enumerate(convs) if f"{pid}#{j}" not in done]
+                if not todo:
+                    continue
+                # build this persona's conversations concurrently (I/O-bound teacher calls)
+                results: dict[int, tuple] = {}
+                with ThreadPoolExecutor(max_workers=max_workers) as ex:
+                    futs = {ex.submit(self._build_one, pid, conv, pairs[j], Pl): j
+                            for j, conv in todo}
+                    for fut in as_completed(futs):
+                        results[futs[fut]] = fut.result()
+                # write in conversation order → deterministic output (and stable checkpoints)
+                for j in sorted(results):
+                    ceid, drift, voice = results[j]
+                    ceid_f.write(json.dumps(ceid, ensure_ascii=False) + "\n")
+                    confs.append(ceid["confidence"]); n_ceid += 1
+                    drift_f.write(json.dumps(drift, ensure_ascii=False) + "\n")
+                    voice_f.write(json.dumps(voice, ensure_ascii=False) + "\n")
+                    done.add(f"{pid}#{j}")
                 ckpt_path.write_text(json.dumps(sorted(done)))
         finally:
             ceid_f.close(); drift_f.close(); voice_f.close()

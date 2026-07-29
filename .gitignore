@@ -1,4 +1,7 @@
-.claude/
+# .claude/ içeriği yok sayılır — AMA kurulu skill'ler repoda kalsın
+# (dizinin kendisi dışlanırsa git içine hiç inmez, o yüzden .claude/* deseni)
+.claude/*
+!.claude/skills/
 __pycache__/
 *.pyc
 *.pyo
@@ -15,6 +18,8 @@ env/
 *.db
 *.sqlite
 *.sqlite3
+node_modules/
+*.log
 
 # coverage artifacts
 .coverage
