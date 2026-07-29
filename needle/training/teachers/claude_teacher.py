@@ -6,7 +6,7 @@ exponential backoff, on-disk response cache. Not run in this environment (no egr
 
 from __future__ import annotations
 
-from .base import BaseTeacher, Conversation, conversation_text
+from .base import BaseTeacher, conversation_text
 from ._remote import JsonCache, RateLimiter, clip01, extract_json, k_layer_summary, retry
 
 CEID_PROMPT = """Sen bir persona tutarlılık değerlendiricisin.

@@ -8,7 +8,7 @@ import pytest
 
 from needle.training.teachers.base import BaseTeacher
 from needle.training.dataset.conversation_generator import (
-    ConversationGenerator, CATEGORIES, LEVEL_NAMES)
+    ConversationGenerator, CATEGORIES)
 from needle.training.dataset.builder import DatasetBuilder
 from needle.training.dataset.validator import DatasetValidator
 from needle.training.dataset.splits import create_splits

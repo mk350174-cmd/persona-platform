@@ -6,7 +6,6 @@ persona_math fallback or monkeypatched builders; they exercise the wiring (graph
 NEEDLE_CACHE, untrained/trained blocks, the new generate_voice tool) without torch.
 """
 
-import pytest
 
 from persona_mcp.logseq import PersonaGraph
 from persona_mcp.integration import NeedleBridge

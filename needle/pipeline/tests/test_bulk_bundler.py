@@ -7,8 +7,6 @@ nothing into the repo.
 
 from pathlib import Path
 
-import pytest
-
 from needle.pipeline import BulkBundler, PlaceholderFactory
 
 

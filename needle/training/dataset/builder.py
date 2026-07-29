@@ -77,7 +77,7 @@ class DatasetBuilder:
     def build_drift_sample(self, persona_id: str, conversation_before, conversation_after) -> dict:
         per = {t.name: (t.weight, t.generate_drift_label(persona_id, conversation_before, conversation_after))
                for t in self.teachers}
-        score = round(sum(w * float(l["score"]) for _, (w, l) in [(n, v) for n, v in per.items()]) /
+        score = round(sum(w * float(lbl["score"]) for _, (w, lbl) in [(n, v) for n, v in per.items()]) /
                       sum(w for w, _ in per.values()), 4)
         return {
             "persona_id": persona_id,
@@ -85,7 +85,7 @@ class DatasetBuilder:
             "drift": bool(score > 0.5),
             "drift_score": score,
             "expected_drift": conversation_after.get("expected_drift") if isinstance(conversation_after, dict) else None,
-            "teacher_scores": {n: l for n, (_, l) in per.items()},
+            "teacher_scores": {n: lbl for n, (_, lbl) in per.items()},
             "source": f"hybrid[{self._weight_sig}]",
         }
 
@@ -147,13 +147,16 @@ class DatasetBuilder:
                 for j in sorted(results):
                     ceid, drift, voice = results[j]
                     ceid_f.write(json.dumps(ceid, ensure_ascii=False) + "\n")
-                    confs.append(ceid["confidence"]); n_ceid += 1
+                    confs.append(ceid["confidence"])
+                    n_ceid += 1
                     drift_f.write(json.dumps(drift, ensure_ascii=False) + "\n")
                     voice_f.write(json.dumps(voice, ensure_ascii=False) + "\n")
                     done.add(f"{pid}#{j}")
                 ckpt_path.write_text(json.dumps(sorted(done)))
         finally:
-            ceid_f.close(); drift_f.close(); voice_f.close()
+            ceid_f.close()
+            drift_f.close()
+            voice_f.close()
         return {"personas": len(personas), "ceid_samples": n_ceid,
                 "mean_confidence": round(float(np.mean(confs)), 4) if confs else None,
                 "output_path": str(out)}

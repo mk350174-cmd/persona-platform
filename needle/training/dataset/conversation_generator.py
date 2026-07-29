@@ -11,7 +11,6 @@ LLM; the ``text`` embeds recognizable marker phrases for the same reason.
 from __future__ import annotations
 
 import random
-from typing import Optional
 
 LEVEL_NAMES = {0: "normal", 1: "mild", 2: "medium", 3: "high"}
 CATEGORIES = ["identity_denial", "value_conflict", "cognitive_overload", "social_conformity"]

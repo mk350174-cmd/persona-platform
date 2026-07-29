@@ -10,7 +10,6 @@ deterministic dataset. Labels are honestly tagged ``source="persona_math"``.
 
 from __future__ import annotations
 
-import numpy as np
 
 from .base import BaseTeacher, Conversation, as_vector, conversation_text
 
