@@ -6,7 +6,6 @@ graceful degradation, persona_math integration). The server/7-tool build test re
 the `mcp` SDK and skips cleanly if it's absent.
 """
 
-import json
 
 import httpx
 import pytest

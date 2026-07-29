@@ -81,10 +81,12 @@ def test_bundler_size_validation_bounds():
 
 
 def test_manifest_json_roundtrips(tmp_path):
-    gguf = tmp_path / "machiavelli.gguf"; gguf.write_bytes(b"\x00" * 300_000)   # ~0.3 MB
-    klayer = tmp_path / "k.npy"; klayer.write_bytes(b"\x00" * 50_000)           # ~0.05 MB
-    m = PersonaBundler().bundle("machiavelli", str(gguf), str(klayer), "", "",
-                                output_dir=str(tmp_path / "out"))
+    gguf = tmp_path / "machiavelli.gguf"
+    gguf.write_bytes(b"\x00" * 300_000)   # ~0.3 MB
+    klayer = tmp_path / "k.npy"
+    klayer.write_bytes(b"\x00" * 50_000)  # ~0.05 MB
+    PersonaBundler().bundle("machiavelli", str(gguf), str(klayer), "", "",
+                            output_dir=str(tmp_path / "out"))
     manifest_file = tmp_path / "out" / "machiavelli" / "manifest.json"
     assert manifest_file.exists()
     reloaded = json.loads(manifest_file.read_text())
@@ -96,7 +98,8 @@ def test_manifest_json_roundtrips(tmp_path):
 # ── torch-free: AndroidExporter output structure ─────────────────────────────────
 
 def test_android_exporter_output_structure(tmp_path):
-    bundle = tmp_path / "bundle"; bundle.mkdir()
+    bundle = tmp_path / "bundle"
+    bundle.mkdir()
     (bundle / "machiavelli.gguf").write_bytes(b"\x00" * 512)
     manifest = PersonaBundler().build_manifest("machiavelli", EXAMPLE_SIZES)
     (bundle / "manifest.json").write_text(json.dumps(manifest))
@@ -134,11 +137,13 @@ def test_ceid_and_drift_loss_forward():
     import torch
     from needle.finetune.losses.ceid_loss import CEIDLoss
     from needle.finetune.losses.drift_loss import DriftLoss
-    pred = torch.rand(5, 4); tgt = torch.rand(5, 4); conf = torch.rand(5)
-    l = CEIDLoss()(pred, tgt, conf)
-    assert l.shape == () and float(l) >= 0.0
-    dl = DriftLoss()(torch.randn(5), torch.randint(0, 2, (5,)).float(), conf)
-    assert dl.shape == () and float(dl) >= 0.0
+    pred = torch.rand(5, 4)
+    tgt = torch.rand(5, 4)
+    conf = torch.rand(5)
+    ceid_loss = CEIDLoss()(pred, tgt, conf)
+    assert ceid_loss.shape == () and float(ceid_loss) >= 0.0
+    drift_loss = DriftLoss()(torch.randn(5), torch.randint(0, 2, (5,)).float(), conf)
+    assert drift_loss.shape == () and float(drift_loss) >= 0.0
 
 
 @requires_torch
@@ -161,7 +166,8 @@ def test_trainer_one_step_smoke(tmp_path):
     ceid = [{"persona_id": "p", "conversation": "hello world", "k_layer_vector": [0.1] * 100,
              "ceid_labels": {"C": 0.5, "E": 0.5, "I": 0.5, "D": 0.5, "composite": 0.5},
              "confidence": 0.9} for _ in range(2)]
-    _write("train.jsonl", ceid); _write("val.jsonl", ceid[:1])
+    _write("train.jsonl", ceid)
+    _write("val.jsonl", ceid[:1])
     _write("drift_dataset.jsonl", [{"persona_id": "p", "conversation_after": "x", "drift": True}])
     _write("voice_dataset.jsonl", [{"persona_id": "p", "prompt": "hi", "voice": "I am a persona"}])
 

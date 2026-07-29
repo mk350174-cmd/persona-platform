@@ -15,7 +15,7 @@ labels), `experiments/` and `results/` (simulated conversations / CEID).
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable, Iterator, Optional
+from typing import Iterator, Optional
 
 import numpy as np
 

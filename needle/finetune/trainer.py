@@ -192,11 +192,13 @@ class PersonaNeedleTrainer:
                 loss = self._step_losses(batch, has_drift, has_voice)["total"] / self.grad_accum
                 loss.backward()
                 if (i + 1) % self.grad_accum == 0:
-                    opt.step(); sched.step(); opt.zero_grad()
+                    opt.step()
+                    sched.step()
+                    opt.zero_grad()
                 run += float(loss) * self.grad_accum
             train_loss = run / max(1, len(train_dl))
 
-            val = self._validate(val_dl := DataLoader(val_ds, batch_size=self.batch_size),
+            val = self._validate(DataLoader(val_ds, batch_size=self.batch_size),
                                  has_drift, has_voice)
             stats = {"epoch": epoch, "train_loss": round(train_loss, 4), **val}
             history.append(stats)
@@ -251,7 +253,8 @@ class PersonaNeedleTrainer:
         torch.save(self.san.state_dict(), path)
 
     def save(self, output_dir: str) -> str:
-        out = Path(output_dir); out.mkdir(parents=True, exist_ok=True)
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
         if self.adapter is not None:
             self.adapter.merge_and_unload()            # fold LoRA → full weights
         torch.save(self.san.state_dict(), out / "pytorch_model.bin")

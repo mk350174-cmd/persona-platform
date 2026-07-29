@@ -106,7 +106,8 @@ def main(argv=None) -> int:
     cfg = PersonaNeedleConfig(**cfg_dict)
     pn = PersonaNeedle(cfg).load_checkpoint(str(Path(args.model) / "pytorch_model.bin"))
     qm = INT4Quantizer(args.group_size, args.scheme).quantize(pn)
-    out = Path(args.output); out.mkdir(parents=True, exist_ok=True)
+    out = Path(args.output)
+    out.mkdir(parents=True, exist_ok=True)
     torch.save({"packed": qm.packed, "fp16_keep": qm.fp16_keep}, out / "quantized.pt")
     (out / "size_report.json").write_text(json.dumps(qm.report, indent=2))
     (out / "config.json").write_text(json.dumps(cfg_dict, indent=2))   # so gguf_writer finds it
