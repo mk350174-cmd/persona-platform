@@ -18,6 +18,8 @@ env/
 *.db
 *.sqlite
 *.sqlite3
+node_modules/
+*.log
 
 # coverage artifacts
 .coverage
