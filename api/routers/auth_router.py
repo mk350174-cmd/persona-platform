@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
@@ -8,12 +8,14 @@ from ..db import get_db, User
 from ..security import hash_password, verify_password, create_access_token
 from ..schemas import RegisterRequest, LoginRequest, TokenResponse, UserResponse
 from ..deps import get_current_user
+from ..rate_limit import limiter
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
-def register(body: RegisterRequest, db: Session = Depends(get_db)):
+@limiter.limit("10/minute")
+def register(request: Request, body: RegisterRequest, db: Session = Depends(get_db)):
     user = User(email=body.email, password_hash=hash_password(body.password))
     db.add(user)
     try:
@@ -26,7 +28,8 @@ def register(body: RegisterRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(body: LoginRequest, db: Session = Depends(get_db)):
+@limiter.limit("10/minute")
+def login(request: Request, body: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == body.email).first()
     # Constant-time-ish: always run verify_password even on missing user,
     # against a dummy hash, to reduce user-enumeration via timing (A11).

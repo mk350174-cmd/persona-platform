@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime
+
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
@@ -51,3 +53,18 @@ class CheckoutResponse(BaseModel):
     checkout_url: str
     session_id: str
     test_mode: bool
+
+
+class ApiKeyCreateResponse(BaseModel):
+    """Raw key is returned exactly once, at creation — never again (T2-010)."""
+    id: int
+    api_key: str
+    key_preview: str
+
+
+class ApiKeyResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    key_preview: str
+    created_at: datetime
+    revoked: bool

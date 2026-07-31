@@ -20,12 +20,14 @@ from fastapi.testclient import TestClient  # noqa: E402
 
 from api.db import Base, engine  # noqa: E402
 from api.main import app  # noqa: E402
+from api.rate_limit import limiter  # noqa: E402
 
 
 @pytest.fixture()
 def client():
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
+    limiter.reset()
     with TestClient(app) as c:
         yield c
 
