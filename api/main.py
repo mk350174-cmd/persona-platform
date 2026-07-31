@@ -10,7 +10,7 @@ from slowapi.middleware import SlowAPIMiddleware
 
 from .db import init_db
 from .rate_limit import limiter
-from .routers import apikey_router, auth_router, persona_router, payments_router
+from .routers import apikey_router, auth_router, persona_router, payments_router, privacy_router
 
 # Called eagerly at import time as well as via lifespan: TestClient only
 # fires ASGI lifespan events when used as a context manager
@@ -55,6 +55,7 @@ app.include_router(auth_router.router)
 app.include_router(apikey_router.router)
 app.include_router(persona_router.router)
 app.include_router(payments_router.router)
+app.include_router(privacy_router.router)
 
 
 @app.get("/health")

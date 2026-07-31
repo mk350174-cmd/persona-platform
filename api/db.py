@@ -6,9 +6,9 @@ PostgreSQL in production (ADR 0001 — FastAPI+PostgreSQL, T2-001).
 from __future__ import annotations
 
 import os
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
-from sqlalchemy import create_engine, String, DateTime, Boolean, ForeignKey, Text
+from sqlalchemy import create_engine, String, DateTime, Date, Boolean, ForeignKey, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker, relationship
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./persona_platform.db")
@@ -27,11 +27,17 @@ def _utcnow() -> datetime:
 
 
 class User(Base):
+    """Note: `date_of_birth` was added after the first version of this table
+    (T2-054). init_db() only creates missing tables, it does not ALTER
+    existing ones — no Alembic migration tooling is wired up yet (no real
+    production database exists to migrate). A pre-existing local dev
+    persona_platform.db needs to be deleted and recreated to pick this up."""
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(255))
+    date_of_birth: Mapped[date] = mapped_column(Date)
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow)
 

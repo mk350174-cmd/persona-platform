@@ -35,8 +35,8 @@ def test_revoke_unknown_key_404s(client, auth_headers):
 
 
 def test_cannot_revoke_another_users_key(client, auth_headers):
-    client.post("/auth/register", json={"email": "other@example.com", "password": "testpass123"})
-    other_login = client.post("/auth/login", json={"email": "other@example.com", "password": "testpass123"})
+    client.post("/auth/register", json={"email": "other@example.com", "password": "testpass123", "date_of_birth": "1990-01-01"})
+    other_login = client.post("/auth/login", json={"email": "other@example.com", "password": "testpass123", "date_of_birth": "1990-01-01"})
     other_headers = {"Authorization": f"Bearer {other_login.json()['access_token']}"}
 
     created = client.post("/apikeys/", headers=auth_headers).json()

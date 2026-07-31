@@ -16,7 +16,8 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 @limiter.limit("10/minute")
 def register(request: Request, body: RegisterRequest, db: Session = Depends(get_db)):
-    user = User(email=body.email, password_hash=hash_password(body.password))
+    user = User(email=body.email, password_hash=hash_password(body.password),
+                date_of_birth=body.date_of_birth)
     db.add(user)
     try:
         db.commit()

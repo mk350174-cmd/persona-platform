@@ -1,13 +1,36 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_validator
+
+MINIMUM_AGE_YEARS = 18
+
+
+def _age_years(dob: date) -> int:
+    today = date.today()
+    years = today.year - dob.year
+    if (today.month, today.day) < (dob.month, dob.day):
+        years -= 1
+    return years
 
 
 class RegisterRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=200)
+    date_of_birth: date
+
+    @field_validator("date_of_birth")
+    @classmethod
+    def _reject_underage(cls, value: date) -> date:
+        """T2-054 — age verification. Self-reported date of birth, not a
+        real ID/age-verification-provider check; that's a separate, more
+        invasive integration this repo doesn't attempt."""
+        if value > date.today():
+            raise ValueError("date_of_birth cannot be in the future")
+        if _age_years(value) < MINIMUM_AGE_YEARS:
+            raise ValueError(f"must be at least {MINIMUM_AGE_YEARS} years old to register")
+        return value
 
 
 class LoginRequest(BaseModel):
@@ -87,3 +110,12 @@ class PurchaseResponse(BaseModel):
     stripe_checkout_session_id: str | None
     stripe_payment_status: str
     created_at: datetime
+
+
+class DataExportResponse(BaseModel):
+    """GDPR Art. 20 data-portability export (T2-053)."""
+    user: UserResponse
+    date_of_birth: date
+    purchases: list[PurchaseResponse]
+    chat_messages: list[ChatMessageResponse]
+    api_keys: list[ApiKeyResponse]
