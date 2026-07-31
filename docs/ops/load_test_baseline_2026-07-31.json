@@ -1,0 +1,19 @@
+{
+  "base_url": "http://127.0.0.1:8125",
+  "concurrency": 20,
+  "total_requests": 200,
+  "wall_seconds": 0.876,
+  "requests_per_second": 228.2,
+  "latency_ms": {
+    "min": 18.18,
+    "p50": 62.87,
+    "p95": 181.27,
+    "p99": 265.89,
+    "max": 340.67,
+    "mean": 82.27
+  },
+  "status_counts": {
+    "200": 200
+  },
+  "error_count": 0
+}

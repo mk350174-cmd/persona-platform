@@ -35,6 +35,9 @@ persona_store.db
 persona_mcp/.cache/
 data/persona_mcp_cache/
 
+# local db backups (scripts/db_backup.sh output)
+backups/
+
 # needle training generated data + caches
 needle/training/data/*.jsonl
 needle/training/data/*.ckpt.json
