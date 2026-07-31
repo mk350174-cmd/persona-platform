@@ -45,6 +45,13 @@ class CEIDMeasureRequest(BaseModel):
     conversation: str = Field(min_length=1, max_length=10_000)
 
 
+class ChatMessageResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    role: str
+    content: str
+    created_at: datetime
+
+
 class CheckoutRequest(BaseModel):
     persona_id: str
 

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, status
+from sqlalchemy.orm import Session
 
 from ..persona_catalog import CATALOG, PersonaCatalogEntry
-from ..schemas import PersonaSummary, PersonaDetail, CEIDMeasureRequest
+from ..schemas import PersonaSummary, PersonaDetail, CEIDMeasureRequest, ChatMessageResponse
 from ..deps import get_current_user
-from ..db import User, ChatMessage
+from ..db import User, ChatMessage, get_db
 
 router = APIRouter(prefix="/personas", tags=["personas"])
 
@@ -79,6 +80,22 @@ def measure_ceid(persona_id: str, body: CEIDMeasureRequest,
     if caught:
         result["engine_warnings"] = [str(w.message) for w in caught]
     return result
+
+
+@router.get("/{persona_id}/chat/history", response_model=list[ChatMessageResponse])
+def get_chat_history(persona_id: str, user: User = Depends(get_current_user),
+                      db: Session = Depends(get_db)):
+    """Read back turns logged by the echo-only WebSocket (T2-019). This
+    returns the persisted transcript, not a generated reply — there is
+    still no real LLM completion wired into this endpoint or the chat
+    WebSocket below."""
+    _entry_or_404(persona_id)
+    return (
+        db.query(ChatMessage)
+        .filter(ChatMessage.user_id == user.id, ChatMessage.persona_id == persona_id)
+        .order_by(ChatMessage.created_at.asc())
+        .all()
+    )
 
 
 @router.websocket("/{persona_id}/chat")

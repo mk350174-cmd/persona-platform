@@ -80,3 +80,35 @@ def test_chat_websocket_echoes(client, auth_headers):
         reply = ws.receive_json()
         assert reply["type"] == "message"
         assert "echo, no LLM wired" in reply["content"]
+
+
+def test_chat_history_requires_auth(client):
+    r = client.get("/personas/mandela/chat/history")
+    assert r.status_code == 401
+
+
+def test_chat_history_empty_before_any_chat(client, auth_headers):
+    r = client.get("/personas/mandela/chat/history", headers=auth_headers)
+    assert r.status_code == 200
+    assert r.json() == []
+
+
+def test_chat_history_reflects_websocket_turns(client, auth_headers):
+    token = auth_headers["Authorization"].split(" ", 1)[1]
+    with client.websocket_connect(f"/personas/mandela/chat?token={token}") as ws:
+        ws.receive_json()
+        ws.send_text("hello there")
+        ws.receive_json()
+
+    r = client.get("/personas/mandela/chat/history", headers=auth_headers)
+    assert r.status_code == 200
+    body = r.json()
+    assert len(body) == 2
+    assert body[0]["role"] == "user"
+    assert body[0]["content"] == "hello there"
+    assert body[1]["role"] == "persona"
+
+
+def test_chat_history_unknown_persona_404s(client, auth_headers):
+    r = client.get("/personas/nobody/chat/history", headers=auth_headers)
+    assert r.status_code == 404
