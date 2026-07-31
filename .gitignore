@@ -33,6 +33,7 @@ persona_store.db
 
 # persona_mcp runtime cache
 persona_mcp/.cache/
+data/persona_mcp_cache/
 
 # needle training generated data + caches
 needle/training/data/*.jsonl
