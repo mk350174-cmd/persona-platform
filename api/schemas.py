@@ -75,3 +75,15 @@ class ApiKeyResponse(BaseModel):
     key_preview: str
     created_at: datetime
     revoked: bool
+
+
+class PurchaseResponse(BaseModel):
+    """Minimal order-history record (T2-025). Not a real invoice/receipt PDF —
+    that requires Stripe billing/invoicing, which needs a live account the
+    user hasn't set up (blocked-business, see T2-021)."""
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    persona_id: str
+    stripe_checkout_session_id: str | None
+    stripe_payment_status: str
+    created_at: datetime

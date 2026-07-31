@@ -15,7 +15,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 from ..persona_catalog import CATALOG
-from ..schemas import CheckoutResponse
+from ..schemas import CheckoutResponse, PurchaseResponse
 from ..deps import get_current_user
 from ..db import get_db, User, Purchase
 
@@ -65,6 +65,18 @@ def create_checkout(persona_id: str, user: User = Depends(get_current_user),
     db.commit()
     return CheckoutResponse(checkout_url=session.url, session_id=session.id,
                              test_mode=not STRIPE_SECRET_KEY.startswith("sk_live_"))
+
+
+@router.get("/purchases", response_model=list[PurchaseResponse])
+def list_purchases(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Order history (T2-025). Not a real invoice/receipt PDF — that needs
+    Stripe billing/invoicing on a live account (blocked-business)."""
+    return (
+        db.query(Purchase)
+        .filter(Purchase.user_id == user.id)
+        .order_by(Purchase.created_at.desc())
+        .all()
+    )
 
 
 @router.post("/webhooks/stripe")

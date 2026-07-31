@@ -77,3 +77,25 @@ def test_webhook_marks_purchase_paid(client, auth_headers, monkeypatch):
     )
     assert r.status_code == 200
     assert r.json()["received"] is True
+
+
+def test_list_purchases_requires_auth(client):
+    r = client.get("/purchases")
+    assert r.status_code == 401
+
+
+def test_list_purchases_empty_by_default(client, auth_headers):
+    r = client.get("/purchases", headers=auth_headers)
+    assert r.status_code == 200
+    assert r.json() == []
+
+
+def test_list_purchases_reflects_checkout(client, auth_headers, monkeypatch):
+    monkeypatch.setattr(stripe.checkout.Session, "create", lambda **kw: _FakeSession())
+    client.post("/checkout/mandela", headers=auth_headers)
+    r = client.get("/purchases", headers=auth_headers)
+    assert r.status_code == 200
+    body = r.json()
+    assert len(body) == 1
+    assert body[0]["persona_id"] == "mandela"
+    assert body[0]["stripe_payment_status"] == "pending"
