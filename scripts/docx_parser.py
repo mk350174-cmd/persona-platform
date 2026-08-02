@@ -1,8 +1,20 @@
 #!/usr/bin/env python3
 """
-Parse KOMB_NASYON.docx and extract all 250+ hybrid persona combinations.
+Parse KOMBİNASYON docx and extract all 250 hybrid persona combinations.
 
 Output: data/hybrid_personas_raw.jsonl (one JSON per line)
+
+Bug fix (T1-158, 2026-07-31): most paragraphs in the source docx are
+prefixed with an invisible zero-width space (U+200B), left over from how
+the text was pasted into Word. ``str.strip()`` does not remove it, so
+``para_text.startswith("KOMBİNASYON")`` silently failed for 202 of the 250
+combination headers — those combinations' text got swallowed into whatever
+combo's "characteristic" field the parser was still filling in (e.g.
+komb_001 originally absorbed the text of combos 2-5). Every text
+comparison/extraction below now goes through ``_clean()``, which strips
+zero-width space (and a stray BOM/no-break-space) before the normal
+``.strip()``. Re-running against the same docx now finds all 250 headers
+with no gaps (verified: numbers 1..250 present, none missing).
 """
 
 import json
@@ -10,6 +22,12 @@ import re
 from pathlib import Path
 from typing import Optional, Dict, List, Any
 from docx import Document
+
+_INVISIBLE_CHARS = "​﻿\xa0"
+
+
+def _clean(text: str) -> str:
+    return text.strip().translate({ord(c): None for c in _INVISIBLE_CHARS}).strip()
 
 
 def parse_active_layers(text: str) -> List[int]:
@@ -33,7 +51,7 @@ def extract_all_personas(docx_path: str) -> List[Dict[str, Any]]:
     personas = []
     i = 0
     while i < len(doc.paragraphs):
-        para_text = doc.paragraphs[i].text.strip()
+        para_text = _clean(doc.paragraphs[i].text)
 
         if para_text.startswith("KOMBİNASYON"):
             match = re.match(r'KOMBİNASYON\s+(\d+):\s*(.+?)\s*\((.+?)\)', para_text)
@@ -58,7 +76,7 @@ def extract_all_personas(docx_path: str) -> List[Dict[str, Any]]:
 
             i += 1
             while i < len(doc.paragraphs):
-                para = doc.paragraphs[i].text.strip()
+                para = _clean(doc.paragraphs[i].text)
 
                 if para.startswith("KOMBİNASYON"):
                     break
@@ -68,7 +86,9 @@ def extract_all_personas(docx_path: str) -> List[Dict[str, Any]]:
                 elif "Aktif (Baskın) Katmanlar:" in para:
                     i += 1
                     while i < len(doc.paragraphs):
-                        active_para = doc.paragraphs[i].text.strip()
+                        active_para = _clean(doc.paragraphs[i].text)
+                        if active_para.startswith("KOMBİNASYON"):
+                            break
                         if "Baskılanan Katmanlar:" in active_para:
                             combo["suppressed_layers"].extend(parse_active_layers(active_para))
                             break
@@ -84,7 +104,7 @@ def extract_all_personas(docx_path: str) -> List[Dict[str, Any]]:
                     combo["characteristic"] = para.replace("Profil Karakteristiği:", "").strip()
                     i += 1
                     while i < len(doc.paragraphs):
-                        char_para = doc.paragraphs[i].text.strip()
+                        char_para = _clean(doc.paragraphs[i].text)
                         if char_para.startswith("KOMBİNASYON"):
                             break
                         if char_para:
@@ -106,11 +126,14 @@ def extract_all_personas(docx_path: str) -> List[Dict[str, Any]]:
 
 
 def main():
-    docx_path = "/root/.claude/uploads/7f6e0378-449d-56f4-993d-b0f5a288ff2f/3257e9d9-KOMB_NASYON_1_Saf_Rasyonalist_The_Cartesian_Analyst.docx"
-    output_dir = Path("/home/user/persona-platform/data")
+    docx_path = (
+        Path(__file__).resolve().parent.parent
+        / "docs" / "KOMBİNASYON 1- Saf Rasyonalist (The Cartesian Analyst).docx"
+    )
+    output_dir = Path(__file__).resolve().parent.parent / "data"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    personas = extract_all_personas(docx_path)
+    personas = extract_all_personas(str(docx_path))
 
     # Write to JSONL
     output_file = output_dir / "hybrid_personas_raw.jsonl"
@@ -118,7 +141,11 @@ def main():
         for p in personas:
             f.write(json.dumps(p, ensure_ascii=False) + '\n')
 
-    print(f"✅ Extracted {len(personas)} personas")
+    numbers = sorted(p["number"] for p in personas)
+    missing = sorted(set(range(1, 251)) - set(numbers)) if numbers else list(range(1, 251))
+    print(f"Extracted {len(personas)} personas")
+    if missing:
+        print(f"WARNING: missing combination numbers: {missing}")
 
 
 if __name__ == "__main__":
