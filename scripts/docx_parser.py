@@ -20,7 +20,7 @@ with no gaps (verified: numbers 1..250 present, none missing).
 import json
 import re
 from pathlib import Path
-from typing import Optional, Dict, List, Any
+from typing import Dict, List, Any
 from docx import Document
 
 _INVISIBLE_CHARS = "​﻿\xa0"
@@ -128,7 +128,7 @@ def extract_all_personas(docx_path: str) -> List[Dict[str, Any]]:
 def main():
     docx_path = (
         Path(__file__).resolve().parent.parent
-        / "docs" / "KOMBİNASYON 1- Saf Rasyonalist (The Cartesian Analyst).docx"
+        / "docs" / "genesis" / "KOMBİNASYON_1-250_Hibrit_Persona_Katalogu.docx"
     )
     output_dir = Path(__file__).resolve().parent.parent / "data"
     output_dir.mkdir(parents=True, exist_ok=True)
