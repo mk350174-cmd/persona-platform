@@ -6,14 +6,20 @@
 Persona mühendisliği ekosistemi: 495 K-layer persona (100-dim), PersonaNeedle 74.2M SAN modeli,
 77 akademik makale (M1-M77, M1-M24 çekirdek), persona_mcp (8 tool), Android runtime, akademik validasyon.
 
-Repo yapısı:
-- persona_math/    → K-layer vektörleri
-- needle/          → PersonaNeedle (architecture/training/finetune/pipeline)
+Repo yapısı (2026-08-12'de gerçek dizinlerle doğrulandı — önceki liste Persona
+reposundan kopyalanmış ve `papers/`/`validation/`/`submissions/` gibi bu repoda
+hiç var olmayan ya da yalnızca kopya/artık dosya içeren dizinleri listeliyordu,
+AF-115'te düzeltildi):
+- persona_math/    → K-layer vektörleri (Persona reposundan senkronize)
+- needle/          → PersonaNeedle (architecture/training/finetune/pipeline, senkronize)
 - persona_mcp/     → MCP server + Logseq entegrasyonu
-- papers/          → M1-M61 LaTeX makaleleri
-- validation/      → Akademik tier güncelleme
+- api/             → FastAPI backend (auth, OAuth2, persona katalog, WebSocket sohbet, ödeme)
+- agents/          → 11 persona ajan tanımı (AI-simülasyon disclosure ile)
+- legal/           → ToS/Privacy Policy taslakları (avukat onayı bekliyor)
 - android/         → Kotlin runtime
-- submissions/     → Gönderime hazır paketler
+- integrations/    → harici entegrasyonlar
+- Gerçek makaleler (M1-M77) ve akademik tier doğrulaması sadece Persona
+  reposunda yaşıyor — bu repoda değil
 
 ---
 

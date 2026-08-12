@@ -23,7 +23,6 @@ This repo currently holds the **engineering core** of the Persona ecosystem:
   Sherlock Holmes), each carrying an AI-simulation disclosure
 - **`legal/`** — Terms of Service / Privacy Policy drafts (⚠️ drafts pending lawyer
   review, not yet in effect)
-- **`validation/`** — tier-promotion tracking (Simülasyon → Ölçülmüş discipline)
 - **`docs/`** — session prompts, integration guides, prevention rules
 
 **Not in this repo (removed, to be rebuilt separately):** the web/app layer —
@@ -82,7 +81,6 @@ persona-platform/
 ├── persona_mcp/      MCP server (persona tools + memory tools)
 ├── agents/           11 persona agent definitions (with AI-simulation disclosure)
 ├── legal/            ToS / Privacy Policy drafts (pending lawyer review)
-├── validation/       Tier-promotion tracking (Simülasyon → Ölçülmüş)
 ├── docs/             Session prompts, integration guides, prevention rules
 ├── android/          Kotlin runtime
 ├── data/, notebooks/ Training data + Kaggle/Colab notebooks
