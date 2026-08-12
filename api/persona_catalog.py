@@ -55,6 +55,7 @@ class PersonaCatalogEntry:
     k_layer_available: bool
     hpep100_blocks: dict[str, str]
     file: str
+    system_prompt: str
 
 
 def _parse_frontmatter(text: str) -> tuple[dict, str]:
@@ -91,6 +92,7 @@ def _load_entry(path: Path) -> PersonaCatalogEntry:
         k_layer_available=k_key is not None,
         hpep100_blocks=_extract_hpep100_blocks(body),
         file=path.name,
+        system_prompt=body.strip(),
     )
 
 

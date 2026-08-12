@@ -3,6 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, status
 from sqlalchemy.orm import Session
 
+from .. import llm_chat
 from ..persona_catalog import CATALOG, PersonaCatalogEntry
 from ..schemas import PersonaSummary, PersonaDetail, CEIDMeasureRequest, ChatMessageResponse
 from ..deps import get_current_user
@@ -103,12 +104,16 @@ async def chat_websocket(websocket: WebSocket, persona_id: str, token: str | Non
     """Real-time chat. Auth via `?token=<JWT>` query param (WebSocket has no
     header-based bearer auth in browsers) — T2-016.
 
-    **Scope (2026-07-30):** this endpoint echoes + logs turns and reports the
-    persona's `k_layer_available`/`untrained` status; it does not generate
-    real LLM completions (that requires wiring an actual model provider,
-    tracked separately — Faz 4 continuation). Do not present this as a
-    finished chat product; it validates the transport + auth + persistence
-    path honestly, nothing more.
+    **Scope (2026-08-12, T2-019):** when `NVIDIA_API_KEY` is configured,
+    replies come from a real NVIDIA NIM completion (generic open model +
+    the persona's full `agents/*.md` system prompt, including its AI
+    Simulation Disclosure) — see `api/llm_chat.py`. This is NOT the
+    fine-tuned PersonaNeedle model (still untrained, hence `untrained`
+    stays `True` regardless of `llm_backend`); it's a system-prompted
+    generic completion, and `session_start`'s `llm_backend` field always
+    says which mode is active so this is never silently overstated.
+    Without a configured key the endpoint stays honestly echo-only
+    (graceful-degradation pattern, CLAUDE.md) — same as before T2-019.
     """
     from ..security import decode_access_token
     from ..db import SessionLocal
@@ -122,19 +127,34 @@ async def chat_websocket(websocket: WebSocket, persona_id: str, token: str | Non
         await websocket.close(code=4401, reason="Missing or invalid token")
         return
 
+    use_llm = llm_chat.chat_available()
     await websocket.accept()
     db = SessionLocal()
+    history: list[dict] = []
     try:
         await websocket.send_json({
             "type": "session_start", "persona_id": persona_id,
             "k_layer_available": entry.k_layer_available,
             "untrained": True,
-            "note": "echo-only transport validation, no LLM completion wired yet",
+            "llm_backend": "nvidia" if use_llm else "echo",
+            "note": ("real NVIDIA-backed completion (generic model + persona system "
+                      "prompt — the fine-tuned PersonaNeedle K-layer model is still "
+                      "untrained)") if use_llm else
+                     "echo-only transport validation, no LLM completion wired yet",
         })
         while True:
             text = await websocket.receive_text()
             db.add(ChatMessage(user_id=user_id, persona_id=persona_id, role="user", content=text))
-            reply = f"[{entry.name} — echo, no LLM wired] {text}"
+            if use_llm:
+                try:
+                    reply = llm_chat.generate_reply(entry.system_prompt, history, text)
+                except Exception:
+                    reply = f"[{entry.name} — NVIDIA completion failed, echo fallback] {text}"
+                else:
+                    history.append({"role": "user", "content": text})
+                    history.append({"role": "assistant", "content": reply})
+            else:
+                reply = f"[{entry.name} — echo, no LLM wired] {text}"
             db.add(ChatMessage(user_id=user_id, persona_id=persona_id, role="persona", content=reply))
             db.commit()
             await websocket.send_json({"type": "message", "role": "persona", "content": reply})
