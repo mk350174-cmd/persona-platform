@@ -8,7 +8,7 @@ from __future__ import annotations
 import os
 from datetime import date, datetime, timezone
 
-from sqlalchemy import create_engine, String, DateTime, Date, Boolean, ForeignKey, Text
+from sqlalchemy import create_engine, String, DateTime, Date, Boolean, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker, relationship
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./persona_platform.db")
@@ -28,16 +28,29 @@ def _utcnow() -> datetime:
 
 class User(Base):
     """Note: `date_of_birth` was added after the first version of this table
-    (T2-054). init_db() only creates missing tables, it does not ALTER
-    existing ones — no Alembic migration tooling is wired up yet (no real
-    production database exists to migrate). A pre-existing local dev
-    persona_platform.db needs to be deleted and recreated to pick this up."""
+    (T2-054), and `oauth_provider`/`oauth_id` after that (T2-008).
+    init_db() only creates missing tables, it does not ALTER existing ones
+    — no Alembic migration tooling is wired up yet (no real production
+    database exists to migrate). A pre-existing local dev
+    persona_platform.db needs to be deleted and recreated to pick these up.
+
+    OAuth-created accounts have no password (`password_hash` is None) and
+    no date_of_birth until the user submits one via PATCH /auth/me/date-of-
+    birth — neither Google's nor GitHub's OAuth userinfo reliably includes
+    a verified birthdate, so age verification (T2-054) can't happen inside
+    the OAuth callback itself. `date_of_birth is None` is the "still needs
+    age verification" signal for OAuth accounts specifically; password-
+    registered accounts always have it set at signup (RegisterRequest
+    requires it) and can never be None."""
     __tablename__ = "users"
+    __table_args__ = (UniqueConstraint("oauth_provider", "oauth_id", name="uq_oauth_identity"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
-    password_hash: Mapped[str] = mapped_column(String(255))
-    date_of_birth: Mapped[date] = mapped_column(Date)
+    password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    date_of_birth: Mapped[date | None] = mapped_column(Date, nullable=True)
+    oauth_provider: Mapped[str | None] = mapped_column(String(32), nullable=True)  # "google" | "github" | None
+    oauth_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow)
 

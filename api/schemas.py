@@ -15,6 +15,17 @@ def _age_years(dob: date) -> int:
     return years
 
 
+def _validate_dob(value: date) -> date:
+    """T2-054 — age verification. Self-reported date of birth, not a
+    real ID/age-verification-provider check; that's a separate, more
+    invasive integration this repo doesn't attempt."""
+    if value > date.today():
+        raise ValueError("date_of_birth cannot be in the future")
+    if _age_years(value) < MINIMUM_AGE_YEARS:
+        raise ValueError(f"must be at least {MINIMUM_AGE_YEARS} years old to register")
+    return value
+
+
 class RegisterRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=200)
@@ -23,14 +34,19 @@ class RegisterRequest(BaseModel):
     @field_validator("date_of_birth")
     @classmethod
     def _reject_underage(cls, value: date) -> date:
-        """T2-054 — age verification. Self-reported date of birth, not a
-        real ID/age-verification-provider check; that's a separate, more
-        invasive integration this repo doesn't attempt."""
-        if value > date.today():
-            raise ValueError("date_of_birth cannot be in the future")
-        if _age_years(value) < MINIMUM_AGE_YEARS:
-            raise ValueError(f"must be at least {MINIMUM_AGE_YEARS} years old to register")
-        return value
+        return _validate_dob(value)
+
+
+class DateOfBirthUpdateRequest(BaseModel):
+    """For OAuth-created accounts completing age verification post-login
+    (T2-008/T2-054) — Google/GitHub OAuth userinfo doesn't reliably include
+    a verified birthdate, so it can't be collected during the callback."""
+    date_of_birth: date
+
+    @field_validator("date_of_birth")
+    @classmethod
+    def _reject_underage(cls, value: date) -> date:
+        return _validate_dob(value)
 
 
 class LoginRequest(BaseModel):
@@ -48,6 +64,8 @@ class UserResponse(BaseModel):
     id: int
     email: EmailStr
     email_verified: bool
+    date_of_birth: date | None = None
+    oauth_provider: str | None = None
 
 
 class PersonaSummary(BaseModel):
