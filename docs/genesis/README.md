@@ -39,9 +39,11 @@ not düşülmeli.
 ### `Katman_1-Ontolojik_Kok.docx` (eski ad: "Katman 1- ...")
 K-layer taksonomisinin (K1-K8 arası detaylı) erken tasarım tanımları.
 
-**⚠️ T1-155 — ÇÖZÜLMEMİŞ ÇAKIŞMA:** Bu belge **K5 = "Baskı ve Savunma
-Mekanizması"** ve **K6 = "İdiosenkratik Pürüzler (Sentetik Hata Payı)"**
-tanımlıyor. Ama güncel, yayınlanmış makaleler farklı tanımlar kullanıyor:
+**⚠️ T1-155 — ÇAKIŞMA (2026-08-12'de K5 için çözüldü, bkz. AF-106/AF-107
+Persona reposundaki AUDIT_FINDINGS.md'de):** Bu belge **K5 = "Baskı ve
+Savunma Mekanizması"** ve **K6 = "İdiosenkratik Pürüzler (Sentetik Hata
+Payı)"** tanımlıyor. Ama güncel, yayınlanmış makaleler farklı tanımlar
+kullanıyor:
 - **M62** (`M62_K5_Temporal_Identity_v01.tex`): K5 = "Temporal Identity
   Layer" (kişisel süreklilik/kronobiyoloji) — bu genesis belgesiyle
   **hiç ilgisi yok**.
@@ -60,8 +62,13 @@ ortaya çıktı** — `persona_math/__init__.py` kendi 55-araç iç numaralama
 Mathematical Analogues (M40--M43)" gibi tablolarla bu iç şemayı zaten
 tanımlıyor — yani `persona_math/*.py`'deki "Mxx" referansları çoğunlukla
 M7'nin kendi iç araç indeksine doğru atıfta bulunuyor, makale serisine
-değil. Bkz. `validation/check_docstring_paper_refs.py`'nin docstring'i
-bu ayrımı detaylandırıyor. **Çözülmedi** (K5/K6 çakışması, yukarıdaki):
-hangi tanımın kanonik olduğuna (muhtemelen en güncel makale: M62/M45)
-resmi bir karar `AUDIT_FINDINGS.md`'ye düşülmeli, bu README sadece
-çakışmayı kayıt altına alıyor.
+değil. Bkz. Persona reposundaki `validation/check_docstring_paper_refs.py`'nin
+docstring'i bu ayrımı detaylandırıyor (bu script sadece Persona reposunda
+var — bu repodaki `validation/` AF-115'te silindi, o kopya zaten
+üründen kopuktu ve Persona'daki asıllarıyla çakışıyordu). **Çözüldü
+(2026-08-12, AF-106/AF-107):** kullanıcı kararıyla K5 için Temporal
+Identity (M62/63/64/66) kanonik kabul edildi; K6 zaten Archetypal
+Foundation'da tutarlıydı, gerçek bir çakışma değildi (bkz. Persona
+reposundaki `AUDIT_FINDINGS.md`). Bu genesis belgesinin kendi K5/K6
+tanımları (erken taslak) hâlâ terk edilmiş/aşılmış olarak işaretli
+kalıyor — geçmiş kayıt olarak korunuyor, güncellenmiyor.
